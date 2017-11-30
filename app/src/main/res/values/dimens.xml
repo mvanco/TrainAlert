@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="red_circle_size">250dp</dimen>
+    <dimen name="red_circle_text_size">20dp</dimen>
+    <dimen name="red_circle_text_view_margin">60dp</dimen>
+
+</resources>
