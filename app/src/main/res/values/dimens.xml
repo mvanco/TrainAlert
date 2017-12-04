@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="red_circle_size">250dp</dimen>
-    <dimen name="red_circle_text_size">20dp</dimen>
+    <dimen name="red_circle_size">100dp</dimen>
+    <dimen name="red_circle_red_border_width">15dp</dimen>
+    <dimen name="red_circle_stroke_width">4dp</dimen>
+    <dimen name="red_circle_text_size">48sp</dimen>
     <dimen name="red_circle_text_view_margin">60dp</dimen>
-
+    <dimen name="fragment_main_notification_container_margin">64dp</dimen>
 </resources>

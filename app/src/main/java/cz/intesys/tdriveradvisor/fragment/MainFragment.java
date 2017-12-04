@@ -1,6 +1,7 @@
 package cz.intesys.tdriveradvisor.fragment;
 
 import android.animation.ValueAnimator;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,16 +25,17 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import cz.intesys.tdriveradvisor.R;
 import cz.intesys.tdriveradvisor.animation.GeoPointInterpolator;
 import cz.intesys.tdriveradvisor.databinding.FragmentMainBinding;
+import cz.intesys.tdriveradvisor.entity.Alarm;
 import cz.intesys.tdriveradvisor.entity.Location;
 import cz.intesys.tdriveradvisor.entity.POI;
 import cz.intesys.tdriveradvisor.entity.TDAOverlayItem;
-import cz.intesys.tdriveradvisor.repository.Repository;
-import cz.intesys.tdriveradvisor.repository.SimulatedRepository;
 import cz.intesys.tdriveradvisor.utility.Utility;
+import cz.intesys.tdriveradvisor.viewmodel.MainFragmentViewModel;
 
 import static cz.intesys.tdriveradvisor.TDriverAdvisorConfig.GPS_TIME_INTERVAL;
 import static cz.intesys.tdriveradvisor.TDriverAdvisorConfig.INFINITE_ANIMATION;
@@ -46,17 +48,19 @@ import static cz.intesys.tdriveradvisor.utility.Utility.playSound;
 public class MainFragment extends Fragment {
 
     private FragmentMainBinding binding;
-    private Repository repository; // TODO: Move this to ViewModel
-
-    public MainFragment() {
-        repository = SimulatedRepository.getInstance();
-    }
+    private MainFragmentViewModel viewModel;
 
     public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        viewModel = ViewModelProviders.of(this).get(MainFragmentViewModel.class);
     }
 
     @Override
@@ -70,12 +74,18 @@ public class MainFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+
+        viewModel.loadPOIs(getActivity());
+        viewModel.getPOIs().observe(this, (POIs) -> {
+            // Nothing yet.
+        });
+
         initMap(getActivity());
 
         // Creates marker which will be animated
         final Marker trainMarker = new Marker(binding.fragmentMainMapview);
         trainMarker.setTitle("Train Location");
-        trainMarker.setPosition(repository.getCurrentLocation().toGeoPoint());
+        trainMarker.setPosition(viewModel.getCurrentLocation().toGeoPoint());
         trainMarker.setIcon(getResources().getDrawable(R.drawable.ic_train_left));
         binding.fragmentMainMapview.getOverlayManager().add(trainMarker);
         startAnimation(trainMarker);
@@ -83,8 +93,8 @@ public class MainFragment extends Fragment {
     }
 
     public void restartAnimation(Context context) {
-        repository = SimulatedRepository.getInstance();
-        binding.fragmentMainMapview.getController().setCenter(repository.getCurrentLocation());
+        // TODO: restart repository from viewmodel
+        binding.fragmentMainMapview.getController().setCenter(viewModel.getCurrentLocation());
 
         binding.fragmentMainMapview.removeAllViews();
 
@@ -94,7 +104,7 @@ public class MainFragment extends Fragment {
             // Creates marker which will be animated
             final Marker trainMarker = new Marker(binding.fragmentMainMapview);
             trainMarker.setTitle("Train Location");
-            trainMarker.setPosition(repository.getCurrentLocation().toGeoPoint());
+            trainMarker.setPosition(viewModel.getCurrentLocation().toGeoPoint());
             trainMarker.setIcon(getResources().getDrawable(R.drawable.ic_train_left));
             binding.fragmentMainMapview.getOverlayManager().add(trainMarker);
             startAnimation(trainMarker);
@@ -109,7 +119,7 @@ public class MainFragment extends Fragment {
         IMapController mapController = binding.fragmentMainMapview.getController();
 
         final ArrayList<OverlayItem> items = new ArrayList<>();
-        for (POI poi : repository.getPOIs(getActivity())) {
+        for (POI poi : viewModel.getPOIs().getValue()) {
             items.add(new TDAOverlayItem(poi));
         }
 
@@ -137,7 +147,7 @@ public class MainFragment extends Fragment {
         binding.fragmentMainMapview.getOverlays().add(overlay);
 
         mapController.setZoom(14);
-        mapController.setCenter(repository.getCurrentLocation());
+        mapController.setCenter(viewModel.getCurrentLocation());
 
         Configuration.getInstance().save(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Save configuration.
     }
@@ -148,7 +158,7 @@ public class MainFragment extends Fragment {
         int numberOfRepetitions = (INFINITE_ANIMATION) ? 1 : (TIME_OF_ANIMATION * 1000) / GPS_TIME_INTERVAL;
         for (int i = 0; i < numberOfRepetitions; i++) {
             new Handler().postDelayed(() -> {
-                Location currentLocation = repository.getCurrentLocation();
+                Location currentLocation = viewModel.getCurrentLocation();
                 animateMarkerTo(binding.fragmentMainMapview, trainMarker, currentLocation.toGeoPoint(), new GeoPointInterpolator.LinearFixed());
                 if ((currentLocation.getMetaIndex() % getMapRefreshGPSCycles()) == 0) {
                     binding.fragmentMainMapview.getController().setCenter(currentLocation.toGeoPoint());
@@ -163,6 +173,10 @@ public class MainFragment extends Fragment {
     }
 
     private void animateMarkerTo(final MapView map, final Marker marker, final GeoPoint finalPosition, final GeoPointInterpolator GeoPointInterpolator) {
+        if (getActivity() == null) {
+            return;
+        }
+
         final GeoPoint startPosition = marker.getPosition();
         ValueAnimator valueAnimator = new ValueAnimator();
 
@@ -334,8 +348,31 @@ public class MainFragment extends Fragment {
     }
 
     private void handleNotification(GeoPoint currentLocation) {
-        for (POI poi : repository.getPOIs(getActivity())) {
+        for (POI poi : viewModel.getPOIs().getValue()) {
+            Log.d("distance", "distance to " + poi.getMetaIndex() + " is " + currentLocation.distanceTo(poi));
+            for (Alarm alarm : poi.getPOIType().getAlarmList()) {
+                if (alarm.isDisabled()) {
+                    continue;
+                }
+                if (currentLocation.distanceTo(poi) < alarm.getDistance()) {
+                    Log.d("showNotification", "poi: " + poi.getMetaIndex() + ", distance: " + alarm.getDistance());
+                    showTravelNotification(alarm.getMessage());
+                    viewModel.disableNewAlarm(alarm);
+                }
+            }
+        }
 
+        // Enable alarm of POI with sufficient distance again
+        List<Alarm> alarmsToRemove = new ArrayList<Alarm>();
+
+        for (Alarm alarm : viewModel.getDisabledAlarms()) {
+            if (currentLocation.distanceTo(alarm.getPoi()) > alarm.getDistance()) {
+                alarmsToRemove.add(alarm);
+            }
+        }
+
+        for (Alarm alarm : alarmsToRemove) {
+            viewModel.enableDisabledAlarm(alarm);
         }
     }
 

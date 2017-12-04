@@ -1,15 +1,20 @@
 package cz.intesys.tdriveradvisor.repository;
 
+import android.content.Context;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import cz.intesys.tdriveradvisor.entity.Location;
 import cz.intesys.tdriveradvisor.entity.POI;
 
+import static cz.intesys.tdriveradvisor.utility.Utility.POI_TYPE_UNDERPASS;
+
 public class SimulatedRepository implements Repository {
 
     private static List<Location> sExampleRoute = getExampleRoute();
-    private static int sLocationIterator = 0;
+    private static int sLocationIterator = 150;
     private static boolean toTheLeftDirection = true;
 
     private static SimulatedRepository sInstance;
@@ -288,29 +293,38 @@ public class SimulatedRepository implements Repository {
             }
         }
 
+        Log.d("currentLocation", "current location " + currentLocation.getMetaIndex());
         return currentLocation;
     }
 
     @Override
-    public List<POI> getPOIs() {
+    public List<POI> getPOIs(Context context) {
         List<POI> sExamplePOIs = new ArrayList<POI>();
 
-        sExamplePOIs.add(new POI(50.47902254646468, 14.03452249583824));
-        sExamplePOIs.add(new POI(50.47817915699491, 14.033283647782222));
-        sExamplePOIs.add(new POI(50.479161674715016, 13.996419068172456));
-        sExamplePOIs.add(new POI(50.468671536801395, 13.976941624253527));
-        sExamplePOIs.add(new POI(50.46681518367927, 13.967698539937949));
-        sExamplePOIs.add(new POI(50.46711419751372, 13.96569837980194));
-        sExamplePOIs.add(new POI(50.470352221395615, 13.95201231288346));
-        sExamplePOIs.add(new POI(50.457425251189875, 13.906925863491022));
-        sExamplePOIs.add(new POI(50.45325162770703, 13.892963746152365));
-        sExamplePOIs.add(new POI(50.44820354253554, 13.865930429153735));
-        sExamplePOIs.add(new POI(50.44444858393916, 13.85523290545108));
-        sExamplePOIs.add(new POI(50.44753197413999, 13.825485004491675));
-        sExamplePOIs.add(new POI(50.443651263354525, 13.81312538535105));
-        sExamplePOIs.add(new POI(50.45203159415806, 13.76749867754598));
-        sExamplePOIs.add(new POI(50.455747679477696, 13.75331515627523));
-        sExamplePOIs.add(new POI(50.46815261073638, 13.719186194335025));
+        sExamplePOIs.add(new POI(50.47902254646468, 14.03452249583824, POI_TYPE_UNDERPASS, context));
+        sExamplePOIs.add(new POI(50.47817915699491, 14.033283647782222, POI_TYPE_UNDERPASS, context));
+
+        //POI poi = new POI(50.479161674715016, 13.996419068172456);
+        //poi.setAlarms(Alarm.createAlarms(context, "Přechod za"));
+        //sExamplePOIs.add(context, );
+
+        sExamplePOIs.add(new POI(50.468671536801395, 13.976941624253527, POI_TYPE_UNDERPASS, context));
+        sExamplePOIs.add(new POI(50.46681518367927, 13.967698539937949, POI_TYPE_UNDERPASS, context));
+        sExamplePOIs.add(new POI(50.46711419751372, 13.96569837980194, POI_TYPE_UNDERPASS, context));
+        sExamplePOIs.add(new POI(50.470352221395615, 13.95201231288346, POI_TYPE_UNDERPASS, context));
+        sExamplePOIs.add(new POI(50.457425251189875, 13.906925863491022, POI_TYPE_UNDERPASS, context));
+        sExamplePOIs.add(new POI(50.45325162770703, 13.892963746152365, POI_TYPE_UNDERPASS, context));
+        sExamplePOIs.add(new POI(50.44820354253554, 13.865930429153735, POI_TYPE_UNDERPASS, context));
+        sExamplePOIs.add(new POI(50.44444858393916, 13.85523290545108, POI_TYPE_UNDERPASS, context));
+        sExamplePOIs.add(new POI(50.44753197413999, 13.825485004491675, POI_TYPE_UNDERPASS, context));
+        sExamplePOIs.add(new POI(50.443651263354525, 13.81312538535105, POI_TYPE_UNDERPASS, context));
+        sExamplePOIs.add(new POI(50.45203159415806, 13.76749867754598, POI_TYPE_UNDERPASS, context));
+        sExamplePOIs.add(new POI(50.455747679477696, 13.75331515627523, POI_TYPE_UNDERPASS, context));
+        sExamplePOIs.add(new POI(50.46815261073638, 13.719186194335025, POI_TYPE_UNDERPASS, context));
+
+        for (int i = 0; i < sExamplePOIs.size(); i++) {
+            sExamplePOIs.get(i).setMetaIndex(i);
+        }
 
         return sExamplePOIs;
     }

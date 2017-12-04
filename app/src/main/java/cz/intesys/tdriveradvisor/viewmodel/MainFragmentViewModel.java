@@ -3,9 +3,13 @@ package cz.intesys.tdriveradvisor.viewmodel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import cz.intesys.tdriveradvisor.entity.Alarm;
+import cz.intesys.tdriveradvisor.entity.Location;
 import cz.intesys.tdriveradvisor.entity.POI;
 import cz.intesys.tdriveradvisor.repository.Repository;
 import cz.intesys.tdriveradvisor.repository.SimulatedRepository;
@@ -13,41 +17,40 @@ import cz.intesys.tdriveradvisor.repository.SimulatedRepository;
 
 public class MainFragmentViewModel extends ViewModel {
 
-    MediatorLiveData<List<POI>> POIs;
+    private MediatorLiveData<List<POI>> mPOIs;
     private Repository mRepository;
+    private List<Alarm> mDisabledAlarms;
 
     public MainFragmentViewModel() {
+        mPOIs = new MediatorLiveData<List<POI>>();
         mRepository = SimulatedRepository.getInstance();
+        mDisabledAlarms = new ArrayList<Alarm>();
     }
 
     public LiveData<List<POI>> getPOIs() {
-        return POIs;
+        return mPOIs;
     }
 
-    public LiveData<List<POI>> loadPOIs() {
-//        POIs.addSource(
-//                mRepository.getPOIs(),
-//                returnedPOIs -> POIs.setValue(returnedPOIs)
-//        );
-        return POIs;
+    public LiveData<List<POI>> loadPOIs(Context context) {
+        mPOIs.setValue(mRepository.getPOIs(context));
+        return mPOIs;
     }
 
-    //    public ListIssuesViewModel() {
-//        mApiResponse = new MediatorLiveData<>();
-//        mIssueRepository = new IssueRepositoryImpl();
-//    }
-//
-//    @NonNull
-//    public LiveData<ApiResponse> getApiResponse() {
-//        return mApiResponse;
-//    }
-//
-//    public LiveData<ApiResponse> loadIssues(@NonNull String user, String repo) {
-//        mApiResponse.addSource(
-//                mIssueRepository.getIssues(user, repo),
-//                apiResponse -> mApiResponse.setValue(apiResponse)
-//        );
-//        return mApiResponse;
-//    }
+    public Location getCurrentLocation() {
+        return mRepository.getCurrentLocation();
+    }
 
+    public void disableNewAlarm(Alarm alarm) {
+        mDisabledAlarms.add(alarm);
+        alarm.disable();
+    }
+
+    public void enableDisabledAlarm(Alarm alarm) {
+        alarm.enable();
+        mDisabledAlarms.remove(alarm);
+    }
+
+    public List<Alarm> getDisabledAlarms() {
+        return mDisabledAlarms;
+    }
 }
