@@ -1,6 +1,7 @@
 package cz.intesys.tdriveradvisor.fragment;
 
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import cz.intesys.tdriveradvisor.R;
 import cz.intesys.tdriveradvisor.animation.GeoPointInterpolator;
 import cz.intesys.tdriveradvisor.databinding.FragmentMainBinding;
+import cz.intesys.tdriveradvisor.entity.Location;
 import cz.intesys.tdriveradvisor.entity.POI;
 import cz.intesys.tdriveradvisor.entity.TDAOverlayItem;
 import cz.intesys.tdriveradvisor.repository.Repository;
@@ -34,7 +36,12 @@ import cz.intesys.tdriveradvisor.repository.SimulatedRepository;
 import cz.intesys.tdriveradvisor.utility.Utility;
 
 import static cz.intesys.tdriveradvisor.TDriverAdvisorConfig.GPS_TIME_INTERVAL;
+import static cz.intesys.tdriveradvisor.TDriverAdvisorConfig.INFINITE_ANIMATION;
 import static cz.intesys.tdriveradvisor.TDriverAdvisorConfig.TIME_OF_ANIMATION;
+import static cz.intesys.tdriveradvisor.utility.Utility.convertToDegrees;
+import static cz.intesys.tdriveradvisor.utility.Utility.getMapRefreshGPSCycles;
+import static cz.intesys.tdriveradvisor.utility.Utility.getMarkerRotation;
+import static cz.intesys.tdriveradvisor.utility.Utility.playSound;
 
 public class MainFragment extends Fragment {
 
@@ -63,11 +70,38 @@ public class MainFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        initMap();
-        startAnimation();
+        initMap(getActivity());
+
+        // Creates marker which will be animated
+        final Marker trainMarker = new Marker(binding.fragmentMainMapview);
+        trainMarker.setTitle("Train Location");
+        trainMarker.setPosition(repository.getCurrentLocation().toGeoPoint());
+        trainMarker.setIcon(getResources().getDrawable(R.drawable.ic_train_left));
+        binding.fragmentMainMapview.getOverlayManager().add(trainMarker);
+        startAnimation(trainMarker);
+
     }
 
-    private void initMap() {
+    public void restartAnimation(Context context) {
+        repository = SimulatedRepository.getInstance();
+        binding.fragmentMainMapview.getController().setCenter(repository.getCurrentLocation());
+
+        binding.fragmentMainMapview.removeAllViews();
+
+        if (!INFINITE_ANIMATION) {
+            initMap(context);
+
+            // Creates marker which will be animated
+            final Marker trainMarker = new Marker(binding.fragmentMainMapview);
+            trainMarker.setTitle("Train Location");
+            trainMarker.setPosition(repository.getCurrentLocation().toGeoPoint());
+            trainMarker.setIcon(getResources().getDrawable(R.drawable.ic_train_left));
+            binding.fragmentMainMapview.getOverlayManager().add(trainMarker);
+            startAnimation(trainMarker);
+        }
+    }
+
+    private void initMap(Context context) {
         Configuration.getInstance().load(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Load configuration.
 
         binding.fragmentMainMapview.setMultiTouchControls(true);
@@ -75,7 +109,7 @@ public class MainFragment extends Fragment {
         IMapController mapController = binding.fragmentMainMapview.getController();
 
         final ArrayList<OverlayItem> items = new ArrayList<>();
-        for (POI poi : repository.getPOIs()) {
+        for (POI poi : repository.getPOIs(getActivity())) {
             items.add(new TDAOverlayItem(poi));
         }
 
@@ -84,7 +118,7 @@ public class MainFragment extends Fragment {
                     @Override
                     public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
                         Toast.makeText(
-                                getActivity(),
+                                context,
                                 "Item '" + item.getTitle() + "' (index=" + index
                                         + ") got single tapped up", Toast.LENGTH_LONG).show();
                         return true; // We 'handled' this event.
@@ -93,12 +127,12 @@ public class MainFragment extends Fragment {
                     @Override
                     public boolean onItemLongPress(final int index, final OverlayItem item) {
                         Toast.makeText(
-                                getActivity(),
+                                context,
                                 "Item '" + item.getTitle() + "' (index=" + index
                                         + ") got long pressed", Toast.LENGTH_LONG).show();
                         return false;
                     }
-                }, getActivity().getApplicationContext());
+                }, context.getApplicationContext());
 
         binding.fragmentMainMapview.getOverlays().add(overlay);
 
@@ -108,44 +142,36 @@ public class MainFragment extends Fragment {
         Configuration.getInstance().save(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Save configuration.
     }
 
-    private void startAnimation() {
-        // Creates marker which will be animated
-        final Marker trainMarker = new Marker(binding.fragmentMainMapview);
-        trainMarker.setTitle("Train Location");
-        trainMarker.setPosition(repository.getCurrentLocation().toGeoPoint());
-        trainMarker.setIcon(getResources().getDrawable(R.drawable.ic_subway));
-        binding.fragmentMainMapview.getOverlayManager().add(trainMarker);
+    //TODO: make with Service or infinite loop, not recursive function (looks bad)
+    private void startAnimation(final Marker trainMarker) {
 
-        int numberOfRepetitions = (TIME_OF_ANIMATION * 1000) / GPS_TIME_INTERVAL;
+        int numberOfRepetitions = (INFINITE_ANIMATION) ? 1 : (TIME_OF_ANIMATION * 1000) / GPS_TIME_INTERVAL;
         for (int i = 0; i < numberOfRepetitions; i++) {
-            final int metaIndex = i;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    GeoPoint currentLocation = repository.getCurrentLocation().toGeoPoint();
-                    animateMarkerTo(binding.fragmentMainMapview, trainMarker, currentLocation, new GeoPointInterpolator.LinearFixed());
-                    if ((metaIndex % Utility.getMapRefreshGPSCycles()) == 0) {
-                        binding.fragmentMainMapview.getController().setCenter(currentLocation);
-                    }
-                    handleNotification(metaIndex);
+            new Handler().postDelayed(() -> {
+                Location currentLocation = repository.getCurrentLocation();
+                animateMarkerTo(binding.fragmentMainMapview, trainMarker, currentLocation.toGeoPoint(), new GeoPointInterpolator.LinearFixed());
+                if ((currentLocation.getMetaIndex() % getMapRefreshGPSCycles()) == 0) {
+                    binding.fragmentMainMapview.getController().setCenter(currentLocation.toGeoPoint());
+                }
+                //handleNotification(currentLocation.getMetaIndex());
+                handleNotification(trainMarker.getPosition());
+                if (INFINITE_ANIMATION) {
+                    startAnimation(trainMarker);
                 }
             }, GPS_TIME_INTERVAL * (i + 1));
         }
     }
 
-    public ValueAnimator animateMarkerTo(final MapView map, final Marker marker, final GeoPoint finalPosition, final GeoPointInterpolator GeoPointInterpolator) {
+    private void animateMarkerTo(final MapView map, final Marker marker, final GeoPoint finalPosition, final GeoPointInterpolator GeoPointInterpolator) {
         final GeoPoint startPosition = marker.getPosition();
         ValueAnimator valueAnimator = new ValueAnimator();
 
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                float v = animation.getAnimatedFraction();
-                Log.d("anim", "animation portion is " + v);
-                GeoPoint newPosition = GeoPointInterpolator.interpolate(v, startPosition, finalPosition);
-                marker.setPosition(newPosition);
-                map.invalidate();
-            }
+        valueAnimator.addUpdateListener(animation -> {
+            float v = animation.getAnimatedFraction();
+            Log.d("anim", "animation portion is " + v);
+            GeoPoint newPosition = GeoPointInterpolator.interpolate(v, startPosition, finalPosition); //TODO: make this using
+            marker.setPosition(newPosition);
+            map.invalidate();
         });
         valueAnimator.setFloatValues(0, 1); // Ignored.
         valueAnimator.setRepeatCount(0);
@@ -154,7 +180,17 @@ public class MainFragment extends Fragment {
 //        long duration = TDriverAdvisorConfig.TIME_SPEED * distanceFraction;
         valueAnimator.setDuration(GPS_TIME_INTERVAL);
         valueAnimator.start();
-        return valueAnimator;
+
+        float markerRotation = convertToDegrees(getMarkerRotation(startPosition, finalPosition));
+        Log.d("markerRotation", String.format("startPosition %f %f, endPosition %f %f, markerRotation %f", startPosition.getLatitude(), startPosition.getLongitude(), finalPosition.getLatitude(), finalPosition.getLongitude(), markerRotation));
+
+        if (Utility.isLeftTrainDirection(startPosition, finalPosition)) {
+            marker.setRotation(markerRotation);
+            marker.setIcon(getResources().getDrawable(R.drawable.ic_train_left));
+        } else {
+            marker.setRotation(markerRotation - 180);
+            marker.setIcon(getResources().getDrawable(R.drawable.ic_train_right));
+        }
     }
 
     private void handleNotification(int metaIndex) {
@@ -291,14 +327,16 @@ public class MainFragment extends Fragment {
     private void showTravelNotification(String text) {
         binding.fragmentMainNotificationText.setText(text);
         binding.fragmentMainNotificationContainer.setVisibility(View.VISIBLE);
+        playSound(getActivity());
 
-        Runnable action = new Runnable() {
-            @Override
-            public void run() {
-                binding.fragmentMainNotificationContainer.setVisibility(View.GONE);
-            }
-        };
+        Runnable action = () -> binding.fragmentMainNotificationContainer.setVisibility(View.GONE);
         binding.fragmentMainNotificationContainer.postDelayed(action, 3000);
+    }
+
+    private void handleNotification(GeoPoint currentLocation) {
+        for (POI poi : repository.getPOIs(getActivity())) {
+
+        }
     }
 
     //    /**
