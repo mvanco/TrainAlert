@@ -1,4 +1,4 @@
-package cz.intesys.tdriveradvisor.entity;
+package cz.intesys.trainalert.entity;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.OverlayItem;

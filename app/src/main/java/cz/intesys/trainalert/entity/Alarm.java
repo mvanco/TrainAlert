@@ -1,4 +1,4 @@
-package cz.intesys.tdriveradvisor.entity;
+package cz.intesys.trainalert.entity;
 
 import android.content.Context;
 import android.media.RingtoneManager;

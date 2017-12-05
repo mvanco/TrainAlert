@@ -9,7 +9,7 @@
         android:id="@+id/fragment_main_map_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="cz.intesys.tdriveradvisor.fragment.MainFragment">
+        tools:context="cz.intesys.trainalert.fragment.MainFragment">
 
         <org.osmdroid.views.MapView
             android:id="@+id/fragment_main_mapview"

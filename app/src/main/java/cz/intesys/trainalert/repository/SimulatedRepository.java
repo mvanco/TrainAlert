@@ -1,4 +1,4 @@
-package cz.intesys.tdriveradvisor.repository;
+package cz.intesys.trainalert.repository;
 
 import android.content.Context;
 import android.util.Log;
@@ -6,10 +6,10 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.intesys.tdriveradvisor.entity.Location;
-import cz.intesys.tdriveradvisor.entity.POI;
+import cz.intesys.trainalert.entity.Location;
+import cz.intesys.trainalert.entity.POI;
 
-import static cz.intesys.tdriveradvisor.utility.Utility.POI_TYPE_UNDERPASS;
+import static cz.intesys.trainalert.utility.Utility.POI_TYPE_UNDERPASS;
 
 public class SimulatedRepository implements Repository {
 

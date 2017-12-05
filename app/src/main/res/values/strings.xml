@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TDriverAdvisor</string>
+    <string name="app_name">TrainAlert</string>
     <string name="activity_main_navigation_drawer_open">Open</string>
     <string name="activity_main_navigation_drawer_close">Close</string>
 

@@ -1,4 +1,4 @@
-package cz.intesys.tdriveradvisor.utility;
+package cz.intesys.trainalert.utility;
 
 import android.content.Context;
 import android.media.Ringtone;
@@ -11,8 +11,8 @@ import org.osmdroid.util.GeoPoint;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import static cz.intesys.tdriveradvisor.TDriverAdvisorConfig.GPS_TIME_INTERVAL;
-import static cz.intesys.tdriveradvisor.TDriverAdvisorConfig.MAP_REFRESH_TIME;
+import static cz.intesys.trainalert.TDriverAdvisorConfig.GPS_TIME_INTERVAL;
+import static cz.intesys.trainalert.TDriverAdvisorConfig.MAP_REFRESH_TIME;
 import static java.lang.Math.PI;
 import static java.lang.Math.atan;
 

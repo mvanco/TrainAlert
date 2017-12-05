@@ -1,4 +1,4 @@
-package cz.intesys.tdriveradvisor.viewmodel;
+package cz.intesys.trainalert.viewmodel;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
@@ -8,11 +8,11 @@ import android.content.Context;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.intesys.tdriveradvisor.entity.Alarm;
-import cz.intesys.tdriveradvisor.entity.Location;
-import cz.intesys.tdriveradvisor.entity.POI;
-import cz.intesys.tdriveradvisor.repository.Repository;
-import cz.intesys.tdriveradvisor.repository.SimulatedRepository;
+import cz.intesys.trainalert.entity.Alarm;
+import cz.intesys.trainalert.entity.Location;
+import cz.intesys.trainalert.entity.POI;
+import cz.intesys.trainalert.repository.Repository;
+import cz.intesys.trainalert.repository.SimulatedRepository;
 
 
 public class MainFragmentViewModel extends ViewModel {

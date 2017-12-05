@@ -1,11 +1,11 @@
-package cz.intesys.tdriveradvisor.animation;
+package cz.intesys.trainalert.animation;
 
 import org.osmdroid.util.GeoPoint;
 
 public interface GeoPointInterpolator {
-    public GeoPoint interpolate(float fraction, GeoPoint a, GeoPoint b);
+    GeoPoint interpolate(float fraction, GeoPoint a, GeoPoint b);
 
-    public class Linear implements GeoPointInterpolator {
+    class Linear implements GeoPointInterpolator {
         @Override
         public GeoPoint interpolate(float fraction, GeoPoint a, GeoPoint b) {
             double lat = (b.getLatitude() - a.getLatitude()) * fraction + a.getLatitude();
@@ -14,7 +14,7 @@ public interface GeoPointInterpolator {
         }
     }
 
-    public class LinearFixed implements GeoPointInterpolator {
+    class LinearFixed implements GeoPointInterpolator {
         @Override
         public GeoPoint interpolate(float fraction, GeoPoint a, GeoPoint b) {
             double lat = (b.getLatitude() - a.getLatitude()) * fraction + a.getLatitude();

@@ -1,4 +1,4 @@
-package cz.intesys.tdriveradvisor.entity;
+package cz.intesys.trainalert.entity;
 
 import android.content.Context;
 
@@ -6,7 +6,7 @@ import org.osmdroid.api.IGeoPoint;
 
 import java.util.List;
 
-import cz.intesys.tdriveradvisor.utility.Utility;
+import cz.intesys.trainalert.utility.Utility;
 
 public class POI implements IGeoPoint {
     private POIType POIType;

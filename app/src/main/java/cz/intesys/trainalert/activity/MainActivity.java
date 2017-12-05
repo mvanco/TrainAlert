@@ -1,4 +1,4 @@
-package cz.intesys.tdriveradvisor.activity;
+package cz.intesys.trainalert.activity;
 
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 
-import cz.intesys.tdriveradvisor.R;
-import cz.intesys.tdriveradvisor.databinding.ActivityMainBinding;
-import cz.intesys.tdriveradvisor.fragment.MainFragment;
+import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.databinding.ActivityMainBinding;
+import cz.intesys.trainalert.fragment.MainFragment;
 
 public class MainActivity extends AppCompatActivity {
 

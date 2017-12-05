@@ -1,4 +1,4 @@
-package cz.intesys.tdriveradvisor.animation;
+package cz.intesys.trainalert.animation;
 
 //public class TrainAnimator {
 //

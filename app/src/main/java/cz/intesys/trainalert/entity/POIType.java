@@ -1,4 +1,4 @@
-package cz.intesys.tdriveradvisor.entity;
+package cz.intesys.trainalert.entity;
 
 import android.content.Context;
 import android.support.annotation.DrawableRes;
@@ -6,11 +6,11 @@ import android.support.annotation.DrawableRes;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.intesys.tdriveradvisor.R;
-import cz.intesys.tdriveradvisor.utility.Utility;
+import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.utility.Utility;
 
-import static cz.intesys.tdriveradvisor.utility.Utility.POI_TYPE_SPEED_LIMITATION;
-import static cz.intesys.tdriveradvisor.utility.Utility.POI_TYPE_UNDERPASS;
+import static cz.intesys.trainalert.utility.Utility.POI_TYPE_SPEED_LIMITATION;
+import static cz.intesys.trainalert.utility.Utility.POI_TYPE_UNDERPASS;
 
 public class POIType {
 

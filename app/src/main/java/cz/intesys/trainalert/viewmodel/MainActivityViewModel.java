@@ -1,4 +1,4 @@
-package cz.intesys.tdriveradvisor.viewmodel;
+package cz.intesys.trainalert.viewmodel;
 
 import android.arch.lifecycle.ViewModel;
 

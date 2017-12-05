@@ -1,4 +1,4 @@
-package cz.intesys.tdriveradvisor;
+package cz.intesys.trainalert;
 
 import android.app.Application;
 import android.content.Context;

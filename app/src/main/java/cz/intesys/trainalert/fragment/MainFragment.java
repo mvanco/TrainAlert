@@ -1,4 +1,4 @@
-package cz.intesys.tdriveradvisor.fragment;
+package cz.intesys.trainalert.fragment;
 
 import android.animation.ValueAnimator;
 import android.arch.lifecycle.ViewModelProviders;
@@ -27,23 +27,23 @@ import org.osmdroid.views.overlay.OverlayItem;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.intesys.tdriveradvisor.R;
-import cz.intesys.tdriveradvisor.animation.GeoPointInterpolator;
-import cz.intesys.tdriveradvisor.databinding.FragmentMainBinding;
-import cz.intesys.tdriveradvisor.entity.Alarm;
-import cz.intesys.tdriveradvisor.entity.Location;
-import cz.intesys.tdriveradvisor.entity.POI;
-import cz.intesys.tdriveradvisor.entity.TDAOverlayItem;
-import cz.intesys.tdriveradvisor.utility.Utility;
-import cz.intesys.tdriveradvisor.viewmodel.MainFragmentViewModel;
+import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.animation.GeoPointInterpolator;
+import cz.intesys.trainalert.databinding.FragmentMainBinding;
+import cz.intesys.trainalert.entity.Alarm;
+import cz.intesys.trainalert.entity.Location;
+import cz.intesys.trainalert.entity.POI;
+import cz.intesys.trainalert.entity.TDAOverlayItem;
+import cz.intesys.trainalert.utility.Utility;
+import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 
-import static cz.intesys.tdriveradvisor.TDriverAdvisorConfig.GPS_TIME_INTERVAL;
-import static cz.intesys.tdriveradvisor.TDriverAdvisorConfig.INFINITE_ANIMATION;
-import static cz.intesys.tdriveradvisor.TDriverAdvisorConfig.TIME_OF_ANIMATION;
-import static cz.intesys.tdriveradvisor.utility.Utility.convertToDegrees;
-import static cz.intesys.tdriveradvisor.utility.Utility.getMapRefreshGPSCycles;
-import static cz.intesys.tdriveradvisor.utility.Utility.getMarkerRotation;
-import static cz.intesys.tdriveradvisor.utility.Utility.playSound;
+import static cz.intesys.trainalert.TDriverAdvisorConfig.GPS_TIME_INTERVAL;
+import static cz.intesys.trainalert.TDriverAdvisorConfig.INFINITE_ANIMATION;
+import static cz.intesys.trainalert.TDriverAdvisorConfig.TIME_OF_ANIMATION;
+import static cz.intesys.trainalert.utility.Utility.convertToDegrees;
+import static cz.intesys.trainalert.utility.Utility.getMapRefreshGPSCycles;
+import static cz.intesys.trainalert.utility.Utility.getMarkerRotation;
+import static cz.intesys.trainalert.utility.Utility.playSound;
 
 public class MainFragment extends Fragment {
 
