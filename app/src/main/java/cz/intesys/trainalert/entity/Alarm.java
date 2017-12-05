@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.support.annotation.StringRes;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Alarm {
@@ -38,6 +39,10 @@ public class Alarm {
             alarms.add(new Alarm(message, distance, poi));
         }
         return alarms;
+    }
+
+    public List<Alarm> toArray() {
+        return Collections.singletonList(this);
     }
 
     public String getMessage() {

@@ -40,12 +40,12 @@ public class MainFragmentViewModel extends ViewModel {
         return mRepository.getCurrentLocation();
     }
 
-    public void disableNewAlarm(Alarm alarm) {
+    public void disableAlarm(Alarm alarm) {
         mDisabledAlarms.add(alarm);
         alarm.disable();
     }
 
-    public void enableDisabledAlarm(Alarm alarm) {
+    public void enableAlarm(Alarm alarm) {
         alarm.enable();
         mDisabledAlarms.remove(alarm);
     }

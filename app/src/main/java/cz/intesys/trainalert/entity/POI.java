@@ -9,7 +9,7 @@ import java.util.List;
 import cz.intesys.trainalert.utility.Utility;
 
 public class POI implements IGeoPoint {
-    private POIType POIType;
+    private POIConfiguration POIConfiguration;
     private String title;
     private Double latitude;
     private Double longitude;
@@ -19,7 +19,7 @@ public class POI implements IGeoPoint {
     public POI(Double latitude, Double longitude, @Utility.POIType int type, Context context) {
         this.latitude = latitude;
         this.longitude = longitude;
-        this.POIType = new POIType(type, this, context);
+        this.POIConfiguration = new POIConfiguration(type, this, context);
     }
 
     @Override
@@ -40,8 +40,8 @@ public class POI implements IGeoPoint {
         return longitude;
     }
 
-    public POIType getPOIType() {
-        return POIType;
+    public POIConfiguration getPOIConfiguration() {
+        return POIConfiguration;
     }
 
     public int getMetaIndex() {

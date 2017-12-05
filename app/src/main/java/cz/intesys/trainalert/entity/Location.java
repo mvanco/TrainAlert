@@ -3,14 +3,11 @@ package cz.intesys.trainalert.entity;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.GeoPoint;
 
-import java.sql.Time;
-
 public class Location implements IGeoPoint {
 
     private Double latitude;
     private Double longitude;
     private int metaIndex; // TODO: remove this when not simulated
-    private Time time;
 
     public Location(Double latitude, Double longitude) {
         this.latitude = latitude;

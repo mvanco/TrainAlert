@@ -86,7 +86,7 @@ public class MainFragment extends Fragment {
         final Marker trainMarker = new Marker(binding.fragmentMainMapview);
         trainMarker.setTitle("Train Location");
         trainMarker.setPosition(viewModel.getCurrentLocation().toGeoPoint());
-        trainMarker.setIcon(getResources().getDrawable(R.drawable.ic_train_left));
+        trainMarker.setIcon(getResources().getDrawable(R.drawable.marker_train_left));
         binding.fragmentMainMapview.getOverlayManager().add(trainMarker);
         startAnimation(trainMarker);
 
@@ -105,7 +105,7 @@ public class MainFragment extends Fragment {
             final Marker trainMarker = new Marker(binding.fragmentMainMapview);
             trainMarker.setTitle("Train Location");
             trainMarker.setPosition(viewModel.getCurrentLocation().toGeoPoint());
-            trainMarker.setIcon(getResources().getDrawable(R.drawable.ic_train_left));
+            trainMarker.setIcon(getResources().getDrawable(R.drawable.marker_train_left));
             binding.fragmentMainMapview.getOverlayManager().add(trainMarker);
             startAnimation(trainMarker);
         }
@@ -120,10 +120,13 @@ public class MainFragment extends Fragment {
 
         final ArrayList<OverlayItem> items = new ArrayList<>();
         for (POI poi : viewModel.getPOIs().getValue()) {
-            items.add(new TDAOverlayItem(poi));
+            TDAOverlayItem item = new TDAOverlayItem(poi);
+            item.setMarker(context.getResources().getDrawable(poi.getPOIConfiguration().getMarkerDrawable()));
+            item.setMarkerHotspot(OverlayItem.HotspotPlace.CENTER);
+            items.add(item);
         }
 
-        ItemizedOverlay<OverlayItem> overlay = new ItemizedIconOverlay<>(items, getResources().getDrawable(R.drawable.ic_clear),
+        ItemizedOverlay<OverlayItem> overlay = new ItemizedIconOverlay<>(items, getResources().getDrawable(R.drawable.poi_crossing),
                 new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
                     @Override
                     public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
@@ -200,10 +203,10 @@ public class MainFragment extends Fragment {
 
         if (Utility.isLeftTrainDirection(startPosition, finalPosition)) {
             marker.setRotation(markerRotation);
-            marker.setIcon(getResources().getDrawable(R.drawable.ic_train_left));
+            marker.setIcon(getResources().getDrawable(R.drawable.marker_train_left));
         } else {
             marker.setRotation(markerRotation - 180);
-            marker.setIcon(getResources().getDrawable(R.drawable.ic_train_right));
+            marker.setIcon(getResources().getDrawable(R.drawable.marker_train_right));
         }
     }
 
@@ -350,14 +353,14 @@ public class MainFragment extends Fragment {
     private void handleNotification(GeoPoint currentLocation) {
         for (POI poi : viewModel.getPOIs().getValue()) {
             Log.d("distance", "distance to " + poi.getMetaIndex() + " is " + currentLocation.distanceTo(poi));
-            for (Alarm alarm : poi.getPOIType().getAlarmList()) {
+            for (Alarm alarm : poi.getPOIConfiguration().getAlarmList()) {
                 if (alarm.isDisabled()) {
                     continue;
                 }
                 if (currentLocation.distanceTo(poi) < alarm.getDistance()) {
                     Log.d("showNotification", "poi: " + poi.getMetaIndex() + ", distance: " + alarm.getDistance());
                     showTravelNotification(alarm.getMessage());
-                    viewModel.disableNewAlarm(alarm);
+                    viewModel.disableAlarm(alarm);
                 }
             }
         }
@@ -372,7 +375,7 @@ public class MainFragment extends Fragment {
         }
 
         for (Alarm alarm : alarmsToRemove) {
-            viewModel.enableDisabledAlarm(alarm);
+            viewModel.enableAlarm(alarm);
         }
     }
 

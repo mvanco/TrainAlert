@@ -18,15 +18,15 @@ import static java.lang.Math.atan;
 
 public class Utility {
 
-    public static final int POI_TYPE_UNDERPASS = 0;
-    public static final int POI_TYPE_SPEED_LIMITATION = 1;
-
-    public static final int POI_TYPE_SEARCH_ALGORITHM_ENABLED_ALARM = 0;
-    public static final int POI_TYPE_SEARCH_ALGORITHM_DISABLED_ALARM = 1;
-
+    public static final int POI_TYPE_CROSSING = 0;
+    public static final int POI_TYPE_SPEED_LIMITATION_50 = 1;
+    public static final int POI_TYPE_SPEED_LIMITATION_70 = 2;
+    public static final int POI_TYPE_TRAIN_STATION = 3;
+    public static final int POI_TYPE_TURNOUT = 4;
+    public static final int POI_TYPE_BRIDGE = 5;
 
     @Retention (RetentionPolicy.SOURCE)
-    @IntDef ( {POI_TYPE_UNDERPASS, POI_TYPE_SPEED_LIMITATION})
+    @IntDef ( {POI_TYPE_CROSSING, POI_TYPE_SPEED_LIMITATION_50, POI_TYPE_SPEED_LIMITATION_70, POI_TYPE_TRAIN_STATION, POI_TYPE_TURNOUT, POI_TYPE_BRIDGE})
     public @interface POIType {
     }
 

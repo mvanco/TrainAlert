@@ -5,8 +5,12 @@
 
     <string name="activity_main_navigation_view_restart">Restart animation</string>
 
-    <string name="fragment_main_poi_type_message_underpass">Přejezd za %1$d metrů</string>
-    <string name="fragment_main_poi_type_message_speed_limitation">Omezená rychlost</string>
+    <string name="fragment_main_poi_type_message_crossing">Přejezd za %1$d metrů</string>
+    <string name="fragment_main_poi_type_message_speed_limitation">Omezení rychlosti %1$d km/h</string>
+    <string name="fragment_main_poi_type_message_train_station">Stanice %1$d m</string>
+    <string name="fragment_main_poi_type_message_turnout">Výhybka %1$d m</string>
+    <string name="fragment_main_poi_type_message_bridge">Most %1$d m</string>
+
     <string name="fragment_main_image_view_desc">Red round sign</string>
 
 </resources>
