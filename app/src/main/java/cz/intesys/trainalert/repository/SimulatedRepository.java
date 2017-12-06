@@ -340,4 +340,8 @@ public class SimulatedRepository implements Repository {
 
         return sExamplePOIs;
     }
+
+    public void restartRepository() {
+        sLocationIterator = 0;
+    }
 }

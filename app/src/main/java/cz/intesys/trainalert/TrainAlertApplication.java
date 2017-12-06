@@ -3,11 +3,11 @@ package cz.intesys.trainalert;
 import android.app.Application;
 import android.content.Context;
 
-public class TDriverAdvisorApplication extends Application {
+public class TrainAlertApplication extends Application {
 
-    private static TDriverAdvisorApplication sInstance;
+    private static TrainAlertApplication sInstance;
 
-    public TDriverAdvisorApplication() {
+    public TrainAlertApplication() {
         sInstance = this;
     }
 

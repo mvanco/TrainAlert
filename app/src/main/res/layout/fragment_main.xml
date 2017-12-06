@@ -18,20 +18,16 @@
 
         <FrameLayout
             android:id="@+id/fragment_main_notification_container"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginBottom="@dimen/fragment_main_notification_container_margin"
-            android:layout_marginEnd="@dimen/fragment_main_notification_container_margin"
-            android:layout_marginLeft="@dimen/fragment_main_notification_container_margin"
-            android:layout_marginRight="@dimen/fragment_main_notification_container_margin"
-            android:layout_marginStart="@dimen/fragment_main_notification_container_margin"
-            android:layout_marginTop="@dimen/fragment_main_notification_container_margin"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="16dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
             tools:visibility="visible">
 
             <ImageView

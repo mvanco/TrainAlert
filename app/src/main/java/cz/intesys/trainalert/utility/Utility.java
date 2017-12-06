@@ -11,8 +11,6 @@ import org.osmdroid.util.GeoPoint;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import static cz.intesys.trainalert.TDriverAdvisorConfig.GPS_TIME_INTERVAL;
-import static cz.intesys.trainalert.TDriverAdvisorConfig.MAP_REFRESH_TIME;
 import static java.lang.Math.PI;
 import static java.lang.Math.atan;
 
@@ -28,10 +26,6 @@ public class Utility {
     @Retention (RetentionPolicy.SOURCE)
     @IntDef ( {POI_TYPE_CROSSING, POI_TYPE_SPEED_LIMITATION_50, POI_TYPE_SPEED_LIMITATION_70, POI_TYPE_TRAIN_STATION, POI_TYPE_TURNOUT, POI_TYPE_BRIDGE})
     public @interface POIType {
-    }
-
-    public static int getMapRefreshGPSCycles() {
-        return (MAP_REFRESH_TIME * 1000) / GPS_TIME_INTERVAL;
     }
 
     public static void playSound(Context context) {

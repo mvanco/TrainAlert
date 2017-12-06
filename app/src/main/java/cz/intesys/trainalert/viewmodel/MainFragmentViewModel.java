@@ -53,4 +53,10 @@ public class MainFragmentViewModel extends ViewModel {
     public List<Alarm> getDisabledAlarms() {
         return mDisabledAlarms;
     }
+
+    public void restartRepository() {
+        if (mRepository instanceof SimulatedRepository) {
+            ((SimulatedRepository) mRepository).restartRepository();
+        }
+    }
 }

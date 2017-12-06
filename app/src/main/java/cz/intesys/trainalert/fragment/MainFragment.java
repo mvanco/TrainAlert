@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.TrainAlertConfig;
 import cz.intesys.trainalert.animation.GeoPointInterpolator;
 import cz.intesys.trainalert.databinding.FragmentMainBinding;
 import cz.intesys.trainalert.entity.Alarm;
@@ -37,11 +38,8 @@ import cz.intesys.trainalert.entity.TDAOverlayItem;
 import cz.intesys.trainalert.utility.Utility;
 import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 
-import static cz.intesys.trainalert.TDriverAdvisorConfig.GPS_TIME_INTERVAL;
-import static cz.intesys.trainalert.TDriverAdvisorConfig.INFINITE_ANIMATION;
-import static cz.intesys.trainalert.TDriverAdvisorConfig.TIME_OF_ANIMATION;
+import static cz.intesys.trainalert.TrainAlertConfig.GPS_TIME_INTERVAL;
 import static cz.intesys.trainalert.utility.Utility.convertToDegrees;
-import static cz.intesys.trainalert.utility.Utility.getMapRefreshGPSCycles;
 import static cz.intesys.trainalert.utility.Utility.getMarkerRotation;
 import static cz.intesys.trainalert.utility.Utility.playSound;
 
@@ -49,6 +47,8 @@ public class MainFragment extends Fragment {
 
     private FragmentMainBinding binding;
     private MainFragmentViewModel viewModel;
+    private LocationPoller mLocationPoller;
+    private Marker trainMarker;
 
     public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
@@ -73,42 +73,29 @@ public class MainFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        initAnimation();
+    }
 
-
+    private void initAnimation() {
         viewModel.loadPOIs(getActivity());
-        viewModel.getPOIs().observe(this, (POIs) -> {
-            // Nothing yet.
-        });
-
         initMap(getActivity());
+        final Marker trainMarker = getTrainMarker(binding.fragmentMainMapview);
+        binding.fragmentMainMapview.getOverlayManager().add(trainMarker);
+        mLocationPoller = new LocationPoller(() -> handleLocationChange(trainMarker));
+    }
 
-        // Creates marker which will be animated
-        final Marker trainMarker = new Marker(binding.fragmentMainMapview);
+    /**
+     * Creates marker which will be animated
+     *
+     * @param mapView where marker will be created
+     * @return marker
+     */
+    private Marker getTrainMarker(MapView mapView) {
+        Marker trainMarker = new Marker(mapView);
         trainMarker.setTitle("Train Location");
         trainMarker.setPosition(viewModel.getCurrentLocation().toGeoPoint());
         trainMarker.setIcon(getResources().getDrawable(R.drawable.marker_train_left));
-        binding.fragmentMainMapview.getOverlayManager().add(trainMarker);
-        startAnimation(trainMarker);
-
-    }
-
-    public void restartAnimation(Context context) {
-        // TODO: restart repository from viewmodel
-        binding.fragmentMainMapview.getController().setCenter(viewModel.getCurrentLocation());
-
-        binding.fragmentMainMapview.removeAllViews();
-
-        if (!INFINITE_ANIMATION) {
-            initMap(context);
-
-            // Creates marker which will be animated
-            final Marker trainMarker = new Marker(binding.fragmentMainMapview);
-            trainMarker.setTitle("Train Location");
-            trainMarker.setPosition(viewModel.getCurrentLocation().toGeoPoint());
-            trainMarker.setIcon(getResources().getDrawable(R.drawable.marker_train_left));
-            binding.fragmentMainMapview.getOverlayManager().add(trainMarker);
-            startAnimation(trainMarker);
-        }
+        return trainMarker;
     }
 
     private void initMap(Context context) {
@@ -155,24 +142,12 @@ public class MainFragment extends Fragment {
         Configuration.getInstance().save(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Save configuration.
     }
 
-    //TODO: make with Service or infinite loop, not recursive function (looks bad)
-    private void startAnimation(final Marker trainMarker) {
-
-        int numberOfRepetitions = (INFINITE_ANIMATION) ? 1 : (TIME_OF_ANIMATION * 1000) / GPS_TIME_INTERVAL;
-        for (int i = 0; i < numberOfRepetitions; i++) {
-            new Handler().postDelayed(() -> {
-                Location currentLocation = viewModel.getCurrentLocation();
-                animateMarkerTo(binding.fragmentMainMapview, trainMarker, currentLocation.toGeoPoint(), new GeoPointInterpolator.LinearFixed());
-                if ((currentLocation.getMetaIndex() % getMapRefreshGPSCycles()) == 0) {
-                    binding.fragmentMainMapview.getController().setCenter(currentLocation.toGeoPoint());
-                }
-                //handleNotification(currentLocation.getMetaIndex());
-                handleNotification(trainMarker.getPosition());
-                if (INFINITE_ANIMATION) {
-                    startAnimation(trainMarker);
-                }
-            }, GPS_TIME_INTERVAL * (i + 1));
-        }
+    private void handleLocationChange(Marker trainMarker) {
+        Location currentLocation = viewModel.getCurrentLocation();
+        Log.d("handler", "executing repetitious code from to position with metaindex " + currentLocation.getMetaIndex());
+        animateMarkerTo(binding.fragmentMainMapview, trainMarker, currentLocation.toGeoPoint(), new GeoPointInterpolator.LinearFixed());
+        binding.fragmentMainMapview.getController().setCenter(currentLocation.toGeoPoint());
+        handleNotification(trainMarker.getPosition());
     }
 
     private void animateMarkerTo(final MapView map, final Marker marker, final GeoPoint finalPosition, final GeoPointInterpolator GeoPointInterpolator) {
@@ -192,9 +167,6 @@ public class MainFragment extends Fragment {
         });
         valueAnimator.setFloatValues(0, 1); // Ignored.
         valueAnimator.setRepeatCount(0);
-//        int distance = startPosition.distanceTo(finalPosition);
-//        int distanceFraction = distance / 250;
-//        long duration = TDriverAdvisorConfig.TIME_SPEED * distanceFraction;
         valueAnimator.setDuration(GPS_TIME_INTERVAL);
         valueAnimator.start();
 
@@ -208,6 +180,64 @@ public class MainFragment extends Fragment {
             marker.setRotation(markerRotation - 180);
             marker.setIcon(getResources().getDrawable(R.drawable.marker_train_right));
         }
+    }
+
+    private void handleNotification(GeoPoint currentLocation) {
+        for (POI poi : viewModel.getPOIs().getValue()) {
+            Log.d("distance", "distance to " + poi.getMetaIndex() + " is " + currentLocation.distanceTo(poi));
+            for (Alarm alarm : poi.getPOIConfiguration().getAlarmList()) {
+                if (alarm.isDisabled()) {
+                    continue;
+                }
+                if (currentLocation.distanceTo(poi) < alarm.getDistance()) {
+                    Log.d("showNotification", "poi: " + poi.getMetaIndex() + ", distance: " + alarm.getDistance());
+                    showTravelNotification(alarm.getMessage());
+                    viewModel.disableAlarm(alarm);
+                }
+            }
+        }
+
+        // Enable alarm of POI with sufficient distance again
+        List<Alarm> alarmsToRemove = new ArrayList<Alarm>();
+
+        for (Alarm alarm : viewModel.getDisabledAlarms()) {
+            if (currentLocation.distanceTo(alarm.getPoi()) > alarm.getDistance()) {
+                alarmsToRemove.add(alarm);
+            }
+        }
+
+        for (Alarm alarm : alarmsToRemove) {
+            viewModel.enableAlarm(alarm);
+        }
+    }
+
+    private void showTravelNotification(String text) {
+        binding.fragmentMainNotificationText.setText(text);
+        binding.fragmentMainNotificationContainer.setVisibility(View.VISIBLE);
+        playSound(getActivity());
+
+        Runnable action = () -> binding.fragmentMainNotificationContainer.setVisibility(View.GONE);
+        binding.fragmentMainNotificationContainer.postDelayed(action, 3000);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mLocationPoller.startPolling();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mLocationPoller.stopPolling();
+    }
+
+    public void restartAnimation(Context context) {
+        mLocationPoller.stopPolling();
+        binding.fragmentMainMapview.removeAllViews();
+        viewModel.restartRepository();
+        initAnimation();
+        mLocationPoller.startPolling();
     }
 
     private void handleNotification(int metaIndex) {
@@ -341,41 +371,24 @@ public class MainFragment extends Fragment {
         }
     }
 
-    private void showTravelNotification(String text) {
-        binding.fragmentMainNotificationText.setText(text);
-        binding.fragmentMainNotificationContainer.setVisibility(View.VISIBLE);
-        playSound(getActivity());
+    private class LocationPoller {
+        private Handler mHandler;
+        private Runnable mPeriodicUpdateRunnable;
 
-        Runnable action = () -> binding.fragmentMainNotificationContainer.setVisibility(View.GONE);
-        binding.fragmentMainNotificationContainer.postDelayed(action, 3000);
-    }
-
-    private void handleNotification(GeoPoint currentLocation) {
-        for (POI poi : viewModel.getPOIs().getValue()) {
-            Log.d("distance", "distance to " + poi.getMetaIndex() + " is " + currentLocation.distanceTo(poi));
-            for (Alarm alarm : poi.getPOIConfiguration().getAlarmList()) {
-                if (alarm.isDisabled()) {
-                    continue;
-                }
-                if (currentLocation.distanceTo(poi) < alarm.getDistance()) {
-                    Log.d("showNotification", "poi: " + poi.getMetaIndex() + ", distance: " + alarm.getDistance());
-                    showTravelNotification(alarm.getMessage());
-                    viewModel.disableAlarm(alarm);
-                }
-            }
+        LocationPoller(Runnable locationChangedRunnable) {
+            mHandler = new Handler();
+            mPeriodicUpdateRunnable = () -> {
+                locationChangedRunnable.run();
+                mHandler.postDelayed(mPeriodicUpdateRunnable, TrainAlertConfig.GPS_TIME_INTERVAL);
+            };
         }
 
-        // Enable alarm of POI with sufficient distance again
-        List<Alarm> alarmsToRemove = new ArrayList<Alarm>();
-
-        for (Alarm alarm : viewModel.getDisabledAlarms()) {
-            if (currentLocation.distanceTo(alarm.getPoi()) > alarm.getDistance()) {
-                alarmsToRemove.add(alarm);
-            }
+        void startPolling() {
+            mPeriodicUpdateRunnable.run();
         }
 
-        for (Alarm alarm : alarmsToRemove) {
-            viewModel.enableAlarm(alarm);
+        void stopPolling() {
+            mHandler.removeCallbacks(mPeriodicUpdateRunnable);
         }
     }
 
