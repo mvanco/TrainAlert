@@ -1,5 +1,7 @@
 package cz.intesys.trainalert.repository;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
 import android.util.Log;
 
@@ -37,6 +39,7 @@ public class SimulatedRepository implements Repository {
 
     public static List<Location> getExampleRoute() {
         List<Location> exampleRoute = new ArrayList<Location>();
+
         exampleRoute.add(new Location(50.48365189588503, 14.039404579177328));
         exampleRoute.add(new Location(50.48268475946398, 14.038823543179397));
         exampleRoute.add(new Location(50.48186552670313, 14.038029609310989));
@@ -278,8 +281,9 @@ public class SimulatedRepository implements Repository {
     }
 
     @Override
-    public Location getCurrentLocation() {
-        Location currentLocation = sExampleRoute.get(sLocationIterator);
+    public LiveData<Location> getCurrentLocation() {
+        final MutableLiveData<Location> currentLocation = new MutableLiveData();
+        currentLocation.setValue(sExampleRoute.get(sLocationIterator));
 
         // Prepare next location
         if (toTheLeftDirection) {
@@ -298,7 +302,7 @@ public class SimulatedRepository implements Repository {
             }
         }
 
-        Log.d("currentLocation", "current location " + currentLocation.getMetaIndex());
+        Log.d("currentLocation", "current location " + currentLocation.getValue().getMetaIndex());
         return currentLocation;
     }
 
