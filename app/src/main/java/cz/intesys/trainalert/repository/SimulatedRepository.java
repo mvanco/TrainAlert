@@ -7,8 +7,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.intesys.trainalert.api.PoisApi;
 import cz.intesys.trainalert.entity.Location;
+import cz.intesys.trainalert.entity.Poi;
 
 public class SimulatedRepository implements Repository {
 
@@ -309,7 +309,7 @@ public class SimulatedRepository implements Repository {
     }
 
     @Override
-    public LiveData<PoisApi> getPois() {
+    public LiveData<List<Poi>> getPois() {
         return null; // TODO: implement this
     }
 

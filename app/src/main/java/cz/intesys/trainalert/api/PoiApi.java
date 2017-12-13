@@ -2,7 +2,9 @@ package cz.intesys.trainalert.api;
 
 import com.google.gson.annotations.Expose;
 
-public class PoiApi {
+import org.osmdroid.api.IGeoPoint;
+
+public class PoiApi implements IGeoPoint {
     @Expose
     private long id;
 
@@ -18,20 +20,14 @@ public class PoiApi {
     @Expose
     private int type;
 
-    public long getId() {
-        return id;
+    @Override
+    public int getLatitudeE6() {
+        return 0;
     }
 
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
+    @Override
+    public int getLongitudeE6() {
+        return 0;
     }
 
     public double getLatitude() {
@@ -48,6 +44,22 @@ public class PoiApi {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public int getType() {

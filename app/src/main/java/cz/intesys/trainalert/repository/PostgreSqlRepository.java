@@ -7,11 +7,16 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.os.Handler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.api.LocationAPI;
+import cz.intesys.trainalert.api.PoiApi;
 import cz.intesys.trainalert.api.PoisApi;
 import cz.intesys.trainalert.api.TaServerApi;
 import cz.intesys.trainalert.entity.Location;
+import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.rest.TaClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,7 +27,7 @@ public class PostgreSqlRepository implements Repository, LifecycleObserver {
     private TaServerApi mApiService;
     private LocationPoller mLocationPoller;
     private MutableLiveData<Location> mCurrentLocation;
-    private MutableLiveData<PoisApi> mPois;
+    private MutableLiveData<List<Poi>> mPois;
 
     public PostgreSqlRepository() {
         mApiService = TaClient.createService(TaServerApi.class);
@@ -56,7 +61,11 @@ public class PostgreSqlRepository implements Repository, LifecycleObserver {
         call.enqueue(new Callback<PoisApi>() {
             @Override
             public void onResponse(Call<PoisApi> call, Response<PoisApi> response) {
-                mPois.setValue(new PoisApi(response.body().getPois()));
+                List<Poi> pois = new ArrayList<>();
+                for (PoiApi poiApi : response.body().getPois()) {
+                    pois.add(new Poi(poiApi));
+                }
+                mPois.setValue(pois);
             }
 
             @Override
@@ -67,7 +76,7 @@ public class PostgreSqlRepository implements Repository, LifecycleObserver {
     }
 
     @Override
-    public LiveData<PoisApi> getPois() {
+    public LiveData<List<Poi>> getPois() {
         return mPois;
     }
 

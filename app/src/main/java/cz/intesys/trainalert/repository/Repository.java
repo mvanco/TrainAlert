@@ -2,14 +2,17 @@ package cz.intesys.trainalert.repository;
 
 import android.arch.lifecycle.LiveData;
 
-import cz.intesys.trainalert.api.PoisApi;
+import java.util.List;
+
 import cz.intesys.trainalert.entity.Location;
+import cz.intesys.trainalert.entity.Poi;
 
 public interface Repository {
     void loadCurrentLocation();
+
     LiveData<Location> getCurrentLocation();
 
     void loadPois();
 
-    LiveData<PoisApi> getPois();
+    LiveData<List<Poi>> getPois();
 }

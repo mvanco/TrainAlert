@@ -10,13 +10,13 @@ import java.util.Collections;
 import java.util.List;
 
 public class Alarm {
-    private String message;
+    private @StringRes int message;
     private Uri ringtone;
     private int distance;
     private boolean enabled;
     private Poi poi; // Must have exactly one Poi which is related to
 
-    public Alarm(String message, int distance, Poi poi) {
+    public Alarm(@StringRes int message, int distance, Poi poi) {
         this.message = message;
         this.distance = distance;
         this.ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -27,16 +27,14 @@ public class Alarm {
     /**
      * Simlify creation of multiple alarms using the same message
      *
-     * @param context
      * @param messageRes must have %1$d format parameter
      * @param distances  number in unit used by {@link org.osmdroid.util.GeoPoint} distanceTo() method
      * @return list of created alarms
      */
-    public static List<Alarm> createAlarms(Context context, @StringRes int messageRes, Poi poi, int[] distances) {
+    public static List<Alarm> createAlarms(@StringRes int messageRes, Poi poi, int[] distances) {
         List<Alarm> alarms = new ArrayList<Alarm>();
         for (int distance : distances) {
-            String message = context.getString(messageRes, distance);
-            alarms.add(new Alarm(message, distance, poi));
+            alarms.add(new Alarm(messageRes, distance, poi));
         }
         return alarms;
     }
@@ -45,8 +43,18 @@ public class Alarm {
         return Collections.singletonList(this);
     }
 
-    public String getMessage() {
+    public @StringRes
+    int getMessage() {
         return message;
+    }
+
+    public String getMessageText(Context context) {
+        String plainMessage = context.getResources().getString(message);
+        if (plainMessage.contains("%1$d")) {
+            return context.getResources().getString(message, distance);
+        } else {
+            return plainMessage;
+        }
     }
 
     public Poi getPoi() {

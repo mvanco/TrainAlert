@@ -1,6 +1,5 @@
 package cz.intesys.trainalert.entity;
 
-import android.content.Context;
 import android.support.annotation.DrawableRes;
 
 import java.util.Collections;
@@ -30,11 +29,10 @@ public class PoiConfiguration {
     /**
      * @param type    type from predefined Poi types
      * @param poi     handle to {@link Poi} object, creates 1:1 relationship between Poi and PoiConfiguration
-     * @param context used to access string resources
      */
-    public PoiConfiguration(@POIType int type, Poi poi, Context context) {
+    public PoiConfiguration(@POIType int type, Poi poi) {
         this.type = type;
-        this.alarmList = createAlarmList(type, poi, context);
+        this.alarmList = createAlarmList(type, poi);
     }
 
     /**
@@ -42,26 +40,24 @@ public class PoiConfiguration {
      *
      * @param type    type of Poi
      * @param poi     Poi which is being configured
-     * @param context used to access string resources
      * @return
      */
-    public List<Alarm> createAlarmList(@POIType int type, Poi poi, Context context) {
+    public List<Alarm> createAlarmList(@POIType int type, Poi poi) {
         switch (type) {
             case POI_TYPE_CROSSING:
-                return Alarm.createAlarms(context, R.string.fragment_main_poi_type_message_crossing, poi, new int[]{160, 320, 480});
+                return Alarm.createAlarms(R.string.fragment_main_poi_type_message_crossing, poi, new int[]{160, 320, 480});
             case POI_TYPE_SPEED_LIMITATION_50:
-                return new Alarm(context.getString(R.string.fragment_main_poi_type_message_speed_limitation, 50), 80, poi).toArray();
+                return new Alarm(R.string.fragment_main_poi_type_message_speed_limitation, 50, poi).toArray();
             case POI_TYPE_SPEED_LIMITATION_70:
-                return new Alarm(context.getString(R.string.fragment_main_poi_type_message_speed_limitation, 50), 80, poi).toArray();
+                return new Alarm(R.string.fragment_main_poi_type_message_speed_limitation, 70, poi).toArray();
             case POI_TYPE_TRAIN_STATION:
-                return Alarm.createAlarms(context, R.string.fragment_main_poi_type_message_train_station, poi, new int[]{160, 320, 480});
+                return Alarm.createAlarms(R.string.fragment_main_poi_type_message_train_station, poi, new int[]{160, 320, 480});
             case POI_TYPE_TURNOUT:
-                return Alarm.createAlarms(context, R.string.fragment_main_poi_type_message_turnout, poi, new int[]{160, 320, 480});
+                return Alarm.createAlarms(R.string.fragment_main_poi_type_message_turnout, poi, new int[]{160, 320, 480});
             case POI_TYPE_BRIDGE:
-                return Alarm.createAlarms(context, R.string.fragment_main_poi_type_message_bridge, poi, new int[]{160, 320, 480});
+                return Alarm.createAlarms(R.string.fragment_main_poi_type_message_bridge, poi, new int[]{160, 320, 480});
             default:
                 return Collections.emptyList();
-
         }
     }
 

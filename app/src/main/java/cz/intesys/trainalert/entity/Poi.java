@@ -1,7 +1,5 @@
 package cz.intesys.trainalert.entity;
 
-import android.content.Context;
-
 import org.osmdroid.api.IGeoPoint;
 
 import java.util.List;
@@ -15,23 +13,22 @@ public class Poi implements IGeoPoint {
     private Double longitude;
     private PoiConfiguration POIConfiguration;
     private int metaIndex;
-
-    public Poi(Double latitude, Double longitude, @Utility.POIType int type, Context context) {
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.POIConfiguration = new PoiConfiguration(type, this, context);
-    }
-
     /**
      * Conversion function
      *
      * @param poiApi
      */
-    public Poi(PoiApi poiApi, Context context) {
+    public Poi(PoiApi poiApi) {
         this.title = poiApi.getTitle();
         this.latitude = poiApi.getLatitude();
         this.longitude = poiApi.getLongitude();
-        this.POIConfiguration = new PoiConfiguration(poiApi.getType(), this, context);
+        this.POIConfiguration = new PoiConfiguration(poiApi.getType(), this);
+    }
+
+    public Poi(Double latitude, Double longitude, @Utility.POIType int type) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.POIConfiguration = new PoiConfiguration(type, this);
     }
 
     @Override
@@ -50,6 +47,10 @@ public class Poi implements IGeoPoint {
 
     public double getLongitude() {
         return longitude;
+    }
+
+    public String getTitle() {
+        return title;
     }
 
     public PoiConfiguration getPOIConfiguration() {
