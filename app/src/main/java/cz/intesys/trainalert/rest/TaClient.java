@@ -7,8 +7,8 @@ import com.google.gson.GsonBuilder;
 
 import java.util.concurrent.TimeUnit;
 
-import cz.intesys.trainalert.TrainAlertConfig;
-import cz.intesys.trainalert.repository.PostgreSQLRepository;
+import cz.intesys.trainalert.TaConfig;
+import cz.intesys.trainalert.repository.PostgreSqlRepository;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -18,11 +18,11 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class TrainAlertClient {
+public class TaClient {
     private static volatile Retrofit sRetrofit;
 
 
-    public TrainAlertClient() {
+    public TaClient() {
     }
 
 
@@ -33,7 +33,7 @@ public class TrainAlertClient {
 
     public static Retrofit getRetrofit() {
         if (sRetrofit == null) {
-            synchronized (PostgreSQLRepository.class) {
+            synchronized (PostgreSqlRepository.class) {
                 if (sRetrofit == null) {
                     sRetrofit = buildRetrofit();
                 }
@@ -45,7 +45,7 @@ public class TrainAlertClient {
 
     private static Retrofit buildRetrofit() {
         Retrofit.Builder builder = new Retrofit.Builder();
-        builder.baseUrl(TrainAlertConfig.REST_BASE_URL);
+        builder.baseUrl(TaConfig.REST_BASE_URL);
         builder.client(buildClient());
         builder.addConverterFactory(createConverterFactory());
         builder.addCallAdapterFactory(createCallAdapterFactory());
@@ -70,7 +70,7 @@ public class TrainAlertClient {
             }
         };
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor(logger);
-        interceptor.setLevel(TrainAlertConfig.LOGS ? HttpLoggingInterceptor.Level.BASIC : HttpLoggingInterceptor.Level.NONE);
+        interceptor.setLevel(TaConfig.LOGS ? HttpLoggingInterceptor.Level.BASIC : HttpLoggingInterceptor.Level.NONE);
         return interceptor;
     }
 

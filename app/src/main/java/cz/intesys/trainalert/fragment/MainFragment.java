@@ -12,36 +12,40 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlay;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.animation.GeoPointInterpolator;
+import cz.intesys.trainalert.api.PoiApi;
+import cz.intesys.trainalert.api.PoisApi;
 import cz.intesys.trainalert.databinding.FragmentMainBinding;
-import cz.intesys.trainalert.entity.Alarm;
 import cz.intesys.trainalert.entity.Location;
-import cz.intesys.trainalert.entity.POI;
-import cz.intesys.trainalert.repository.PostgreSQLRepository;
+import cz.intesys.trainalert.entity.Poi;
+import cz.intesys.trainalert.entity.TaOverlayItem;
+import cz.intesys.trainalert.repository.PostgreSqlRepository;
 import cz.intesys.trainalert.utility.Utility;
 import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 
-import static cz.intesys.trainalert.TrainAlertConfig.GPS_TIME_INTERVAL;
+import static cz.intesys.trainalert.TaConfig.GPS_TIME_INTERVAL;
 import static cz.intesys.trainalert.utility.Utility.convertToDegrees;
 import static cz.intesys.trainalert.utility.Utility.getMarkerRotation;
 import static cz.intesys.trainalert.utility.Utility.playSound;
 
 public class MainFragment extends Fragment {
 
-    private FragmentMainBinding binding;
-    private MainFragmentViewModel viewModel;
-    private Marker trainMarker;
+    private FragmentMainBinding mBinding;
+    private MainFragmentViewModel mViewModel;
 
     public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
@@ -53,15 +57,15 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(MainFragmentViewModel.class);
-        getLifecycle().addObserver(PostgreSQLRepository.getInstance());
+        mViewModel = ViewModelProviders.of(this).get(MainFragmentViewModel.class);
+        getLifecycle().addObserver(PostgreSqlRepository.getInstance());
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentMainBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+        mBinding = FragmentMainBinding.inflate(inflater, container, false);
+        return mBinding.getRoot();
     }
 
     @Override
@@ -70,12 +74,17 @@ public class MainFragment extends Fragment {
         initAnimation();
     }
 
+    /**
+     * Note: Loading of current location is started  automatically in this.onResume() due to added lifecycle observer to PostgreSqlRepository singleton.
+     */
     private void initAnimation() {
-        //viewModel.loadPOIs(getActivity());
-        initMap(getActivity());
-        final Marker trainMarker = getTrainMarker(binding.fragmentMainMapview);
-        binding.fragmentMainMapview.getOverlayManager().add(trainMarker);
-        viewModel.getCurrentLocation().observe(this, currentLocation -> handleLocationChange(trainMarker, currentLocation));
+        //mViewModel.loadPOIs(getActivity());
+        initMap(getActivity()); // Initialize map using osmdroid library and set current position on the map.
+        final Marker trainMarker = getTrainMarker(mBinding.fragmentMainMapview);
+        mBinding.fragmentMainMapview.getOverlayManager().add(trainMarker); // Add train marker.
+        mViewModel.getCurrentLocation().observe(this, currentLocation -> handleLocationChange(trainMarker, currentLocation));
+        mViewModel.getPOIs().observe(this, POIs -> handlePOIsChange(POIs));
+        mViewModel.loadPOIs();
     }
 
     /**
@@ -87,7 +96,7 @@ public class MainFragment extends Fragment {
     private Marker getTrainMarker(MapView mapView) {
         Marker trainMarker = new Marker(mapView);
         trainMarker.setTitle("Train LocationAPI");
-        trainMarker.setPosition(viewModel.getCurrentLocation().getValue().toGeoPoint());
+        trainMarker.setPosition(mViewModel.getStarterLocation().toGeoPoint());
         trainMarker.setIcon(getResources().getDrawable(R.drawable.marker_train_left));
         return trainMarker;
     }
@@ -95,51 +104,19 @@ public class MainFragment extends Fragment {
     private void initMap(Context context) {
         Configuration.getInstance().load(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Load configuration.
 
-        binding.fragmentMainMapview.setMultiTouchControls(true);
-        binding.fragmentMainMapview.setTilesScaledToDpi(true);
-        IMapController mapController = binding.fragmentMainMapview.getController();
-
-//        final ArrayList<OverlayItem> items = new ArrayList<>();
-//        for (POI poi : viewModel.getPOIs().getValue()) {
-//            TDAOverlayItem item = new TDAOverlayItem(poi);
-//            item.setMarker(context.getResources().getDrawable(poi.getPOIConfiguration().getMarkerDrawable()));
-//            item.setMarkerHotspot(OverlayItem.HotspotPlace.CENTER);
-//            items.add(item);
-//        }
-//
-//        ItemizedOverlay<OverlayItem> overlay = new ItemizedIconOverlay<>(items, getResources().getDrawable(R.drawable.poi_crossing),
-//                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-//                    @Override
-//                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-//                        Toast.makeText(
-//                                context,
-//                                "Item '" + item.getTitle() + "' (index=" + index
-//                                        + ") got single tapped up", Toast.LENGTH_LONG).show();
-//                        return true; // We 'handled' this event.
-//                    }
-//
-//                    @Override
-//                    public boolean onItemLongPress(final int index, final OverlayItem item) {
-//                        Toast.makeText(
-//                                context,
-//                                "Item '" + item.getTitle() + "' (index=" + index
-//                                        + ") got long pressed", Toast.LENGTH_LONG).show();
-//                        return false;
-//                    }
-//                }, context.getApplicationContext());
-//
-//        binding.fragmentMainMapview.getOverlays().add(overlay);
+        mBinding.fragmentMainMapview.setMultiTouchControls(true);
+        mBinding.fragmentMainMapview.setTilesScaledToDpi(true);
+        IMapController mapController = mBinding.fragmentMainMapview.getController();
 
         mapController.setZoom(14);
-        mapController.setCenter(viewModel.getCurrentLocation().getValue());
 
         Configuration.getInstance().save(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Save configuration.
     }
 
     private void handleLocationChange(Marker trainMarker, Location currentLocation) {
         Log.d("handler", "executing repetitious code from to position " + currentLocation.getLatitude() + ", " + currentLocation.getLongitude());
-        animateMarkerTo(binding.fragmentMainMapview, trainMarker, currentLocation.toGeoPoint(), new GeoPointInterpolator.LinearFixed());
-        binding.fragmentMainMapview.getController().setCenter(currentLocation.toGeoPoint());
+        animateMarkerTo(mBinding.fragmentMainMapview, trainMarker, currentLocation.toGeoPoint(), new GeoPointInterpolator.LinearFixed());
+        mBinding.fragmentMainMapview.getController().setCenter(currentLocation.toGeoPoint());
         //handleNotification(trainMarker.getPosition());
     }
 
@@ -175,49 +152,75 @@ public class MainFragment extends Fragment {
         }
     }
 
+    private void handlePOIsChange(PoisApi pois) {
+
+        final ArrayList<OverlayItem> items = new ArrayList<>();
+        for (PoiApi poiApi : pois.getPois()) {
+            Poi poi = new Poi(poiApi, getActivity());
+            TaOverlayItem item = new TaOverlayItem(poi);
+            item.setMarker(getActivity().getResources().getDrawable(poi.getPOIConfiguration().getMarkerDrawable()));
+            item.setMarkerHotspot(OverlayItem.HotspotPlace.CENTER);
+            items.add(item);
+        }
+
+        ItemizedOverlay<OverlayItem> overlay = new ItemizedIconOverlay<>(items, getResources().getDrawable(R.drawable.poi_crossing),
+                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                    @Override
+                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                        Toast.makeText(
+                                getActivity(),
+                                "Item '" + item.getTitle() + "' (index=" + index
+                                        + ") got single tapped up", Toast.LENGTH_LONG).show();
+                        return true; // We 'handled' this event.
+                    }
+
+                    @Override
+                    public boolean onItemLongPress(final int index, final OverlayItem item) {
+                        Toast.makeText(
+                                getActivity(),
+                                "Item '" + item.getTitle() + "' (index=" + index
+                                        + ") got long pressed", Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                }, getActivity().getApplicationContext());
+
+        mBinding.fragmentMainMapview.getOverlays().add(overlay);
+    }
+
     public void restartAnimation(Context context) {
-        binding.fragmentMainMapview.removeAllViews();
-        viewModel.restartRepository();
+        mBinding.fragmentMainMapview.removeAllViews();
+        mViewModel.restartRepository();
         initAnimation();
     }
 
-    private void handleNotification(GeoPoint currentLocation) {
-        for (POI poi : viewModel.getPOIs().getValue()) {
-            Log.d("distance", "distance to " + poi.getMetaIndex() + " is " + currentLocation.distanceTo(poi));
-            for (Alarm alarm : poi.getPOIConfiguration().getAlarmList()) {
-                if (alarm.isDisabled()) {
-                    continue;
-                }
-                if (currentLocation.distanceTo(poi) < alarm.getDistance()) {
-                    Log.d("showNotification", "poi: " + poi.getMetaIndex() + ", distance: " + alarm.getDistance());
-                    showTravelNotification(alarm.getMessage());
-                    viewModel.disableAlarm(alarm);
-                }
-            }
-        }
-
-        // Enable alarm of POI with sufficient distance again
-        List<Alarm> alarmsToRemove = new ArrayList<Alarm>();
-
-        for (Alarm alarm : viewModel.getDisabledAlarms()) {
-            if (currentLocation.distanceTo(alarm.getPoi()) > alarm.getDistance()) {
-                alarmsToRemove.add(alarm);
-            }
-        }
-
-        for (Alarm alarm : alarmsToRemove) {
-            viewModel.enableAlarm(alarm);
-        }
-    }
-
-    private void showTravelNotification(String text) {
-        binding.fragmentMainNotificationText.setText(text);
-        binding.fragmentMainNotificationContainer.setVisibility(View.VISIBLE);
-        playSound(getActivity());
-
-        Runnable action = () -> binding.fragmentMainNotificationContainer.setVisibility(View.GONE);
-        binding.fragmentMainNotificationContainer.postDelayed(action, 3000);
-    }
+//    private void handleNotification(GeoPoint currentLocation) {
+//        for (Poi poi : mViewModel.getPois().getValue()) {
+//            Log.d("distance", "distance to " + poi.getMetaIndex() + " is " + currentLocation.distanceTo(poi));
+//            for (Alarm alarm : poi.getPOIConfiguration().getAlarmList()) {
+//                if (alarm.isDisabled()) {
+//                    continue;
+//                }
+//                if (currentLocation.distanceTo(poi) < alarm.getDistance()) {
+//                    Log.d("showNotification", "poi: " + poi.getMetaIndex() + ", distance: " + alarm.getDistance());
+//                    showTravelNotification(alarm.getMessage());
+//                    mViewModel.disableAlarm(alarm);
+//                }
+//            }
+//        }
+//
+//        // Enable alarm of Poi with sufficient distance again
+//        List<Alarm> alarmsToRemove = new ArrayList<Alarm>();
+//
+//        for (Alarm alarm : mViewModel.getDisabledAlarms()) {
+//            if (currentLocation.distanceTo(alarm.getPoi()) > alarm.getDistance()) {
+//                alarmsToRemove.add(alarm);
+//            }
+//        }
+//
+//        for (Alarm alarm : alarmsToRemove) {
+//            mViewModel.enableAlarm(alarm);
+//        }
+//    }
 
     private void handleNotification(int metaIndex) {
         switch (metaIndex) {
@@ -348,5 +351,14 @@ public class MainFragment extends Fragment {
                 showTravelNotification("Přejezd za 200m");
                 break;
         }
+    }
+
+    private void showTravelNotification(String text) {
+        mBinding.fragmentMainNotificationText.setText(text);
+        mBinding.fragmentMainNotificationContainer.setVisibility(View.VISIBLE);
+        playSound(getActivity());
+
+        Runnable action = () -> mBinding.fragmentMainNotificationContainer.setVisibility(View.GONE);
+        mBinding.fragmentMainNotificationContainer.postDelayed(action, 3000);
     }
 }

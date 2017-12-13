@@ -14,9 +14,9 @@ public class Alarm {
     private Uri ringtone;
     private int distance;
     private boolean enabled;
-    private POI poi; // Must have exactly one POI which is related to
+    private Poi poi; // Must have exactly one Poi which is related to
 
-    public Alarm(String message, int distance, POI poi) {
+    public Alarm(String message, int distance, Poi poi) {
         this.message = message;
         this.distance = distance;
         this.ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -32,7 +32,7 @@ public class Alarm {
      * @param distances  number in unit used by {@link org.osmdroid.util.GeoPoint} distanceTo() method
      * @return list of created alarms
      */
-    public static List<Alarm> createAlarms(Context context, @StringRes int messageRes, POI poi, int[] distances) {
+    public static List<Alarm> createAlarms(Context context, @StringRes int messageRes, Poi poi, int[] distances) {
         List<Alarm> alarms = new ArrayList<Alarm>();
         for (int distance : distances) {
             String message = context.getString(messageRes, distance);
@@ -49,7 +49,7 @@ public class Alarm {
         return message;
     }
 
-    public POI getPoi() {
+    public Poi getPoi() {
         return poi;
     }
 

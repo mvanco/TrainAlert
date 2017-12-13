@@ -4,11 +4,11 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.OverlayItem;
 
 /**
- * Variant of {@link OverlayItem} with constructor which takes {@link POI}
+ * Variant of {@link OverlayItem} with constructor which takes {@link Poi}
  */
-public class TDAOverlayItem extends OverlayItem {
+public class TaOverlayItem extends OverlayItem {
 
-    public TDAOverlayItem(POI poi) {
+    public TaOverlayItem(Poi poi) {
         super("", "", new GeoPoint(poi.getLatitude(), poi.getLongitude()));
     }
 }

@@ -17,22 +17,22 @@ import static cz.intesys.trainalert.utility.Utility.POI_TYPE_TRAIN_STATION;
 import static cz.intesys.trainalert.utility.Utility.POI_TYPE_TURNOUT;
 
 /**
- * Configuration for POI - e.g. list of alarms, marker drawable, ... Enable group setting of configuration
+ * Configuration for Poi - e.g. list of alarms, marker drawable, ... Enable group setting of configuration
  * according to {@link POIType}, however this configuration is
- * specific for each POI because it stores unique {@link Alarm} objects which can be enabled/disabled
- * separately for each POI.
+ * specific for each Poi because it stores unique {@link Alarm} objects which can be enabled/disabled
+ * separately for each Poi.
  */
-public class POIConfiguration {
+public class PoiConfiguration {
 
     private @POIType int type;
     private List<Alarm> alarmList;
 
     /**
-     * @param type    type from predefined POI types
-     * @param poi     handle to {@link POI} object, creates 1:1 relationship between POI and POIConfiguration
+     * @param type    type from predefined Poi types
+     * @param poi     handle to {@link Poi} object, creates 1:1 relationship between Poi and PoiConfiguration
      * @param context used to access string resources
      */
-    public POIConfiguration(@POIType int type, POI poi, Context context) {
+    public PoiConfiguration(@POIType int type, Poi poi, Context context) {
         this.type = type;
         this.alarmList = createAlarmList(type, poi, context);
     }
@@ -40,12 +40,12 @@ public class POIConfiguration {
     /**
      * Alarm configuration for each {@link POIType}
      *
-     * @param type    type of POI
-     * @param poi     POI which is being configured
+     * @param type    type of Poi
+     * @param poi     Poi which is being configured
      * @param context used to access string resources
      * @return
      */
-    public List<Alarm> createAlarmList(@POIType int type, POI poi, Context context) {
+    public List<Alarm> createAlarmList(@POIType int type, Poi poi, Context context) {
         switch (type) {
             case POI_TYPE_CROSSING:
                 return Alarm.createAlarms(context, R.string.fragment_main_poi_type_message_crossing, poi, new int[]{160, 320, 480});

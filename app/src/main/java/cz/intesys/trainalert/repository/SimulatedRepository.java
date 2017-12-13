@@ -2,26 +2,18 @@ package cz.intesys.trainalert.repository;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.intesys.trainalert.api.PoisApi;
 import cz.intesys.trainalert.entity.Location;
-import cz.intesys.trainalert.entity.POI;
-
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_BRIDGE;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_CROSSING;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_SPEED_LIMITATION_50;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_SPEED_LIMITATION_70;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_TRAIN_STATION;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_TURNOUT;
 
 public class SimulatedRepository implements Repository {
 
     private static List<Location> sExampleRoute = getExampleRoute();
-    private static int sLocationIterator = 0; // 0 - the most right POI, 230 - the most left POI
+    private static int sLocationIterator = 0; // 0 - the most right Poi, 230 - the most left Poi
     private static boolean toTheLeftDirection = true;
 
     private static SimulatedRepository sInstance;
@@ -281,6 +273,11 @@ public class SimulatedRepository implements Repository {
     }
 
     @Override
+    public void loadCurrentLocation() {
+
+    }
+
+    @Override
     public LiveData<Location> getCurrentLocation() {
         final MutableLiveData<Location> currentLocation = new MutableLiveData();
         currentLocation.setValue(sExampleRoute.get(sLocationIterator));
@@ -307,43 +304,53 @@ public class SimulatedRepository implements Repository {
     }
 
     @Override
-    public List<POI> getPOIs(Context context) {
-        List<POI> sExamplePOIs = new ArrayList<POI>();
+    public void loadPois() {
 
-//        sExamplePOIs.add(new POI(50.47902254646468, 14.03452249583824, POI_TYPE_CROSSING, context));
-//        sExamplePOIs.add(new POI(50.47817915699491, 14.033283647782222, POI_TYPE_CROSSING, context));
-//        sExamplePOIs.add(new POI(50.468671536801395, 13.976941624253527, POI_TYPE_CROSSING, context));
-//        sExamplePOIs.add(new POI(50.46681518367927, 13.967698539937949, POI_TYPE_CROSSING, context));
-//        sExamplePOIs.add(new POI(50.46711419751372, 13.96569837980194, POI_TYPE_CROSSING, context));
-//        sExamplePOIs.add(new POI(50.470352221395615, 13.95201231288346, POI_TYPE_CROSSING, context));
-//        sExamplePOIs.add(new POI(50.457425251189875, 13.906925863491022, POI_TYPE_CROSSING, context));
-//        sExamplePOIs.add(new POI(50.45325162770703, 13.892963746152365, POI_TYPE_CROSSING, context));
-//        sExamplePOIs.add(new POI(50.44820354253554, 13.865930429153735, POI_TYPE_CROSSING, context));
-//        sExamplePOIs.add(new POI(50.44444858393916, 13.85523290545108, POI_TYPE_CROSSING, context));
-//        sExamplePOIs.add(new POI(50.44753197413999, 13.825485004491675, POI_TYPE_CROSSING, context));
-//        sExamplePOIs.add(new POI(50.443651263354525, 13.81312538535105, POI_TYPE_CROSSING, context));
-//        sExamplePOIs.add(new POI(50.45203159415806, 13.76749867754598, POI_TYPE_CROSSING, context));
-//        sExamplePOIs.add(new POI(50.455747679477696, 13.75331515627523, POI_TYPE_CROSSING, context));
-//        sExamplePOIs.add(new POI(50.46815261073638, 13.719186194335025, POI_TYPE_CROSSING, context));
-
-        sExamplePOIs.add(new POI(50.47902, 14.03453, POI_TYPE_CROSSING, context));
-        sExamplePOIs.add(new POI(50.47394, 14.00254, POI_TYPE_SPEED_LIMITATION_50, context));
-        sExamplePOIs.add(new POI(50.47916, 13.99642, POI_TYPE_CROSSING, context));
-        sExamplePOIs.add(new POI(50.48079, 13.99086, POI_TYPE_TRAIN_STATION, context));
-        sExamplePOIs.add(new POI(50.46866, 13.97693, POI_TYPE_CROSSING, context));
-        sExamplePOIs.add(new POI(50.46641, 13.96887, POI_TYPE_SPEED_LIMITATION_70, context));
-        sExamplePOIs.add(new POI(50.46964, 13.95576, POI_TYPE_CROSSING, context));
-        sExamplePOIs.add(new POI(50.46404, 13.93943, POI_TYPE_BRIDGE, context));
-        sExamplePOIs.add(new POI(50.45779, 13.92928, POI_TYPE_SPEED_LIMITATION_70, context));
-        sExamplePOIs.add(new POI(50.45158, 13.88418, POI_TYPE_BRIDGE, context));
-        sExamplePOIs.add(new POI(50.47950, 13.69669, POI_TYPE_TURNOUT, context));
-
-        for (int i = 0; i < sExamplePOIs.size(); i++) {
-            sExamplePOIs.get(i).setMetaIndex(i);
-        }
-
-        return sExamplePOIs;
     }
+
+    @Override
+    public LiveData<PoisApi> getPois() {
+        return null; // TODO: implement this
+    }
+
+    //    @Override
+//    public List<Poi> getPois(Context context) {
+//        List<Poi> sExamplePOIs = new ArrayList<Poi>();
+//
+////        sExamplePOIs.add(new Poi(50.47902254646468, 14.03452249583824, POI_TYPE_CROSSING, context));
+////        sExamplePOIs.add(new Poi(50.47817915699491, 14.033283647782222, POI_TYPE_CROSSING, context));
+////        sExamplePOIs.add(new Poi(50.468671536801395, 13.976941624253527, POI_TYPE_CROSSING, context));
+////        sExamplePOIs.add(new Poi(50.46681518367927, 13.967698539937949, POI_TYPE_CROSSING, context));
+////        sExamplePOIs.add(new Poi(50.46711419751372, 13.96569837980194, POI_TYPE_CROSSING, context));
+////        sExamplePOIs.add(new Poi(50.470352221395615, 13.95201231288346, POI_TYPE_CROSSING, context));
+////        sExamplePOIs.add(new Poi(50.457425251189875, 13.906925863491022, POI_TYPE_CROSSING, context));
+////        sExamplePOIs.add(new Poi(50.45325162770703, 13.892963746152365, POI_TYPE_CROSSING, context));
+////        sExamplePOIs.add(new Poi(50.44820354253554, 13.865930429153735, POI_TYPE_CROSSING, context));
+////        sExamplePOIs.add(new Poi(50.44444858393916, 13.85523290545108, POI_TYPE_CROSSING, context));
+////        sExamplePOIs.add(new Poi(50.44753197413999, 13.825485004491675, POI_TYPE_CROSSING, context));
+////        sExamplePOIs.add(new Poi(50.443651263354525, 13.81312538535105, POI_TYPE_CROSSING, context));
+////        sExamplePOIs.add(new Poi(50.45203159415806, 13.76749867754598, POI_TYPE_CROSSING, context));
+////        sExamplePOIs.add(new Poi(50.455747679477696, 13.75331515627523, POI_TYPE_CROSSING, context));
+////        sExamplePOIs.add(new Poi(50.46815261073638, 13.719186194335025, POI_TYPE_CROSSING, context));
+//
+//        sExamplePOIs.add(new Poi(50.47902, 14.03453, POI_TYPE_CROSSING, context));
+//        sExamplePOIs.add(new Poi(50.47394, 14.00254, POI_TYPE_SPEED_LIMITATION_50, context));
+//        sExamplePOIs.add(new Poi(50.47916, 13.99642, POI_TYPE_CROSSING, context));
+//        sExamplePOIs.add(new Poi(50.48079, 13.99086, POI_TYPE_TRAIN_STATION, context));
+//        sExamplePOIs.add(new Poi(50.46866, 13.97693, POI_TYPE_CROSSING, context));
+//        sExamplePOIs.add(new Poi(50.46641, 13.96887, POI_TYPE_SPEED_LIMITATION_70, context));
+//        sExamplePOIs.add(new Poi(50.46964, 13.95576, POI_TYPE_CROSSING, context));
+//        sExamplePOIs.add(new Poi(50.46404, 13.93943, POI_TYPE_BRIDGE, context));
+//        sExamplePOIs.add(new Poi(50.45779, 13.92928, POI_TYPE_SPEED_LIMITATION_70, context));
+//        sExamplePOIs.add(new Poi(50.45158, 13.88418, POI_TYPE_BRIDGE, context));
+//        sExamplePOIs.add(new Poi(50.47950, 13.69669, POI_TYPE_TURNOUT, context));
+//
+//        for (int i = 0; i < sExamplePOIs.size(); i++) {
+//            sExamplePOIs.get(i).setMetaIndex(i);
+//        }
+//
+//        return sExamplePOIs;
+//    }
 
     public void restartRepository() {
         sLocationIterator = 0;

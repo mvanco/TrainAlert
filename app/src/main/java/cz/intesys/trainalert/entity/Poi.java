@@ -6,20 +6,32 @@ import org.osmdroid.api.IGeoPoint;
 
 import java.util.List;
 
+import cz.intesys.trainalert.api.PoiApi;
 import cz.intesys.trainalert.utility.Utility;
 
-public class POI implements IGeoPoint {
-    private POIConfiguration POIConfiguration;
+public class Poi implements IGeoPoint {
     private String title;
     private Double latitude;
     private Double longitude;
-    private List<Alarm> alarms;
+    private PoiConfiguration POIConfiguration;
     private int metaIndex;
 
-    public POI(Double latitude, Double longitude, @Utility.POIType int type, Context context) {
+    public Poi(Double latitude, Double longitude, @Utility.POIType int type, Context context) {
         this.latitude = latitude;
         this.longitude = longitude;
-        this.POIConfiguration = new POIConfiguration(type, this, context);
+        this.POIConfiguration = new PoiConfiguration(type, this, context);
+    }
+
+    /**
+     * Conversion function
+     *
+     * @param poiApi
+     */
+    public Poi(PoiApi poiApi, Context context) {
+        this.title = poiApi.getTitle();
+        this.latitude = poiApi.getLatitude();
+        this.longitude = poiApi.getLongitude();
+        this.POIConfiguration = new PoiConfiguration(poiApi.getType(), this, context);
     }
 
     @Override
@@ -40,7 +52,7 @@ public class POI implements IGeoPoint {
         return longitude;
     }
 
-    public POIConfiguration getPOIConfiguration() {
+    public PoiConfiguration getPOIConfiguration() {
         return POIConfiguration;
     }
 
@@ -53,14 +65,14 @@ public class POI implements IGeoPoint {
     }
 
     public void addAlarm(Alarm alarm) {
-        this.alarms.add(alarm);
+        this.POIConfiguration.getAlarmList().add(alarm);
     }
 
     public List<Alarm> getAlarms() {
-        return alarms;
+        return this.POIConfiguration.getAlarmList();
     }
 
     public void setAlarms(List<Alarm> alarms) {
-        this.alarms = alarms;
+        this.POIConfiguration.getAlarmList().addAll(alarms);
     }
 }

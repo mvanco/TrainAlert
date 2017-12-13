@@ -3,11 +3,11 @@ package cz.intesys.trainalert;
 import android.app.Application;
 import android.content.Context;
 
-public class TrainAlertApplication extends Application {
+public class TaApplication extends Application {
 
-    private static TrainAlertApplication sInstance;
+    private static TaApplication sInstance;
 
-    public TrainAlertApplication() {
+    public TaApplication() {
         sInstance = this;
     }
 

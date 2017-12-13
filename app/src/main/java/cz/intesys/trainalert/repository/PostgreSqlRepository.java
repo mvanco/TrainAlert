@@ -5,39 +5,38 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.OnLifecycleEvent;
-import android.content.Context;
 import android.os.Handler;
 
-import java.util.List;
-
-import cz.intesys.trainalert.TrainAlertConfig;
+import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.api.LocationAPI;
-import cz.intesys.trainalert.api.TAServerAPI;
+import cz.intesys.trainalert.api.PoisApi;
+import cz.intesys.trainalert.api.TaServerApi;
 import cz.intesys.trainalert.entity.Location;
-import cz.intesys.trainalert.entity.POI;
-import cz.intesys.trainalert.rest.TrainAlertClient;
+import cz.intesys.trainalert.rest.TaClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PostgreSQLRepository implements Repository, LifecycleObserver {
-    private static PostgreSQLRepository sInstance;
-    private TAServerAPI mApiService;
+public class PostgreSqlRepository implements Repository, LifecycleObserver {
+    private static PostgreSqlRepository sInstance;
+    private TaServerApi mApiService;
     private LocationPoller mLocationPoller;
-    private MutableLiveData<Location> liveData;
+    private MutableLiveData<Location> mCurrentLocation;
+    private MutableLiveData<PoisApi> mPois;
 
-    public PostgreSQLRepository() {
-        mApiService = TrainAlertClient.createService(TAServerAPI.class);
-        mLocationPoller = new LocationPoller(() -> getCurrentLocation());
-        liveData = new MutableLiveData<>();
+    public PostgreSqlRepository() {
+        mApiService = TaClient.createService(TaServerApi.class);
+        mLocationPoller = new LocationPoller(() -> loadCurrentLocation());
+        mCurrentLocation = new MutableLiveData<>();
+        mPois = new MutableLiveData<>();
     }
 
-    public LiveData<Location> getCurrentLocation() {
+    public void loadCurrentLocation() {
         Call<LocationAPI> call = mApiService.getLocation();
         call.enqueue(new Callback<LocationAPI>() {
             @Override
             public void onResponse(Call<LocationAPI> call, Response<LocationAPI> response) {
-                liveData.setValue(new Location(response.body()));
+                mCurrentLocation.setValue(new Location(response.body()));
             }
 
             @Override
@@ -45,19 +44,37 @@ public class PostgreSQLRepository implements Repository, LifecycleObserver {
                 // TODO: handle this
             }
         });
-        return liveData;
     }
 
     @Override
-    public List<POI> getPOIs(Context context) {
-        return null;
+    public LiveData<Location> getCurrentLocation() {
+        return mCurrentLocation;
     }
 
-    public static PostgreSQLRepository getInstance() {
-        if (sInstance == null) {
-            sInstance = new PostgreSQLRepository();
-        }
+    public void loadPois() {
+        Call<PoisApi> call = mApiService.getPois();
+        call.enqueue(new Callback<PoisApi>() {
+            @Override
+            public void onResponse(Call<PoisApi> call, Response<PoisApi> response) {
+                mPois.setValue(new PoisApi(response.body().getPois()));
+            }
 
+            @Override
+            public void onFailure(Call<PoisApi> call, Throwable t) {
+                // TODO: handle this
+            }
+        });
+    }
+
+    @Override
+    public LiveData<PoisApi> getPois() {
+        return mPois;
+    }
+
+    public static PostgreSqlRepository getInstance() {
+        if (sInstance == null) {
+            sInstance = new PostgreSqlRepository();
+        }
         return sInstance;
     }
 
@@ -80,7 +97,7 @@ public class PostgreSQLRepository implements Repository, LifecycleObserver {
             mHandler = new Handler();
             mPeriodicUpdateRunnable = () -> {
                 locationChangedRunnable.run();
-                mHandler.postDelayed(mPeriodicUpdateRunnable, TrainAlertConfig.GPS_TIME_INTERVAL);
+                mHandler.postDelayed(mPeriodicUpdateRunnable, TaConfig.GPS_TIME_INTERVAL);
             };
         }
 
