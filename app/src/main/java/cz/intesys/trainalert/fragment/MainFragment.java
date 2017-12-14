@@ -14,8 +14,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.events.MapListener;
+import org.osmdroid.events.ScrollEvent;
+import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
@@ -45,6 +49,7 @@ public class MainFragment extends Fragment {
 
     private FragmentMainBinding mBinding;
     private MainFragmentViewModel mViewModel;
+    private Marker mTrainMarker;
 
     public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
@@ -64,6 +69,7 @@ public class MainFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = FragmentMainBinding.inflate(inflater, container, false);
+        mBinding.fab.setOnClickListener(view -> onFabClick());
         return mBinding.getRoot();
     }
 
@@ -78,13 +84,51 @@ public class MainFragment extends Fragment {
      * Warning: Works with activity {@link Context}, activity must be already attached!
      */
     private void initAnimation() {
-        //mViewModel.loadPOIs(getActivity());
         initMap(getActivity()); // Initialize map using osmdroid library and set current position on the map.
-        final Marker trainMarker = getTrainMarker(mBinding.fragmentMainMapview);
-        mBinding.fragmentMainMapview.getOverlayManager().add(trainMarker); // Add train marker.
-        mViewModel.getCurrentLocation().observe(this, currentLocation -> handleLocationChange(trainMarker, currentLocation));
+        initTrainMarker(mBinding.fragmentMainMapview);
+        mBinding.fragmentMainMapview.getOverlayManager().add(mTrainMarker); // Add train marker.
+        mViewModel.getLocation().observe(this, currentLocation -> handleLocationChange(mTrainMarker, currentLocation));
         mViewModel.getPois().observe(this, pois -> handlePOIsChange(pois));
         mViewModel.loadPOIs();
+    }
+
+    private void initMap(Context context) {
+        Configuration.getInstance().load(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Load configuration.
+        mBinding.fragmentMainMapview.setMultiTouchControls(true);
+        mBinding.fragmentMainMapview.setTilesScaledToDpi(true);
+        mBinding.fragmentMainMapview.setMapListener(new MapListener() {
+            @Override
+            public boolean onScroll(ScrollEvent event) {
+                return onMapScroll(event);
+            }
+
+            @Override
+            public boolean onZoom(ZoomEvent event) {
+                return false;
+            }
+        });
+        IMapController mapController = mBinding.fragmentMainMapview.getController();
+        mapController.setZoom(14);
+        Configuration.getInstance().save(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Save configuration.
+    }
+
+    private boolean onMapScroll(ScrollEvent event) {
+        if (event.getY() == 0 || event.getX() == 0) { // Filter weird scroll events.
+            return true;
+        }
+
+        IGeoPoint centerPoint = event.getSource().getMapCenter();
+        if (mViewModel.isShouldSwitchToFreeMode()) {
+            setFabAsNotFixed(); // Only after second confirmation of free movement, it is in real "free mode".
+            mViewModel.setFreeMode(true);
+        } else {
+            mViewModel.setShouldSwitchToFreeMode(true);
+        }
+        return true;
+    }
+
+    private void setFabAsNotFixed() {
+        mBinding.fab.setImageResource(R.drawable.fab_gps_not_fixed);
     }
 
     /**
@@ -93,27 +137,63 @@ public class MainFragment extends Fragment {
      * @param mapView where marker will be created
      * @return marker
      */
-    private Marker getTrainMarker(MapView mapView) {
-        Marker trainMarker = new Marker(mapView);
-        trainMarker.setTitle("Train LocationAPI");
-        trainMarker.setPosition(mViewModel.getStarterLocation().toGeoPoint());
-        trainMarker.setIcon(getResources().getDrawable(R.drawable.marker_train_left));
-        return trainMarker;
+    private void initTrainMarker(MapView mapView) {
+        if (mTrainMarker == null) {
+            mTrainMarker = new Marker(mapView);
+            mTrainMarker.setTitle("Train LocationAPI");
+            mTrainMarker.setPosition(mViewModel.getStarterLocation().toGeoPoint());
+            mTrainMarker.setIcon(getResources().getDrawable(R.drawable.marker_train_left));
+        }
     }
 
-    private void initMap(Context context) {
-        Configuration.getInstance().load(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Load configuration.
-        mBinding.fragmentMainMapview.setMultiTouchControls(true);
-        mBinding.fragmentMainMapview.setTilesScaledToDpi(true);
-        IMapController mapController = mBinding.fragmentMainMapview.getController();
-        mapController.setZoom(14);
-        Configuration.getInstance().save(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Save configuration.
+    /**
+     * Warning: Works with activity {@link Context}, activity must be already attached!
+     *
+     * @param pois
+     */
+    private void handlePOIsChange(List<Poi> pois) {
+        if (getActivity() == null) {
+            return;
+        }
+
+        final ArrayList<OverlayItem> items = new ArrayList<>();
+        for (Poi poi : pois) {
+            OverlayItem item = new OverlayItem(poi.getTitle(), "", poi);
+            item.setMarker(getActivity().getResources().getDrawable(poi.getPOIConfiguration().getMarkerDrawable()));
+            item.setMarkerHotspot(OverlayItem.HotspotPlace.CENTER);
+            items.add(item);
+        }
+
+        ItemizedOverlay<OverlayItem> overlay = new ItemizedIconOverlay<>(items, getResources().getDrawable(R.drawable.poi_crossing),
+                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                    @Override
+                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                        Toast.makeText(
+                                getActivity(),
+                                "Item '" + item.getTitle() + "' (index=" + index
+                                        + ") got single tapped up", Toast.LENGTH_LONG).show();
+                        return true; // We 'handled' this event.
+                    }
+
+                    @Override
+                    public boolean onItemLongPress(final int index, final OverlayItem item) {
+                        Toast.makeText(
+                                getActivity(),
+                                "Item '" + item.getTitle() + "' (index=" + index
+                                        + ") got long pressed", Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                }, getActivity().getApplicationContext());
+
+        mBinding.fragmentMainMapview.getOverlays().add(overlay);
     }
 
     private void handleLocationChange(Marker trainMarker, Location currentLocation) {
         Log.d("handler", "executing repetitious code from to position " + currentLocation.getLatitude() + ", " + currentLocation.getLongitude());
-        animateMarkerTo(mBinding.fragmentMainMapview, trainMarker, currentLocation.toGeoPoint(), new GeoPointInterpolator.LinearFixed());
-        mBinding.fragmentMainMapview.getController().setCenter(currentLocation.toGeoPoint());
+        animateMarkerTo(mBinding.fragmentMainMapview, trainMarker, currentLocation.toGeoPoint(), new GeoPointInterpolator.Linear());
+        if (!mViewModel.isFreeMode()) {
+            setMapPosition(currentLocation.toGeoPoint());
+        }
         handleNotification(trainMarker.getPosition());
     }
 
@@ -193,48 +273,6 @@ public class MainFragment extends Fragment {
 
         Runnable action = () -> mBinding.fragmentMainNotificationContainer.setVisibility(View.GONE);
         mBinding.fragmentMainNotificationContainer.postDelayed(action, 3000);
-    }
-
-    /**
-     * Warning: Works with activity {@link Context}, activity must be already attached!
-     *
-     * @param pois
-     */
-    private void handlePOIsChange(List<Poi> pois) {
-        if (getActivity() == null) {
-            return;
-        }
-
-        final ArrayList<OverlayItem> items = new ArrayList<>();
-        for (Poi poi : pois) {
-            OverlayItem item = new OverlayItem(poi.getTitle(), "", poi);
-            item.setMarker(getActivity().getResources().getDrawable(poi.getPOIConfiguration().getMarkerDrawable()));
-            item.setMarkerHotspot(OverlayItem.HotspotPlace.CENTER);
-            items.add(item);
-        }
-
-        ItemizedOverlay<OverlayItem> overlay = new ItemizedIconOverlay<>(items, getResources().getDrawable(R.drawable.poi_crossing),
-                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                    @Override
-                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                        Toast.makeText(
-                                getActivity(),
-                                "Item '" + item.getTitle() + "' (index=" + index
-                                        + ") got single tapped up", Toast.LENGTH_LONG).show();
-                        return true; // We 'handled' this event.
-                    }
-
-                    @Override
-                    public boolean onItemLongPress(final int index, final OverlayItem item) {
-                        Toast.makeText(
-                                getActivity(),
-                                "Item '" + item.getTitle() + "' (index=" + index
-                                        + ") got long pressed", Toast.LENGTH_LONG).show();
-                        return false;
-                    }
-                }, getActivity().getApplicationContext());
-
-        mBinding.fragmentMainMapview.getOverlays().add(overlay);
     }
 
 //    private void handleNotification(int metaIndex) {
@@ -368,9 +406,32 @@ public class MainFragment extends Fragment {
 //        }
 //    }
 
+    private void onFabClick() {
+        setMapPosition(mViewModel.getLastLocation().toGeoPoint());
+        setFabAsFixed();
+    }
+
+    private void setFabAsFixed() {
+        mBinding.fab.setImageResource(R.drawable.fab_gps_fixed);
+    }
+
+    /**
+     * Set map position programmatically and ensures correct handling of "free mode" (with blocking of setting free mode).
+     * Warning: This function should be used every time {@link IMapController} setCenter() method is about to be called.
+     *
+     * @param newPosition
+     */
+    private void setMapPosition(GeoPoint newPosition) {
+        mViewModel.setFreeMode(false);
+        mViewModel.setShouldSwitchToFreeMode(false);
+        mBinding.fragmentMainMapview.getController().setCenter(newPosition);
+    }
+
     public void restartAnimation(Context context) {
-        mBinding.fragmentMainMapview.removeAllViews();
-        mViewModel.restartRepository();
-        initAnimation();
+
+        setFabAsNotFixed();
+//        mBinding.fragmentMainMapview.removeAllViews();
+//        mViewModel.restartRepository();
+//        initAnimation();
     }
 }

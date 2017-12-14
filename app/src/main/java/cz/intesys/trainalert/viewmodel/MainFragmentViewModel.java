@@ -20,6 +20,8 @@ public class MainFragmentViewModel extends ViewModel {
     private MediatorLiveData<List<Poi>> mPois;
     private Repository mRepository;
     private List<Alarm> mDisabledAlarms;
+    private boolean mShouldSwitchToFreeMode = false;
+    private boolean mFreeMode = false;
 
     public MainFragmentViewModel() {
         mLocation = new MediatorLiveData<Location>();
@@ -33,15 +35,43 @@ public class MainFragmentViewModel extends ViewModel {
         mPois.addSource(mRepository.getPois(), pois -> mPois.setValue(pois));
     }
 
+    public boolean isFreeMode() {
+        return mFreeMode;
+    }
+
+    public void setFreeMode(boolean freeMode) {
+        mFreeMode = freeMode;
+    }
+
+    public boolean isShouldSwitchToFreeMode() {
+        return mShouldSwitchToFreeMode;
+    }
+
+    public void setShouldSwitchToFreeMode(boolean shouldSwitchToFreeMode) {
+        mShouldSwitchToFreeMode = shouldSwitchToFreeMode;
+    }
+
     public void loadPOIs() {
         mRepository.loadPois();
+    }
+
+    public Location getLastLocation() {
+        if (isLoadedLocation()) {
+            return mLocation.getValue();
+        } else {
+            return getStarterLocation();
+        }
     }
 
     public Location getStarterLocation() {
         return new Location(50.48365189588503, 14.039404579177328);
     }
 
-    public LiveData<Location> getCurrentLocation() {
+    public boolean isLoadedLocation() {
+        return mLocation.getValue() != null;
+    }
+
+    public LiveData<Location> getLocation() {
         return mLocation;
     }
 

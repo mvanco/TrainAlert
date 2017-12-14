@@ -6,6 +6,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.os.Handler;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,10 +38,15 @@ public class PostgreSqlRepository implements Repository, LifecycleObserver {
     }
 
     public void loadCurrentLocation() {
+        Log.d("testorder", "loadCurrentLocation()");
         Call<LocationAPI> call = mApiService.getLocation();
         call.enqueue(new Callback<LocationAPI>() {
             @Override
             public void onResponse(Call<LocationAPI> call, Response<LocationAPI> response) {
+                if (response.body() == null) {
+                    return;
+                }
+                Log.e("testorder", "onResponse() id:" + response.body().getId());
                 mCurrentLocation.setValue(new Location(response.body()));
             }
 
@@ -61,6 +67,9 @@ public class PostgreSqlRepository implements Repository, LifecycleObserver {
         call.enqueue(new Callback<PoisApi>() {
             @Override
             public void onResponse(Call<PoisApi> call, Response<PoisApi> response) {
+                if (response.body() == null) {
+                    return;
+                }
                 List<Poi> pois = new ArrayList<>();
                 for (PoiApi poiApi : response.body().getPois()) {
                     pois.add(new Poi(poiApi));

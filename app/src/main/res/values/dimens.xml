@@ -5,4 +5,5 @@
     <dimen name="red_circle_text_size">20sp</dimen>
     <dimen name="red_circle_text_view_margin">48dp</dimen>
     <dimen name="fragment_main_notification_container_margin">64dp</dimen>
+    <dimen name="fab_gps_margin">20dp</dimen>
 </resources>
