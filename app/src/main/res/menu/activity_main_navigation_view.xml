@@ -2,6 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/menu_restart"
-        android:title="@string/activity_main_navigation_view_restart" />
+        android:id="@+id/menu_pois"
+        android:title="@string/activity_main_navigation_view_pois" />
 </menu>

@@ -4,8 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="cz.intesys.trainalert.activity.MainActivity">
 
-    <data></data>
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

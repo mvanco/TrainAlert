@@ -37,6 +37,14 @@ public class PostgreSqlRepository implements Repository, LifecycleObserver {
         mPois = new MutableLiveData<>();
     }
 
+    public static PostgreSqlRepository getInstance() {
+        if (sInstance == null) {
+            sInstance = new PostgreSqlRepository();
+        }
+        return sInstance;
+    }
+
+    @Override
     public void loadCurrentLocation() {
         Log.d("testorder", "loadCurrentLocation()");
         Call<LocationAPI> call = mApiService.getLocation();
@@ -62,6 +70,7 @@ public class PostgreSqlRepository implements Repository, LifecycleObserver {
         return mCurrentLocation;
     }
 
+    @Override
     public void loadPois() {
         Call<PoisApi> call = mApiService.getPois();
         call.enqueue(new Callback<PoisApi>() {
@@ -89,13 +98,6 @@ public class PostgreSqlRepository implements Repository, LifecycleObserver {
         return mPois;
     }
 
-    public static PostgreSqlRepository getInstance() {
-        if (sInstance == null) {
-            sInstance = new PostgreSqlRepository();
-        }
-        return sInstance;
-    }
-
     @OnLifecycleEvent (Lifecycle.Event.ON_RESUME)
     public void startLocationPolling() {
         mLocationPoller.startPolling();
@@ -119,19 +121,19 @@ public class PostgreSqlRepository implements Repository, LifecycleObserver {
             };
         }
 
-        void startPolling() {
-            if (!isRunning()) {
-                mPeriodicUpdateRunnable.run();
-                setRunning(true);
-            }
-        }
-
         public boolean isRunning() {
             return mRunning;
         }
 
         public void setRunning(boolean running) {
             mRunning = running;
+        }
+
+        void startPolling() {
+            if (!isRunning()) {
+                mPeriodicUpdateRunnable.run();
+                setRunning(true);
+            }
         }
 
         void stopPolling() {

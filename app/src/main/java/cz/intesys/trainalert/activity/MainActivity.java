@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.databinding.ActivityMainBinding;
-import cz.intesys.trainalert.fragment.MainFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,9 +21,9 @@ public class MainActivity extends AppCompatActivity {
         setupActionBar();
         binding.activityMainNavigationView.setNavigationItemSelectedListener(
                 (item) -> {
-                    if (item.getItemId() == R.id.menu_restart) {
-                        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.activity_main_content_main_activity);
-                        fragment.restartAnimation(this);
+                    if (item.getItemId() == R.id.menu_pois) {
+                        // TODO: start activity with editation possibilities
+                        startActivity(PoiActivity.newIntent(MainActivity.this));
                         return true;
                     }
                     return false;
