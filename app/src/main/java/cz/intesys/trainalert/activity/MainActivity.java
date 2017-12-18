@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
                 (item) -> {
                     if (item.getItemId() == R.id.menu_pois) {
                         // TODO: start activity with editation possibilities
+                        binding.activityMainDrawerLayout.closeDrawers();
                         startActivity(PoiActivity.newIntent(MainActivity.this));
                         return true;
                     }

@@ -4,10 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.databinding.ActivityPoiBinding;
@@ -42,7 +42,7 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
     }
 
     @Override
-    public void onPoiClick(Poi poi) {
+    public void onPoiSelect(Poi poi) {
         Log.d("fraginteraction", "was clicked on poi " + poi.getTitle());
     }
 
@@ -51,9 +51,18 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
 
     }
 
+    public void onBlablaClick(View v) {
+        Log.d("fraginteraction", "was clicked on poi ");
+    }
+
+    public void onAddPoiClick() {
+
+    }
+
     private void setupLayout() {
         if (mBinding.fragmentContainer != null) {
-            Fragment fragment = PoiListFragment.newInstance("ahoj", "druhje");
+            PoiListFragment fragment = PoiListFragment.newInstance();
+            fragment.setListener(this);
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
         }
     }

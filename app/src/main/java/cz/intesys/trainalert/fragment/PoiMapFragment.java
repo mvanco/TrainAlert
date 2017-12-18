@@ -20,14 +20,6 @@ import cz.intesys.trainalert.entity.Poi;
 
 import static cz.intesys.trainalert.TaConfig.MAP_DEFAULT_ZOOM;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PoiMapFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link PoiMapFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class PoiMapFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;

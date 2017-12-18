@@ -147,7 +147,7 @@ public class MainFragment extends Fragment {
         if (mTrainMarker == null) {
             mTrainMarker = new Marker(mapView);
             mTrainMarker.setTitle("Train LocationAPI");
-            mTrainMarker.setPosition(mViewModel.getStarterLocation().toGeoPoint());
+            mTrainMarker.setPosition(mViewModel.getLastLocation().toGeoPoint());
             mTrainMarker.setIcon(getResources().getDrawable(R.drawable.marker_train_left));
         }
     }

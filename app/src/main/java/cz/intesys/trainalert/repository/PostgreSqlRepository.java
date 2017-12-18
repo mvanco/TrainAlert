@@ -23,6 +23,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * Note: If used with location, there must be added getLifecycle().addObserver(PostgreSqlRepository.getInstance())
+ * on fragment or activity. For loading POIs, loadPois() method should be used.
+ */
 public class PostgreSqlRepository implements Repository, LifecycleObserver {
     private static PostgreSqlRepository sInstance;
     private TaServerApi mApiService;
@@ -42,27 +46,6 @@ public class PostgreSqlRepository implements Repository, LifecycleObserver {
             sInstance = new PostgreSqlRepository();
         }
         return sInstance;
-    }
-
-    @Override
-    public void loadCurrentLocation() {
-        Log.d("testorder", "loadCurrentLocation()");
-        Call<LocationAPI> call = mApiService.getLocation();
-        call.enqueue(new Callback<LocationAPI>() {
-            @Override
-            public void onResponse(Call<LocationAPI> call, Response<LocationAPI> response) {
-                if (response.body() == null) {
-                    return;
-                }
-                Log.e("testorder", "onResponse() id:" + response.body().getId());
-                mCurrentLocation.setValue(new Location(response.body()));
-            }
-
-            @Override
-            public void onFailure(Call<LocationAPI> call, Throwable t) {
-                // TODO: handle this
-            }
-        });
     }
 
     @Override
@@ -142,5 +125,25 @@ public class PostgreSqlRepository implements Repository, LifecycleObserver {
                 setRunning(false);
             }
         }
+    }
+
+    void loadCurrentLocation() {
+        Log.d("testorder", "loadCurrentLocation()");
+        Call<LocationAPI> call = mApiService.getLocation();
+        call.enqueue(new Callback<LocationAPI>() {
+            @Override
+            public void onResponse(Call<LocationAPI> call, Response<LocationAPI> response) {
+                if (response.body() == null) {
+                    return;
+                }
+                Log.e("testorder", "onResponse() id:" + response.body().getId());
+                mCurrentLocation.setValue(new Location(response.body()));
+            }
+
+            @Override
+            public void onFailure(Call<LocationAPI> call, Throwable t) {
+                // TODO: handle this
+            }
+        });
     }
 }

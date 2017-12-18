@@ -273,11 +273,6 @@ public class SimulatedRepository implements Repository {
     }
 
     @Override
-    public void loadCurrentLocation() {
-
-    }
-
-    @Override
     public LiveData<Location> getCurrentLocation() {
         final MutableLiveData<Location> currentLocation = new MutableLiveData();
         currentLocation.setValue(sExampleRoute.get(sLocationIterator));
