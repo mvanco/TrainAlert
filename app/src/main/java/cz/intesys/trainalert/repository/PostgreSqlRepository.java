@@ -5,13 +5,11 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.OnLifecycleEvent;
-import android.os.Handler;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.api.LocationAPI;
 import cz.intesys.trainalert.api.PoiApi;
 import cz.intesys.trainalert.api.PoisApi;
@@ -19,6 +17,7 @@ import cz.intesys.trainalert.api.TaServerApi;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.rest.TaClient;
+import cz.intesys.trainalert.utility.Utility.LocationPoller;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -91,41 +90,6 @@ public class PostgreSqlRepository implements Repository, LifecycleObserver {
         mLocationPoller.stopPolling();
     }
 
-    private class LocationPoller {
-        private Handler mHandler;
-        private Runnable mPeriodicUpdateRunnable;
-        private boolean mRunning = false;
-
-        LocationPoller(Runnable locationChangedRunnable) {
-            mHandler = new Handler();
-            mPeriodicUpdateRunnable = () -> {
-                locationChangedRunnable.run();
-                mHandler.postDelayed(mPeriodicUpdateRunnable, TaConfig.GPS_TIME_INTERVAL);
-            };
-        }
-
-        public boolean isRunning() {
-            return mRunning;
-        }
-
-        public void setRunning(boolean running) {
-            mRunning = running;
-        }
-
-        void startPolling() {
-            if (!isRunning()) {
-                mPeriodicUpdateRunnable.run();
-                setRunning(true);
-            }
-        }
-
-        void stopPolling() {
-            if (isRunning()) {
-                mHandler.removeCallbacks(mPeriodicUpdateRunnable);
-                setRunning(false);
-            }
-        }
-    }
 
     void loadCurrentLocation() {
         Log.d("testorder", "loadCurrentLocation()");

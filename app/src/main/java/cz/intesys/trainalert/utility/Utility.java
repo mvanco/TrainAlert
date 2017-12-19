@@ -4,12 +4,15 @@ import android.content.Context;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.annotation.IntDef;
 
 import org.osmdroid.util.GeoPoint;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import cz.intesys.trainalert.TaConfig;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.atan;
@@ -75,5 +78,41 @@ public class Utility {
 
     public static float convertToDegrees(double radians) {
         return (float) (radians / PI * 180);
+    }
+
+    public static class LocationPoller {
+        private Handler mHandler;
+        private Runnable mPeriodicUpdateRunnable;
+        private boolean mRunning = false;
+
+        public LocationPoller(Runnable locationChangedRunnable) {
+            mHandler = new Handler();
+            mPeriodicUpdateRunnable = () -> {
+                locationChangedRunnable.run();
+                mHandler.postDelayed(mPeriodicUpdateRunnable, TaConfig.GPS_TIME_INTERVAL);
+            };
+        }
+
+        public boolean isRunning() {
+            return mRunning;
+        }
+
+        public void setRunning(boolean running) {
+            mRunning = running;
+        }
+
+        public void startPolling() {
+            if (!isRunning()) {
+                mPeriodicUpdateRunnable.run();
+                setRunning(true);
+            }
+        }
+
+        public void stopPolling() {
+            if (isRunning()) {
+                mHandler.removeCallbacks(mPeriodicUpdateRunnable);
+                setRunning(false);
+            }
+        }
     }
 }

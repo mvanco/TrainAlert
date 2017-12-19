@@ -25,7 +25,6 @@ public class MainFragmentViewModel extends ViewModel {
 
     public MainFragmentViewModel() {
         mLocation = new MediatorLiveData<Location>();
-        //mRepository = SimulatedRepository.getInstance();
 
         mPois = new MediatorLiveData<List<Poi>>();
         mRepository = PostgreSqlRepository.getInstance();

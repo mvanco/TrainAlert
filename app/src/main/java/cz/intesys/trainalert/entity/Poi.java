@@ -13,6 +13,7 @@ public class Poi implements IGeoPoint {
     private Double longitude;
     private PoiConfiguration POIConfiguration;
     private int metaIndex;
+
     /**
      * Conversion function
      *
@@ -25,10 +26,15 @@ public class Poi implements IGeoPoint {
         this.POIConfiguration = new PoiConfiguration(poiApi.getType(), this);
     }
 
-    public Poi(Double latitude, Double longitude, @Utility.POIType int type) {
+    public Poi(String title, Double latitude, Double longitude, @Utility.POIType int type) {
+        this.title = title;
         this.latitude = latitude;
         this.longitude = longitude;
         this.POIConfiguration = new PoiConfiguration(type, this);
+    }
+
+    public Poi(Double latitude, Double longitude, @Utility.POIType int type) {
+        this(null, latitude, longitude, type);
     }
 
     @Override
