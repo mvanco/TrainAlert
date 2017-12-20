@@ -15,6 +15,7 @@ import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.utility.Utility.LocationPoller;
 
+import static cz.intesys.trainalert.TaConfig.SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE;
 import static cz.intesys.trainalert.utility.Utility.POI_TYPE_BRIDGE;
 import static cz.intesys.trainalert.utility.Utility.POI_TYPE_CROSSING;
 import static cz.intesys.trainalert.utility.Utility.POI_TYPE_SPEED_LIMITATION_50;
@@ -23,11 +24,11 @@ import static cz.intesys.trainalert.utility.Utility.POI_TYPE_TRAIN_STATION;
 import static cz.intesys.trainalert.utility.Utility.POI_TYPE_TURNOUT;
 
 public class SimulatedRepository implements Repository, LifecycleObserver {
+    private final List<Poi> mExamplePois;
     private static SimulatedRepository sInstance;
     private int mLocationIterator = 0; // 0 - the most right Poi, 230 - the most left Poi
     private boolean toTheLeftDirection = true;
     private List<Location> mExampleRoute;
-    private List<Poi> mExamplePois;
     private LocationPoller mLocationPoller;
     private MutableLiveData<Location> mCurrentLocation;
     private MutableLiveData<List<Poi>> mPois;
@@ -53,12 +54,10 @@ public class SimulatedRepository implements Repository, LifecycleObserver {
         return mCurrentLocation;
     }
 
-    @Override
     public void loadPois() {
-        int serverDelay = new Random().nextInt(1000) + 500; // <500, 1500)
         new Handler().postDelayed(() -> {
             mPois.setValue(mExamplePois);
-        }, serverDelay);
+        }, getRandomServerDelay());
     }
 
     @Override
@@ -78,6 +77,54 @@ public class SimulatedRepository implements Repository, LifecycleObserver {
 
     public void restartRepository() {
         mLocationIterator = 0;
+    }
+
+    public List<Poi> getExamplePois() {
+        List<Poi> sExamplePOIs = new ArrayList<Poi>();
+
+        sExamplePOIs.add(new Poi("Přechod 1", 50.47902, 14.03453, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi("Omezení (50) 1", 50.47394, 14.00254, POI_TYPE_SPEED_LIMITATION_50));
+        sExamplePOIs.add(new Poi("Přechod 2", 50.47916, 13.99642, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi("Stanice 1", 50.48079, 13.99086, POI_TYPE_TRAIN_STATION));
+        sExamplePOIs.add(new Poi("Přechod 3", 50.46866, 13.97693, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi("Omezení (70) 1", 50.46641, 13.96887, POI_TYPE_SPEED_LIMITATION_70));
+        sExamplePOIs.add(new Poi("Přechod 4", 50.46964, 13.95576, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi("Most 1", 50.46404, 13.93943, POI_TYPE_BRIDGE));
+        sExamplePOIs.add(new Poi("Omezení (70) 2", 50.45779, 13.92928, POI_TYPE_SPEED_LIMITATION_70));
+        sExamplePOIs.add(new Poi("Most 2", 50.45158, 13.88418, POI_TYPE_BRIDGE));
+        sExamplePOIs.add(new Poi("Výhybka 1", 50.47950, 13.69669, POI_TYPE_TURNOUT));
+
+//        sExamplePOIs.add(new Poi(50.47902254646468, 14.03452249583824, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(50.47817915699491, 14.033283647782222, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(50.468671536801395, 13.976941624253527, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(50.46681518367927, 13.967698539937949, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(50.46711419751372, 13.96569837980194, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(50.470352221395615, 13.95201231288346, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(50.457425251189875, 13.906925863491022, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(50.45325162770703, 13.892963746152365, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(50.44820354253554, 13.865930429153735, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(50.44444858393916, 13.85523290545108, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(50.44753197413999, 13.825485004491675, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(50.443651263354525, 13.81312538535105, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(50.45203159415806, 13.76749867754598, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(50.455747679477696, 13.75331515627523, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(50.46815261073638, 13.719186194335025, POI_TYPE_CROSSING));
+
+        for (int i = 0; i < sExamplePOIs.size(); i++) {
+            sExamplePOIs.get(i).setMetaIndex(i);
+        }
+
+        return sExamplePOIs;
+    }
+
+    public int getRandomServerDelay() {
+        if (SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0] == 0 && SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0] == 0) {
+            return 0;
+        }
+
+        int rangeSize = SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[1] - SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0];
+        int serverDelay = new Random().nextInt(rangeSize) + SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0]; // <500, 1500)
+        return serverDelay;
     }
 
     private List<Location> getExampleRoute() {
@@ -323,49 +370,10 @@ public class SimulatedRepository implements Repository, LifecycleObserver {
         return exampleRoute;
     }
 
-    private List<Poi> getExamplePois() {
-        List<Poi> sExamplePOIs = new ArrayList<Poi>();
-
-        sExamplePOIs.add(new Poi("Přechod 1", 50.47902, 14.03453, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi("Omezení (50) 1", 50.47394, 14.00254, POI_TYPE_SPEED_LIMITATION_50));
-        sExamplePOIs.add(new Poi("Přechod 2", 50.47916, 13.99642, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi("Stanice 1", 50.48079, 13.99086, POI_TYPE_TRAIN_STATION));
-        sExamplePOIs.add(new Poi("Přechod 3", 50.46866, 13.97693, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi("Omezení (70) 1", 50.46641, 13.96887, POI_TYPE_SPEED_LIMITATION_70));
-        sExamplePOIs.add(new Poi("Přechod 4", 50.46964, 13.95576, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi("Most 1", 50.46404, 13.93943, POI_TYPE_BRIDGE));
-        sExamplePOIs.add(new Poi("Omezení (70) 2", 50.45779, 13.92928, POI_TYPE_SPEED_LIMITATION_70));
-        sExamplePOIs.add(new Poi("Most 2", 50.45158, 13.88418, POI_TYPE_BRIDGE));
-        sExamplePOIs.add(new Poi("Výhybka 1", 50.47950, 13.69669, POI_TYPE_TURNOUT));
-
-//        sExamplePOIs.add(new Poi(50.47902254646468, 14.03452249583824, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.47817915699491, 14.033283647782222, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.468671536801395, 13.976941624253527, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.46681518367927, 13.967698539937949, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.46711419751372, 13.96569837980194, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.470352221395615, 13.95201231288346, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.457425251189875, 13.906925863491022, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.45325162770703, 13.892963746152365, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.44820354253554, 13.865930429153735, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.44444858393916, 13.85523290545108, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.44753197413999, 13.825485004491675, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.443651263354525, 13.81312538535105, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.45203159415806, 13.76749867754598, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.455747679477696, 13.75331515627523, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.46815261073638, 13.719186194335025, POI_TYPE_CROSSING));
-
-        for (int i = 0; i < sExamplePOIs.size(); i++) {
-            sExamplePOIs.get(i).setMetaIndex(i);
-        }
-
-        return sExamplePOIs;
-    }
-
     private void loadCurrentLocation() {
-        int serverDelay = new Random().nextInt(1000) + 500; // <500, 1500)
         new Handler().postDelayed(() -> {
             mCurrentLocation.setValue(mExampleRoute.get(mLocationIterator));
-        }, serverDelay);
+        }, getRandomServerDelay());
 
         // Prepare next location
         if (toTheLeftDirection) {

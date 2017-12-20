@@ -1,5 +1,8 @@
 package cz.intesys.trainalert.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.osmdroid.api.IGeoPoint;
 
 import java.util.List;
@@ -7,7 +10,18 @@ import java.util.List;
 import cz.intesys.trainalert.api.PoiApi;
 import cz.intesys.trainalert.utility.Utility;
 
-public class Poi implements IGeoPoint {
+public class Poi implements IGeoPoint, Parcelable {
+    public static final Creator<Poi> CREATOR = new Creator<Poi>() {
+        @Override
+        public Poi createFromParcel(Parcel in) {
+            return new Poi(in);
+        }
+
+        @Override
+        public Poi[] newArray(int size) {
+            return new Poi[size];
+        }
+    };
     private String title;
     private Double latitude;
     private Double longitude;
@@ -35,6 +49,46 @@ public class Poi implements IGeoPoint {
 
     public Poi(Double latitude, Double longitude, @Utility.POIType int type) {
         this(null, latitude, longitude, type);
+    }
+
+    protected Poi(Parcel in) {
+        title = in.readString();
+        if (in.readByte() == 0) {
+            latitude = null;
+        } else {
+            latitude = in.readDouble();
+        }
+        if (in.readByte() == 0) {
+            longitude = null;
+        } else {
+            longitude = in.readDouble();
+        }
+        POIConfiguration = in.readParcelable(PoiConfiguration.class.getClassLoader());
+        metaIndex = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        if (latitude == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(latitude);
+        }
+        if (longitude == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(longitude);
+        }
+        dest.writeParcelable(POIConfiguration, flags);
+        dest.writeInt(metaIndex);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     @Override

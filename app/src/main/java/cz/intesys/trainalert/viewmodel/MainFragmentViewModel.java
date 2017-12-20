@@ -1,5 +1,6 @@
 package cz.intesys.trainalert.viewmodel;
 
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.ViewModel;
@@ -10,7 +11,6 @@ import java.util.List;
 import cz.intesys.trainalert.entity.Alarm;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
-import cz.intesys.trainalert.repository.PostgreSqlRepository;
 import cz.intesys.trainalert.repository.Repository;
 import cz.intesys.trainalert.repository.SimulatedRepository;
 
@@ -22,16 +22,21 @@ public class MainFragmentViewModel extends ViewModel {
     private List<Alarm> mDisabledAlarms;
     private boolean mShouldSwitchToFreeMode = false;
     private boolean mFreeMode = false;
+    private List<Poi> mRawPois;
 
     public MainFragmentViewModel() {
         mLocation = new MediatorLiveData<Location>();
 
         mPois = new MediatorLiveData<List<Poi>>();
-        mRepository = PostgreSqlRepository.getInstance();
+        mRepository = SimulatedRepository.getInstance(); // TODO: change to real PostgreSqlRepository
         mDisabledAlarms = new ArrayList<Alarm>();
 
         mLocation.addSource(mRepository.getCurrentLocation(), currentLocation -> mLocation.setValue(currentLocation));
-        mPois.addSource(mRepository.getPois(), pois -> mPois.setValue(pois));
+        mPois.addSource(mRepository.getPois(), pois -> {
+            mRawPois = pois;
+            mPois.setValue(pois);
+        });
+        loadPOIs();
     }
 
     public boolean isFreeMode() {
@@ -48,10 +53,6 @@ public class MainFragmentViewModel extends ViewModel {
 
     public void setShouldSwitchToFreeMode(boolean shouldSwitchToFreeMode) {
         mShouldSwitchToFreeMode = shouldSwitchToFreeMode;
-    }
-
-    public void loadPOIs() {
-        mRepository.loadPois();
     }
 
     public Location getLastLocation() {
@@ -78,8 +79,12 @@ public class MainFragmentViewModel extends ViewModel {
         return mPois;
     }
 
+    public List<Poi> getLastPois() {
+        return mRawPois;
+    }
+
     public boolean areLoadedPois() {
-        return mPois.getValue() != null;
+        return mRawPois != null;
     }
 
     public void disableAlarm(Alarm alarm) {
@@ -100,5 +105,30 @@ public class MainFragmentViewModel extends ViewModel {
         if (mRepository instanceof SimulatedRepository) {
             ((SimulatedRepository) mRepository).restartRepository();
         }
+    }
+
+    public void loadPOIs() {
+        mRepository.loadPois();
+    }
+
+
+    /**
+     * Enables getLastPois() funcionality without handling all location updates
+     *
+     * @param owner
+     */
+    public void enableLastLocation(LifecycleOwner owner) {
+        mLocation.observe(owner, (location) -> {
+        });
+    }
+
+    /**
+     * Enables getLastPois() funcionality without handling all pois updates
+     *
+     * @param owner
+     */
+    public void enableLastPois(LifecycleOwner owner) {
+        mPois.observe(owner, (pois) -> {
+        });
     }
 }

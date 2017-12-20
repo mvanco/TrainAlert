@@ -1,5 +1,7 @@
 package cz.intesys.trainalert.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
 
 import java.util.Collections;
@@ -21,8 +23,19 @@ import static cz.intesys.trainalert.utility.Utility.POI_TYPE_TURNOUT;
  * specific for each Poi because it stores unique {@link Alarm} objects which can be enabled/disabled
  * separately for each Poi.
  */
-public class PoiConfiguration {
+public class PoiConfiguration implements Parcelable {
 
+    public static final Creator<PoiConfiguration> CREATOR = new Creator<PoiConfiguration>() {
+        @Override
+        public PoiConfiguration createFromParcel(Parcel in) {
+            return new PoiConfiguration(in);
+        }
+
+        @Override
+        public PoiConfiguration[] newArray(int size) {
+            return new PoiConfiguration[size];
+        }
+    };
     private @POIType int type;
     private List<Alarm> alarmList;
 
@@ -33,6 +46,22 @@ public class PoiConfiguration {
     public PoiConfiguration(@POIType int type, Poi poi) {
         this.type = type;
         this.alarmList = createAlarmList(type, poi);
+    }
+
+    protected PoiConfiguration(Parcel in) {
+        type = in.readInt();
+        alarmList = in.createTypedArrayList(Alarm.CREATOR);
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(type);
+        dest.writeTypedList(alarmList);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     /**

@@ -17,8 +17,7 @@ public class PoiListAdapter extends RecyclerView.Adapter<PoiListAdapter.ViewHold
         void onPoiSelect(Poi poi);
     }
 
-    public PoiListAdapter(List<Poi> pois, OnItemClickListener listener) {
-        mPois = pois;
+    public PoiListAdapter(OnItemClickListener listener) {
         mListener = listener;
     }
 
@@ -41,8 +40,8 @@ public class PoiListAdapter extends RecyclerView.Adapter<PoiListAdapter.ViewHold
         return mPois.size();
     }
 
-    public void setListener(OnItemClickListener listener) {
-        mListener = listener;
+    public void setData(List<Poi> pois) {
+        mPois = pois;
         notifyDataSetChanged();
     }
 

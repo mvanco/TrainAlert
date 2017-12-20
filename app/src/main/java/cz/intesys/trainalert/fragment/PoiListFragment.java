@@ -11,11 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import cz.intesys.trainalert.adapter.PoiListAdapter;
 import cz.intesys.trainalert.databinding.FragmentPoiListBinding;
-import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 
 public class PoiListFragment extends Fragment {
@@ -38,10 +35,20 @@ public class PoiListFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(MainFragmentViewModel.class);
-        mViewModel.getPois().observe(this, pois -> handlePOIsChange(pois));
     }
 
     @Override
@@ -55,34 +62,26 @@ public class PoiListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mBinding.fragmentPoiListRecyclerView.setLayoutManager(mLayoutManager);
-        mViewModel.loadPOIs();
+        mAdapter = new PoiListAdapter(mListener);
+        mBinding.fragmentPoiListRecyclerView.setAdapter(mAdapter);
+        mViewModel.getPois().observe(this, pois -> {
+            mAdapter.setData(pois);
+        });
+
+//        TODO: find why this causes bug, if it is called right after onResume(), bigger delay is ok
+//        List<Poi> sExamplePOIs = new ArrayList<Poi>();
+//        sExamplePOIs.add(new Poi("Přechod 1", 50.47902, 14.03453, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi("Omezení (50) 1", 50.47394, 14.00254, POI_TYPE_SPEED_LIMITATION_50));
+//        sExamplePOIs.add(new Poi("Přechod 2", 50.47916, 13.99642, POI_TYPE_CROSSING));
+//        new Handler().postDelayed(() -> {
+//            handlePOIsChange(sExamplePOIs);
+//        }, 5);
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    public void setListener(OnFragmentInteractionListener listener) {
-        mListener = listener;
-        mAdapter.setListener(mListener);
-    }
-
-    private void handlePOIsChange(List<Poi> pois) {
-        mAdapter = new PoiListAdapter(pois, mListener);
-        mAdapter.setListener(mListener);
-        mBinding.fragmentPoiListRecyclerView.setAdapter(mAdapter); //If mBinding null so far move mViweModel.getPois() to onCreateView()
     }
 }

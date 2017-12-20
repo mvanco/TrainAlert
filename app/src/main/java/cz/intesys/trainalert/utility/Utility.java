@@ -6,13 +6,21 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.IntDef;
+import android.widget.Toast;
 
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.ItemizedOverlay;
+import org.osmdroid.views.overlay.OverlayItem;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.List;
 
+import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.TaConfig;
+import cz.intesys.trainalert.entity.Poi;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.atan;
@@ -78,6 +86,39 @@ public class Utility {
 
     public static float convertToDegrees(double radians) {
         return (float) (radians / PI * 180);
+    }
+
+    public static ItemizedOverlay<OverlayItem> loadOverlayFromPois(List<Poi> pois, Context context) {
+        final ArrayList<OverlayItem> items = new ArrayList<>();
+        for (Poi poi : pois) {
+            OverlayItem item = new OverlayItem(poi.getTitle(), "", poi);
+            item.setMarker(context.getResources().getDrawable(poi.getPOIConfiguration().getMarkerDrawable()));
+            item.setMarkerHotspot(OverlayItem.HotspotPlace.CENTER);
+            items.add(item);
+        }
+
+        ItemizedOverlay<OverlayItem> overlay = new ItemizedIconOverlay<>(items, context.getResources().getDrawable(R.drawable.poi_crossing),
+                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                    @Override
+                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                        Toast.makeText(
+                                context,
+                                "Item '" + item.getTitle() + "' (index=" + index
+                                        + ") got single tapped up", Toast.LENGTH_LONG).show();
+                        return true; // We 'handled' this event.
+                    }
+
+                    @Override
+                    public boolean onItemLongPress(final int index, final OverlayItem item) {
+                        Toast.makeText(
+                                context,
+                                "Item '" + item.getTitle() + "' (index=" + index
+                                        + ") got long pressed", Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                }, context.getApplicationContext());
+
+        return overlay;
     }
 
     public static class LocationPoller {

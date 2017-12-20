@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
@@ -23,10 +22,7 @@ import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-import org.osmdroid.views.overlay.ItemizedIconOverlay;
-import org.osmdroid.views.overlay.ItemizedOverlay;
 import org.osmdroid.views.overlay.Marker;
-import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +33,7 @@ import cz.intesys.trainalert.databinding.FragmentMainBinding;
 import cz.intesys.trainalert.entity.Alarm;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
-import cz.intesys.trainalert.repository.PostgreSqlRepository;
+import cz.intesys.trainalert.repository.SimulatedRepository;
 import cz.intesys.trainalert.utility.Utility;
 import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 
@@ -64,7 +60,7 @@ public class MainFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(MainFragmentViewModel.class);
-        getLifecycle().addObserver(PostgreSqlRepository.getInstance());
+        getLifecycle().addObserver(SimulatedRepository.getInstance()); // TODO: change to real PostgreSqlRepository
     }
 
     @Override
@@ -100,7 +96,6 @@ public class MainFragment extends Fragment {
         mBinding.fragmentMainMapview.getOverlayManager().add(mTrainMarker); // Add train marker.
         mViewModel.getLocation().observe(this, currentLocation -> handleLocationChange(mTrainMarker, currentLocation));
         mViewModel.getPois().observe(this, pois -> handlePOIsChange(pois));
-        mViewModel.loadPOIs();
     }
 
     private void initMap(Context context) {
@@ -248,36 +243,7 @@ public class MainFragment extends Fragment {
             return;
         }
 
-        final ArrayList<OverlayItem> items = new ArrayList<>();
-        for (Poi poi : pois) {
-            OverlayItem item = new OverlayItem(poi.getTitle(), "", poi);
-            item.setMarker(getActivity().getResources().getDrawable(poi.getPOIConfiguration().getMarkerDrawable()));
-            item.setMarkerHotspot(OverlayItem.HotspotPlace.CENTER);
-            items.add(item);
-        }
-
-        ItemizedOverlay<OverlayItem> overlay = new ItemizedIconOverlay<>(items, getResources().getDrawable(R.drawable.poi_crossing),
-                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                    @Override
-                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                        Toast.makeText(
-                                getActivity(),
-                                "Item '" + item.getTitle() + "' (index=" + index
-                                        + ") got single tapped up", Toast.LENGTH_LONG).show();
-                        return true; // We 'handled' this event.
-                    }
-
-                    @Override
-                    public boolean onItemLongPress(final int index, final OverlayItem item) {
-                        Toast.makeText(
-                                getActivity(),
-                                "Item '" + item.getTitle() + "' (index=" + index
-                                        + ") got long pressed", Toast.LENGTH_LONG).show();
-                        return false;
-                    }
-                }, getActivity().getApplicationContext());
-
-        mBinding.fragmentMainMapview.getOverlays().add(overlay);
+        mBinding.fragmentMainMapview.getOverlays().add(Utility.loadOverlayFromPois(pois, getActivity()));
     }
 
     /**

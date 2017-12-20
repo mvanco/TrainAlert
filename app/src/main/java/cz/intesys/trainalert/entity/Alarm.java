@@ -3,13 +3,26 @@ package cz.intesys.trainalert.entity;
 import android.content.Context;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.StringRes;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Alarm {
+public class Alarm implements Parcelable {
+    public static final Creator<Alarm> CREATOR = new Creator<Alarm>() {
+        @Override
+        public Alarm createFromParcel(Parcel in) {
+            return new Alarm(in);
+        }
+
+        @Override
+        public Alarm[] newArray(int size) {
+            return new Alarm[size];
+        }
+    };
     private @StringRes int message;
     private Uri ringtone;
     private int distance;
@@ -22,6 +35,13 @@ public class Alarm {
         this.ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         this.enabled = true; // Default behaviour.
         this.poi = poi;
+    }
+
+    protected Alarm(Parcel in) {
+        message = in.readInt();
+        ringtone = in.readParcelable(Uri.class.getClassLoader());
+        distance = in.readInt();
+        enabled = in.readByte() != 0;
     }
 
     /**
@@ -37,6 +57,19 @@ public class Alarm {
             alarms.add(new Alarm(messageRes, distance, poi));
         }
         return alarms;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(message);
+        dest.writeParcelable(ringtone, flags);
+        dest.writeInt(distance);
+        dest.writeByte((byte) (enabled ? 1 : 0));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public List<Alarm> toArray() {

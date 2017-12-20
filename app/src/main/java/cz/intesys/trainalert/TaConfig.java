@@ -5,4 +5,5 @@ public class TaConfig {
     public static final String REST_BASE_URL = "http://192.168.16.29:5000";
     public static final boolean LOGS = BuildConfig.LOGS;
     public static final int MAP_DEFAULT_ZOOM = 15; //
+    public static final int[] SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE = {200, 800}; // [0, 0] or [x, y] where x, y > 0
 }
