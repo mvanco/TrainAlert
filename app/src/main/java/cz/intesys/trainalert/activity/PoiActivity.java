@@ -16,8 +16,8 @@ import cz.intesys.trainalert.fragment.PoiMapFragment;
 
 public class PoiActivity extends AppCompatActivity implements PoiListFragment.OnFragmentInteractionListener, PoiMapFragment.OnFragmentInteractionListener {
 
-    private static final String POI_MAP_FRAGMENT_TAG = "cz.intesys.trainalert.poiactivity.poimaptag";
-    private static final String POI_LIST_FRAGMENT_TAG = "cz.intesys.trainalert.poiactivity.poilisttag";
+    private static final String POI_MAP_FRAGMENT_TAG = "cz.intesys.trainAlert.poiActivity.poiMapTag";
+    private static final String POI_LIST_FRAGMENT_TAG = "cz.intesys.trainAlert.poiActivity.poiListTag";
 
     private ActivityPoiBinding mBinding;
 

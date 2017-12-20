@@ -199,7 +199,7 @@ public class MainFragment extends Fragment {
         }
         for (Poi poi : mViewModel.getPois().getValue()) {
             Log.d("distance", "distance to " + poi.getMetaIndex() + " is " + currentLocation.distanceTo(poi));
-            for (Alarm alarm : poi.getPOIConfiguration().getAlarmList()) {
+            for (Alarm alarm : poi.getPoiConfiguration().getAlarmList()) {
                 if (alarm.isDisabled()) {
                     continue;
                 }

@@ -25,7 +25,7 @@ public class Poi implements IGeoPoint, Parcelable {
     private String title;
     private Double latitude;
     private Double longitude;
-    private PoiConfiguration POIConfiguration;
+    private PoiConfiguration PoiConfiguration;
     private int metaIndex;
 
     /**
@@ -37,14 +37,14 @@ public class Poi implements IGeoPoint, Parcelable {
         this.title = poiApi.getTitle();
         this.latitude = poiApi.getLatitude();
         this.longitude = poiApi.getLongitude();
-        this.POIConfiguration = new PoiConfiguration(poiApi.getType(), this);
+        this.PoiConfiguration = new PoiConfiguration(poiApi.getType(), this);
     }
 
     public Poi(String title, Double latitude, Double longitude, @Utility.POIType int type) {
         this.title = title;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.POIConfiguration = new PoiConfiguration(type, this);
+        this.PoiConfiguration = new PoiConfiguration(type, this);
     }
 
     public Poi(Double latitude, Double longitude, @Utility.POIType int type) {
@@ -63,7 +63,7 @@ public class Poi implements IGeoPoint, Parcelable {
         } else {
             longitude = in.readDouble();
         }
-        POIConfiguration = in.readParcelable(PoiConfiguration.class.getClassLoader());
+        PoiConfiguration = in.readParcelable(PoiConfiguration.class.getClassLoader());
         metaIndex = in.readInt();
     }
 
@@ -82,7 +82,7 @@ public class Poi implements IGeoPoint, Parcelable {
             dest.writeByte((byte) 1);
             dest.writeDouble(longitude);
         }
-        dest.writeParcelable(POIConfiguration, flags);
+        dest.writeParcelable(PoiConfiguration, flags);
         dest.writeInt(metaIndex);
     }
 
@@ -113,8 +113,8 @@ public class Poi implements IGeoPoint, Parcelable {
         return title;
     }
 
-    public PoiConfiguration getPOIConfiguration() {
-        return POIConfiguration;
+    public PoiConfiguration getPoiConfiguration() {
+        return PoiConfiguration;
     }
 
     public int getMetaIndex() {
@@ -126,14 +126,14 @@ public class Poi implements IGeoPoint, Parcelable {
     }
 
     public void addAlarm(Alarm alarm) {
-        this.POIConfiguration.getAlarmList().add(alarm);
+        this.PoiConfiguration.getAlarmList().add(alarm);
     }
 
     public List<Alarm> getAlarms() {
-        return this.POIConfiguration.getAlarmList();
+        return this.PoiConfiguration.getAlarmList();
     }
 
     public void setAlarms(List<Alarm> alarms) {
-        this.POIConfiguration.getAlarmList().addAll(alarms);
+        this.PoiConfiguration.getAlarmList().addAll(alarms);
     }
 }
