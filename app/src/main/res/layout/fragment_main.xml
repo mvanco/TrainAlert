@@ -4,18 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/fragment_main_map_container"
+        android:id="@+id/fragmentMain_mapContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="cz.intesys.trainalert.fragment.MainFragment">
 
         <org.osmdroid.views.MapView
-            android:id="@+id/fragment_main_mapview"
+            android:id="@+id/fragmentMain_mapView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
         <FrameLayout
-            android:id="@+id/fragment_main_notification_container"
+            android:id="@+id/fragmentMain_notificationContainer"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_marginTop="16dp"
@@ -35,29 +35,29 @@
                 android:contentDescription="@string/fragment_main_image_view_desc" />
 
             <TextView
-                android:id="@+id/fragment_main_notification_text"
+                android:id="@+id/fragmentMain_notificationText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="@dimen/red_circle_text_view_margin"
+                android:layout_margin="@dimen/redCircle_textView_margin"
                 android:gravity="center"
-                android:textSize="@dimen/red_circle_text_size"
+                android:textSize="@dimen/redCircle_text_size"
                 tools:text="Prejazd za 500m" />
 
         </FrameLayout>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
+            android:id="@+id/fragmentMain_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_marginBottom="@dimen/fab_gps_margin"
-            android:layout_marginEnd="@dimen/fab_gps_margin"
-            android:layout_marginRight="@dimen/fab_gps_margin"
+            android:layout_marginBottom="@dimen/fabGps_margin"
+            android:layout_marginEnd="@dimen/fabGps_margin"
+            android:layout_marginRight="@dimen/fabGps_margin"
             android:onClick="onFabClicked"
             android:src="@drawable/fab_gps_fixed"
             app:backgroundTint="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/fragment_main_mapview"
-            app:layout_constraintEnd_toEndOf="@+id/fragment_main_mapview" />
+            app:layout_constraintBottom_toBottomOf="@+id/fragmentMain_mapView"
+            app:layout_constraintEnd_toEndOf="@+id/fragmentMain_mapView" />
 
     </android.support.constraint.ConstraintLayout>
 

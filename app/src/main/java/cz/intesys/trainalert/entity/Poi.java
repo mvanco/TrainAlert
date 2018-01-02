@@ -1,5 +1,6 @@
 package cz.intesys.trainalert.entity;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -7,8 +8,11 @@ import org.osmdroid.api.IGeoPoint;
 
 import java.util.List;
 
+import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.api.PoiApi;
 import cz.intesys.trainalert.utility.Utility;
+
+import static cz.intesys.trainalert.utility.Utility.POI_TYPE_DEFUALT;
 
 public class Poi implements IGeoPoint, Parcelable {
     public static final Creator<Poi> CREATOR = new Creator<Poi>() {
@@ -25,7 +29,7 @@ public class Poi implements IGeoPoint, Parcelable {
     private String title;
     private Double latitude;
     private Double longitude;
-    private PoiConfiguration PoiConfiguration;
+    private PoiConfiguration poiConfiguration;
     private int metaIndex;
 
     /**
@@ -34,21 +38,25 @@ public class Poi implements IGeoPoint, Parcelable {
      * @param poiApi
      */
     public Poi(PoiApi poiApi) {
-        this.title = poiApi.getTitle();
-        this.latitude = poiApi.getLatitude();
-        this.longitude = poiApi.getLongitude();
-        this.PoiConfiguration = new PoiConfiguration(poiApi.getType(), this);
+        this(poiApi.getTitle(), poiApi.getLatitude(), poiApi.getLongitude(), poiApi.getType());
+    }
+
+    /**
+     * Create new default Poi from location.
+     */
+    public Poi(Location location, Context context) {
+        this(context.getString(R.string.poi_default_name), location.getLatitude(), location.getLongitude(), POI_TYPE_DEFUALT);
+    }
+
+    public Poi(Double latitude, Double longitude, @Utility.POIType int type) {
+        this(null, latitude, longitude, type);
     }
 
     public Poi(String title, Double latitude, Double longitude, @Utility.POIType int type) {
         this.title = title;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.PoiConfiguration = new PoiConfiguration(type, this);
-    }
-
-    public Poi(Double latitude, Double longitude, @Utility.POIType int type) {
-        this(null, latitude, longitude, type);
+        this.poiConfiguration = new PoiConfiguration(type, this);
     }
 
     protected Poi(Parcel in) {
@@ -63,7 +71,7 @@ public class Poi implements IGeoPoint, Parcelable {
         } else {
             longitude = in.readDouble();
         }
-        PoiConfiguration = in.readParcelable(PoiConfiguration.class.getClassLoader());
+        poiConfiguration = in.readParcelable(PoiConfiguration.class.getClassLoader());
         metaIndex = in.readInt();
     }
 
@@ -82,7 +90,7 @@ public class Poi implements IGeoPoint, Parcelable {
             dest.writeByte((byte) 1);
             dest.writeDouble(longitude);
         }
-        dest.writeParcelable(PoiConfiguration, flags);
+        dest.writeParcelable(poiConfiguration, flags);
         dest.writeInt(metaIndex);
     }
 
@@ -109,12 +117,32 @@ public class Poi implements IGeoPoint, Parcelable {
         return longitude;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Poi poi = (Poi) o;
+
+        if (!title.equals(poi.title)) return false;
+        if (!latitude.equals(poi.latitude)) return false;
+        return longitude.equals(poi.longitude);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = title.hashCode();
+        result = 31 * result + latitude.hashCode();
+        result = 31 * result + longitude.hashCode();
+        return result;
+    }
+
     public String getTitle() {
         return title;
     }
 
     public PoiConfiguration getPoiConfiguration() {
-        return PoiConfiguration;
+        return poiConfiguration;
     }
 
     public int getMetaIndex() {
@@ -126,14 +154,14 @@ public class Poi implements IGeoPoint, Parcelable {
     }
 
     public void addAlarm(Alarm alarm) {
-        this.PoiConfiguration.getAlarmList().add(alarm);
+        this.poiConfiguration.getAlarmList().add(alarm);
     }
 
     public List<Alarm> getAlarms() {
-        return this.PoiConfiguration.getAlarmList();
+        return this.poiConfiguration.getAlarmList();
     }
 
     public void setAlarms(List<Alarm> alarms) {
-        this.PoiConfiguration.getAlarmList().addAll(alarms);
+        this.poiConfiguration.getAlarmList().addAll(alarms);
     }
 }

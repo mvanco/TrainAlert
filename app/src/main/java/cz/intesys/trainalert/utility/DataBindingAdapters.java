@@ -10,7 +10,13 @@ public final class DataBindingAdapters {
 
 
     @BindingAdapter ("android:src")
-    public static void setImageResource(ImageView imageView, int resource) {
-        imageView.setImageResource(resource);
+    public static void setImageResource(ImageView imageView, int resId) {
+        imageView.setImageResource(resId);
     }
+
+
+//    @BindingAdapter("android:textRes")
+//    public static void setTextResource(TextView textView, int resId) {
+//        textView.setText(textView.getContext().getResources().getString(resId));
+//    }
 }

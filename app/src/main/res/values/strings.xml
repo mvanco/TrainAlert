@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">TrainAlert</string>
+
+    <!-- Navigation item IDs/titles -->
+    <string name="nav_pois">POIs</string>
+
     <string name="activity_main_navigation_drawer_open">Open</string>
     <string name="activity_main_navigation_drawer_close">Close</string>
-
-    <string name="activity_main_navigation_view_pois">POIs</string>
 
     <string name="fragment_main_poi_type_message_crossing">Přejezd za %1$d metrů</string>
     <string name="fragment_main_poi_type_message_speed_limitation">Omezení rychlosti %1$d km/h</string>
@@ -15,10 +17,10 @@
 
     <string name="activity_poi_title">POIs</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
+    <!-- Content Descriptions -->
     <string name="fragment_poi_list_icon_desc">Icon</string>
     <string name="fragment_poi_list_title_desc">Title</string>
+    <string name="nav_header_item_image_view_desc">Icon</string>
+    <string name="poi_default_name"><![CDATA[<Name>]]></string>
+
 </resources>

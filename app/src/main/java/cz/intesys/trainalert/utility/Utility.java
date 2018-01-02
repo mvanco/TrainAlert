@@ -33,6 +33,7 @@ public class Utility {
     public static final int POI_TYPE_TRAIN_STATION = 3;
     public static final int POI_TYPE_TURNOUT = 4;
     public static final int POI_TYPE_BRIDGE = 5;
+    public static final int POI_TYPE_DEFUALT = POI_TYPE_CROSSING;
 
     @Retention (RetentionPolicy.SOURCE)
     @IntDef ( {POI_TYPE_CROSSING, POI_TYPE_SPEED_LIMITATION_50, POI_TYPE_SPEED_LIMITATION_70, POI_TYPE_TRAIN_STATION, POI_TYPE_TURNOUT, POI_TYPE_BRIDGE})

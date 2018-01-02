@@ -33,12 +33,12 @@ import cz.intesys.trainalert.databinding.FragmentMainBinding;
 import cz.intesys.trainalert.entity.Alarm;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
-import cz.intesys.trainalert.repository.SimulatedRepository;
 import cz.intesys.trainalert.utility.Utility;
 import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 
 import static cz.intesys.trainalert.TaConfig.GPS_TIME_INTERVAL;
 import static cz.intesys.trainalert.TaConfig.MAP_DEFAULT_ZOOM;
+import static cz.intesys.trainalert.TaConfig.REPOSITORY;
 import static cz.intesys.trainalert.utility.Utility.convertToDegrees;
 import static cz.intesys.trainalert.utility.Utility.getMarkerRotation;
 import static cz.intesys.trainalert.utility.Utility.playSound;
@@ -60,14 +60,14 @@ public class MainFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(MainFragmentViewModel.class);
-        getLifecycle().addObserver(SimulatedRepository.getInstance()); // TODO: change to real PostgreSqlRepository
+        getLifecycle().addObserver(REPOSITORY);
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = FragmentMainBinding.inflate(inflater, container, false);
-        mBinding.fab.setOnClickListener(view -> onFabClick());
+        mBinding.fragmentMainFab.setOnClickListener(view -> onFabClick());
         return mBinding.getRoot();
     }
 
@@ -77,8 +77,22 @@ public class MainFragment extends Fragment {
         initAnimation();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mTrainMarker.setPosition(mViewModel.getLastLocation().toGeoPoint());
+    }
+
     public void restartAnimation(Context context) {
         setFabAsNotFixed();
+    }
+
+    public boolean isAnimating() {
+        return mViewModel.isAnimating();
+    }
+
+    public void setAnimating(boolean shouldAnimating) {
+        mViewModel.setAnimating(shouldAnimating);
     }
 
     private void onFabClick() {
@@ -92,17 +106,17 @@ public class MainFragment extends Fragment {
      */
     private void initAnimation() {
         initMap(getActivity()); // Initialize map using osmdroid library and set current position on the map.
-        initTrainMarker(mBinding.fragmentMainMapview);
-        mBinding.fragmentMainMapview.getOverlayManager().add(mTrainMarker); // Add train marker.
+        initTrainMarker(mBinding.fragmentMainMapView);
+        mBinding.fragmentMainMapView.getOverlayManager().add(mTrainMarker); // Add train marker.
         mViewModel.getLocation().observe(this, currentLocation -> handleLocationChange(mTrainMarker, currentLocation));
         mViewModel.getPois().observe(this, pois -> handlePOIsChange(pois));
     }
 
     private void initMap(Context context) {
         Configuration.getInstance().load(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Load configuration.
-        mBinding.fragmentMainMapview.setMultiTouchControls(true);
-        mBinding.fragmentMainMapview.setTilesScaledToDpi(true);
-        mBinding.fragmentMainMapview.setMapListener(new MapListener() {
+        mBinding.fragmentMainMapView.setMultiTouchControls(true);
+        mBinding.fragmentMainMapView.setTilesScaledToDpi(true);
+        mBinding.fragmentMainMapView.setMapListener(new MapListener() {
             @Override
             public boolean onScroll(ScrollEvent event) {
                 return onMapScroll(event);
@@ -113,7 +127,7 @@ public class MainFragment extends Fragment {
                 return false;
             }
         });
-        mBinding.fragmentMainMapview.getController().setZoom(MAP_DEFAULT_ZOOM);
+        mBinding.fragmentMainMapView.getController().setZoom(MAP_DEFAULT_ZOOM);
         Configuration.getInstance().save(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Save configuration.
     }
 
@@ -149,7 +163,11 @@ public class MainFragment extends Fragment {
 
     private void handleLocationChange(Marker trainMarker, Location currentLocation) {
         Log.d("handler", "executing repetitious code from to position " + currentLocation.getLatitude() + ", " + currentLocation.getLongitude());
-        animateMarkerTo(mBinding.fragmentMainMapview, trainMarker, currentLocation.toGeoPoint(), new GeoPointInterpolator.Linear());
+        if (mViewModel.isAnimating()) {
+            animateMarkerTo(mBinding.fragmentMainMapView, trainMarker, currentLocation.toGeoPoint(), new GeoPointInterpolator.Linear());
+        } else {
+            trainMarker.setPosition(currentLocation.toGeoPoint());
+        }
         if (!mViewModel.isFreeMode()) {
             setMapPosition(currentLocation.toGeoPoint());
         }
@@ -164,8 +182,12 @@ public class MainFragment extends Fragment {
         final GeoPoint startPosition = marker.getPosition();
         ValueAnimator valueAnimator = new ValueAnimator();
 
-        valueAnimator.addUpdateListener(animation -> {
-            float v = animation.getAnimatedFraction();
+        valueAnimator.addUpdateListener(animator -> {
+            if (!mViewModel.isAnimating()) {
+                animator.cancel();
+                return;
+            }
+            float v = animator.getAnimatedFraction();
             Log.d("anim", "animation portion is " + v);
             GeoPoint newPosition = GeoPointInterpolator.interpolate(v, startPosition, finalPosition); //TODO: make this using
             marker.setPosition(newPosition);
@@ -242,8 +264,10 @@ public class MainFragment extends Fragment {
         if (getActivity() == null) {
             return;
         }
-
-        mBinding.fragmentMainMapview.getOverlays().add(Utility.loadOverlayFromPois(pois, getActivity()));
+        if (mBinding.fragmentMainMapView.getOverlays().size() > 1) {
+            mBinding.fragmentMainMapView.getOverlays().remove(1);
+        }
+        mBinding.fragmentMainMapView.getOverlays().add(Utility.loadOverlayFromPois(pois, getActivity()));
     }
 
     /**
@@ -255,14 +279,14 @@ public class MainFragment extends Fragment {
     private void setMapPosition(GeoPoint newPosition) {
         mViewModel.setFreeMode(false);
         mViewModel.setShouldSwitchToFreeMode(false);
-        mBinding.fragmentMainMapview.getController().setCenter(newPosition);
+        mBinding.fragmentMainMapView.getController().setCenter(newPosition);
     }
 
     private void setFabAsFixed() {
-        mBinding.fab.setImageResource(R.drawable.fab_gps_fixed);
+        mBinding.fragmentMainFab.setImageResource(R.drawable.fab_gps_fixed);
     }
 
     private void setFabAsNotFixed() {
-        mBinding.fab.setImageResource(R.drawable.fab_gps_not_fixed);
+        mBinding.fragmentMainFab.setImageResource(R.drawable.fab_gps_not_fixed);
     }
 }

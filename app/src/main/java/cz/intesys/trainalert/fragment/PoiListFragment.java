@@ -24,6 +24,7 @@ public class PoiListFragment extends Fragment {
     private PoiListAdapter mAdapter;
 
     public interface OnFragmentInteractionListener extends PoiListAdapter.OnItemClickListener {
+        void onPoiAdd();
     }
 
     public PoiListFragment() {
@@ -54,6 +55,7 @@ public class PoiListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentPoiListBinding.inflate(inflater, container, false);
+        mBinding.fragmentPoiListFab.setOnClickListener((view) -> mListener.onPoiAdd());
         return mBinding.getRoot();
     }
 
@@ -61,6 +63,7 @@ public class PoiListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mLayoutManager = new LinearLayoutManager(getActivity());
+        mBinding.fragmentPoiListRecyclerView.hasFixedSize();
         mBinding.fragmentPoiListRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new PoiListAdapter(mListener);
         mBinding.fragmentPoiListRecyclerView.setAdapter(mAdapter);

@@ -4,20 +4,20 @@
         <shape android:shape="oval">
             <solid android:color="#ff0000" />
             <stroke
-                android:width="@dimen/red_circle_stroke_width"
+                android:width="@dimen/redCircle_stroke_width"
                 android:color="#000000" />
         </shape>
     </item>
     <item
-        android:bottom="@dimen/red_circle_red_border_width"
+        android:bottom="@dimen/redCircle_redBorder_width"
         android:gravity="center"
-        android:left="@dimen/red_circle_red_border_width"
-        android:right="@dimen/red_circle_red_border_width"
-        android:top="@dimen/red_circle_red_border_width">
+        android:left="@dimen/redCircle_redBorder_width"
+        android:right="@dimen/redCircle_redBorder_width"
+        android:top="@dimen/redCircle_redBorder_width">
         <shape android:shape="oval">
             <solid android:color="#f1ed15" />
             <stroke
-                android:width="@dimen/red_circle_stroke_width"
+                android:width="@dimen/redCircle_stroke_width"
                 android:color="#000000" />
         </shape>
     </item>

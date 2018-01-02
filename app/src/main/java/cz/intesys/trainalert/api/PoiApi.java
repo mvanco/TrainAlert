@@ -4,6 +4,8 @@ import com.google.gson.annotations.Expose;
 
 import org.osmdroid.api.IGeoPoint;
 
+import cz.intesys.trainalert.utility.Utility;
+
 public class PoiApi implements IGeoPoint {
     @Expose
     private long id;
@@ -62,7 +64,8 @@ public class PoiApi implements IGeoPoint {
         this.title = title;
     }
 
-    public int getType() {
+    public @Utility.POIType
+    int getType() {
         return type;
     }
 

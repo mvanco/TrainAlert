@@ -39,7 +39,7 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (mBinding.fragmentContainer != null) { // In portrait mode with single fragment.
+                if (mBinding.activityPoiFragmentContainer != null) { // In portrait mode with single fragment.
                     if (getSupportFragmentManager().findFragmentByTag(POI_MAP_FRAGMENT_TAG) != null) {
                         switchToPoiListFragment();
                     } else {
@@ -54,10 +54,10 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
 
     @Override
     public void onPoiSelect(Poi poi) {
-        if (mBinding.fragmentContainer != null) {
+        if (isInSingleFragmentMode()) {
             switchToPoiMapFragment(poi);
         } else {
-            PoiMapFragment fragment = (PoiMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_poi_map);
+            PoiMapFragment fragment = (PoiMapFragment) getSupportFragmentManager().findFragmentById(R.id.activityPoi_mapFragment);
             fragment.editPoi(poi);
         }
         Log.d("fraginteraction", "was clicked on poi " + poi.getTitle());
@@ -68,18 +68,25 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
 
     }
 
-    public void onAddPoiClick() {
+    @Override
+    public void onPoiAdd() {
+        if (isInSingleFragmentMode()) {
+            switchToPoiMapFragment(PoiMapFragment.MODE_NEW_POI);
+        } else {
+            PoiMapFragment fragment = (PoiMapFragment) getSupportFragmentManager().findFragmentById(R.id.activityPoi_mapFragment);
+            fragment.addPoi();
+        }
 
     }
 
     private void setupLayout() {
-        if (mBinding.fragmentContainer != null) {
+        if (mBinding.activityPoiFragmentContainer != null) {
             switchToPoiListFragment();
         }
     }
 
     private void setupActionBar() {
-        setSupportActionBar(mBinding.myToolbar);
+        setSupportActionBar(mBinding.activityPoiToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setTitle(R.string.activity_poi_title);
@@ -87,11 +94,20 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
 
     private void switchToPoiListFragment() {
         PoiListFragment fragment = PoiListFragment.newInstance();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment, POI_LIST_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.activityPoi_fragmentContainer, fragment, POI_LIST_FRAGMENT_TAG).commit();
     }
 
     private void switchToPoiMapFragment(Poi poi) {
         PoiMapFragment fragment = PoiMapFragment.newInstance(poi);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment, POI_MAP_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.activityPoi_fragmentContainer, fragment, POI_MAP_FRAGMENT_TAG).commit();
+    }
+
+    private void switchToPoiMapFragment(@PoiMapFragment.PoiMapFragmentMode int mode) {
+        PoiMapFragment fragment = PoiMapFragment.newInstance(mode);
+        getSupportFragmentManager().beginTransaction().replace(R.id.activityPoi_fragmentContainer, fragment, POI_MAP_FRAGMENT_TAG).commit();
+    }
+
+    private boolean isInSingleFragmentMode() {
+        return mBinding.activityPoiFragmentContainer != null;
     }
 }

@@ -12,6 +12,8 @@ import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.repository.Repository;
 import cz.intesys.trainalert.repository.SimulatedRepository;
 
+import static cz.intesys.trainalert.TaConfig.REPOSITORY;
+
 public class PoiMapFragmentViewModel extends ViewModel {
     private MediatorLiveData<Location> mLocation;
     private MediatorLiveData<List<Poi>> mPois;
@@ -23,7 +25,7 @@ public class PoiMapFragmentViewModel extends ViewModel {
         mLocation = new MediatorLiveData<Location>();
 
         mPois = new MediatorLiveData<List<Poi>>();
-        mRepository = SimulatedRepository.getInstance(); // TODO: change to real PostgreSqlRepository
+        mRepository = REPOSITORY;
 
         mLocation.addSource(mRepository.getCurrentLocation(), currentLocation -> mLocation.setValue(currentLocation));
         mPois.addSource(mRepository.getPois(), pois -> {

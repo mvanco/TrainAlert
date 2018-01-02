@@ -7,43 +7,43 @@
 
 
     <EditText
-        android:id="@+id/poi_map_info_latitude"
+        android:id="@+id/poiMapInfo_latitude"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
-        app:layout_constraintBottom_toTopOf="@+id/poi_map_info_marker"
-        app:layout_constraintEnd_toStartOf="@+id/poi_map_info_longitude"
+        app:layout_constraintBottom_toTopOf="@+id/poiMapInfo_marker"
+        app:layout_constraintEnd_toStartOf="@+id/poiMapInfo_longitude"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
-        android:id="@+id/poi_map_info_longitude"
+        android:id="@+id/poiMapInfo_longitude"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
         android:text="Name"
-        app:layout_constraintBaseline_toBaselineOf="@+id/poi_map_info_latitude"
+        app:layout_constraintBaseline_toBaselineOf="@+id/poiMapInfo_latitude"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/poi_map_info_latitude" />
+        app:layout_constraintStart_toEndOf="@+id/poiMapInfo_latitude" />
 
     <ImageView
-        android:id="@+id/poi_map_info_marker"
+        android:id="@+id/poiMapInfo_marker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/poi_map_info_horizontal_line"
+        app:layout_constraintBottom_toTopOf="@+id/poiMapInfo_horizontalLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/marker_default" />
+        app:srcCompat="@drawable/ic_edit_location" />
 
     <Button
-        android:id="@+id/poi_map_info_confirm_button"
+        android:id="@+id/poiMapInfo_confirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -52,10 +52,10 @@
         android:text="OK"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/poi_map_info_horizontal_line" />
+        app:layout_constraintTop_toTopOf="@+id/poiMapInfo_horizontalLine" />
 
     <android.support.constraint.Guideline
-        android:id="@+id/poi_map_info_horizontal_line"
+        android:id="@+id/poiMapInfo_horizontalLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -67,13 +67,13 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toTopOf="@id/poi_map_info_latitude"
+        app:layout_constraintBottom_toTopOf="@id/poiMapInfo_latitude"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="91dp">
 
         <ImageView
-            android:id="@+id/poi_map_info_icon"
+            android:id="@+id/poiMapInfo_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -82,7 +82,7 @@
             tools:layout_editor_absoluteY="94dp" />
 
         <EditText
-            android:id="@+id/poi_map_info_title"
+            android:id="@+id/poiMapInfo_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"

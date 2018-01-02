@@ -3,11 +3,23 @@ package cz.intesys.trainalert.activity;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
+import android.view.View;
 
 import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.adapter.NavAdapter;
 import cz.intesys.trainalert.databinding.ActivityMainBinding;
+import cz.intesys.trainalert.fragment.MainFragment;
+
+import static android.support.v4.widget.DrawerLayout.STATE_IDLE;
+import static android.support.v4.widget.DrawerLayout.STATE_SETTLING;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,17 +31,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         setupActionBar();
-        binding.activityMainNavigationView.setNavigationItemSelectedListener(
-                (item) -> {
-                    if (item.getItemId() == R.id.menu_pois) {
-                        // TODO: start activity with editation possibilities
-                        binding.activityMainDrawerLayout.closeDrawers();
-                        startActivity(PoiActivity.newIntent(MainActivity.this));
-                        return true;
-                    }
-                    return false;
-                }
-        );
+        RecyclerView recyclerView = binding.activityMainNavigationView.findViewById(R.id.activityMain_recyclerView);
+        recyclerView.hasFixedSize();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new NavAdapter((id) -> onNavigationItemSelected(id)));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.activity_main_content_main_activity);
+        fragment.setAnimating(true);
+    }
+
+    private void onNavigationItemSelected(@StringRes int id) {
+        if (id == R.string.nav_pois) { // POIs
+            MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.activity_main_content_main_activity);
+            fragment.setAnimating(false);
+            binding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
+            startActivity(PoiActivity.newIntent(MainActivity.this));
+        }
     }
 
     private void setupActionBar() {
@@ -40,5 +61,31 @@ public class MainActivity extends AppCompatActivity {
         binding.activityMainDrawerLayout.addDrawerListener(mToggle);
         binding.activityMainDrawerLayout.setScrimColor(Color.TRANSPARENT);
         mToggle.syncState();
+        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.activity_main_content_main_activity);
+        binding.activityMainDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(@NonNull View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                if (newState == STATE_SETTLING) { // Animation is in progress.
+                    fragment.setAnimating(false); // Stop animation in fragment to allow finer animation of drawer.
+                } else if (newState == STATE_IDLE) { // Animation is not in progress.
+                    fragment.setAnimating(true);
+                }
+            }
+        });
     }
 }

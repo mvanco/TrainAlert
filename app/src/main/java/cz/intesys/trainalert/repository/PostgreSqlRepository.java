@@ -1,7 +1,6 @@
 package cz.intesys.trainalert.repository;
 
 import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.OnLifecycleEvent;
@@ -26,7 +25,7 @@ import retrofit2.Response;
  * Note: If used with location, there must be added getLifecycle().addObserver(PostgreSqlRepository.getInstance())
  * on fragment or activity. For loading POIs, loadPois() method should be used.
  */
-public class PostgreSqlRepository implements Repository, LifecycleObserver {
+public class PostgreSqlRepository implements Repository {
     private static PostgreSqlRepository sInstance;
     private TaServerApi mApiService;
     private LocationPoller mLocationPoller;
@@ -65,6 +64,10 @@ public class PostgreSqlRepository implements Repository, LifecycleObserver {
                 for (PoiApi poiApi : response.body().getPois()) {
                     pois.add(new Poi(poiApi));
                 }
+                if (mPois.getValue() != null && mPois.getValue().equals(pois)) {
+                    return; // Prevent reloading of new data (e.g. in RecyclerView) when it is the same as previous - it suppress UI artifacts
+                }
+
                 mPois.setValue(pois);
             }
 

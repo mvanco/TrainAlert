@@ -1,46 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="cz.intesys.trainalert.activity.MainActivity">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/activityMain_appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/activityMain_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize" />
+
+        </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.widget.DrawerLayout
-            android:id="@+id/activity_main_drawer_layout"
+            android:id="@+id/activityMain_drawerLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <include
                 layout="@layout/activity_main_content"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="?attr/actionBarSize" />
+                android:layout_height="match_parent" />
 
             <android.support.design.widget.NavigationView
-                android:id="@+id/activity_main_navigation_view"
+                android:id="@+id/activityMain_navigationView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="start"
-                android:layout_marginTop="?attr/actionBarSize"
-                app:menu="@menu/activity_main_navigation_view" />
+                android:layout_gravity="start">
+
+                <android.support.v4.widget.NestedScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <include layout="@layout/nav_header" />
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/activityMain_recyclerView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:nestedScrollingEnabled="false"
+                            tools:targetApi="lollipop" />
+
+                    </LinearLayout>
+
+                </android.support.v4.widget.NestedScrollView>
+
+            </android.support.design.widget.NavigationView>
 
         </android.support.v4.widget.DrawerLayout>
 
-        <android.support.design.widget.AppBarLayout
-            android:id="@+id/activity_main_app_bar_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/activity_main_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize" />
-
-        </android.support.design.widget.AppBarLayout>
-
-    </FrameLayout>
+    </LinearLayout>
 
 </layout>

@@ -1,7 +1,6 @@
 package cz.intesys.trainalert.repository;
 
 import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.OnLifecycleEvent;
@@ -23,10 +22,11 @@ import static cz.intesys.trainalert.utility.Utility.POI_TYPE_SPEED_LIMITATION_70
 import static cz.intesys.trainalert.utility.Utility.POI_TYPE_TRAIN_STATION;
 import static cz.intesys.trainalert.utility.Utility.POI_TYPE_TURNOUT;
 
-public class SimulatedRepository implements Repository, LifecycleObserver {
+public class SimulatedRepository implements Repository {
     private final List<Poi> mExamplePois;
     private static SimulatedRepository sInstance;
     private int mLocationIterator = 0; // 0 - the most right Poi, 230 - the most left Poi
+    private boolean mLoaded = false;
     private boolean toTheLeftDirection = true;
     private List<Location> mExampleRoute;
     private LocationPoller mLocationPoller;
@@ -55,9 +55,12 @@ public class SimulatedRepository implements Repository, LifecycleObserver {
     }
 
     public void loadPois() {
-        new Handler().postDelayed(() -> {
-            mPois.setValue(mExamplePois);
-        }, getRandomServerDelay());
+        if (!mLoaded) {
+            new Handler().postDelayed(() -> {
+                mPois.setValue(mExamplePois);
+                mLoaded = true;
+            }, getRandomServerDelay());
+        }
     }
 
     @Override

@@ -7,55 +7,56 @@
 
         <variable
             name="data"
-            type="cz.intesys.trainalert.entity.Poi" />
+            type="cz.intesys.trainalert.entity.NavItem" />
     </data>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/poiListItem_cardView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/poiListItem_height"
-        android:layout_marginBottom="@dimen/poiListItem_cardView_margin"
-        android:layout_marginEnd="@dimen/poiListItem_cardView_margin"
-        android:layout_marginStart="@dimen/poiListItem_cardView_margin"
-        android:padding="@dimen/poiListItem_cardView_padding"
-        app:cardCornerRadius="@dimen/poiListItem_cardView_cornerRadius"
-        app:cardElevation="@dimen/poiListItem_cardView_elevation">
+        android:layout_height="@dimen/navHeaderItem_cardView_height"
+        android:layout_marginBottom="@dimen/navHeaderItem_cardView_margin"
+        android:layout_marginEnd="@dimen/navHeaderItem_cardView_margin"
+        android:layout_marginLeft="@dimen/navHeaderItem_cardView_margin"
+        android:layout_marginRight="@dimen/navHeaderItem_cardView_margin"
+        android:layout_marginStart="@dimen/navHeaderItem_cardView_margin"
+        android:elevation="@dimen/navHeaderItem_cardView_elevation"
+        android:padding="@dimen/navHeaderItem_cardView_padding"
+        app:cardCornerRadius="@dimen/navHeaderItem_cardView_cornerRadius">
+
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/poiListItem_icon"
+                android:id="@+id/navHeaderItem_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:contentDescription="@string/fragment_poi_list_icon_desc"
-                android:src="@{data.poiConfiguration.markerDrawable}"
+                android:contentDescription="@string/nav_header_item_image_view_desc"
+                android:src="@{data.iconRes}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/poi_crossing" />
+                app:srcCompat="@android:drawable/btn_star_big_on" />
 
             <TextView
-                android:id="@+id/poiListItem_title"
+                android:id="@+id/navHeaderItem_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:contentDescription="@string/fragment_poi_list_title_desc"
-                android:text="@{data.title}"
-                app:layout_constraintBottom_toBottomOf="@id/poiListItem_icon"
+                android:text="@{data.titleRes}"
+                app:layout_constraintBottom_toBottomOf="@+id/navHeaderItem_icon"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/poiListItem_icon"
-                app:layout_constraintTop_toTopOf="@id/poiListItem_icon"
-                tools:text="Přechod 1" />
-
+                app:layout_constraintStart_toEndOf="@+id/navHeaderItem_icon"
+                app:layout_constraintTop_toTopOf="@+id/navHeaderItem_icon"
+                tools:text="TextView" />
         </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
+
 
 </layout>

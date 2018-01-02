@@ -9,7 +9,7 @@
         tools:context="cz.intesys.trainalert.activity.PoiActivity">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/my_toolbar"
+            android:id="@+id/activityPoi_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -18,27 +18,27 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         <fragment
-            android:id="@+id/fragment_poi_list"
+            android:id="@+id/activityPoi_listFragment"
             android:name="cz.intesys.trainalert.fragment.PoiListFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintStart_toStartOf="@+id/my_toolbar"
-            app:layout_constraintTop_toBottomOf="@+id/my_toolbar" />
+            app:layout_constraintEnd_toStartOf="@+id/activityPoi_guideline"
+            app:layout_constraintStart_toStartOf="@+id/activityPoi_toolbar"
+            app:layout_constraintTop_toBottomOf="@+id/activityPoi_toolbar" />
 
         <fragment
-            android:id="@+id/fragment_poi_map"
+            android:id="@+id/activityPoi_mapFragment"
             android:name="cz.intesys.trainalert.fragment.PoiMapFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/my_toolbar"
-            app:layout_constraintStart_toEndOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/my_toolbar" />
+            app:layout_constraintEnd_toEndOf="@+id/activityPoi_toolbar"
+            app:layout_constraintStart_toEndOf="@+id/activityPoi_guideline"
+            app:layout_constraintTop_toBottomOf="@+id/activityPoi_toolbar" />
 
         <android.support.constraint.Guideline
-            android:id="@+id/guideline"
+            android:id="@+id/activityPoi_guideline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"

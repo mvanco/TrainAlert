@@ -14,6 +14,8 @@ import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.repository.Repository;
 import cz.intesys.trainalert.repository.SimulatedRepository;
 
+import static cz.intesys.trainalert.TaConfig.REPOSITORY;
+
 public class MainFragmentViewModel extends ViewModel {
 
     private MediatorLiveData<Location> mLocation;
@@ -23,12 +25,13 @@ public class MainFragmentViewModel extends ViewModel {
     private boolean mShouldSwitchToFreeMode = false;
     private boolean mFreeMode = false;
     private List<Poi> mRawPois;
+    private boolean animating = true;
 
     public MainFragmentViewModel() {
         mLocation = new MediatorLiveData<Location>();
 
         mPois = new MediatorLiveData<List<Poi>>();
-        mRepository = SimulatedRepository.getInstance(); // TODO: change to real PostgreSqlRepository
+        mRepository = REPOSITORY;
         mDisabledAlarms = new ArrayList<Alarm>();
 
         mLocation.addSource(mRepository.getCurrentLocation(), currentLocation -> mLocation.setValue(currentLocation));
@@ -37,6 +40,14 @@ public class MainFragmentViewModel extends ViewModel {
             mPois.setValue(pois);
         });
         loadPOIs();
+    }
+
+    public boolean isAnimating() {
+        return animating;
+    }
+
+    public void setAnimating(boolean animating) {
+        this.animating = animating;
     }
 
     public boolean isFreeMode() {
