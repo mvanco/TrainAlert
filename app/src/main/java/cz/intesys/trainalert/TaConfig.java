@@ -1,5 +1,7 @@
 package cz.intesys.trainalert;
 
+import java.util.concurrent.TimeUnit;
+
 import cz.intesys.trainalert.repository.Repository;
 import cz.intesys.trainalert.repository.SimulatedRepository;
 
@@ -10,4 +12,7 @@ public class TaConfig {
     public static final int MAP_DEFAULT_ZOOM = 15; //
     public static final int[] SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE = {200, 800}; // [0, 0] or [x, y] where x, y > 0
     public static final Repository REPOSITORY = SimulatedRepository.getInstance(); // TODO: change to real PostgreSqlRepository
+
+    public static final long UPDATE_INTERVAL = 5;
+    public static final TimeUnit UPDATE_INTERVAL_UNIT = TimeUnit.MINUTES;
 }

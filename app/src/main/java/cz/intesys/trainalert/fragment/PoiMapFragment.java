@@ -14,12 +14,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.events.MapListener;
 import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.OverlayItem;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -167,11 +170,25 @@ public class PoiMapFragment extends Fragment {
         });
         mBinding.fragmentMainMapView.getController().setZoom(MAP_DEFAULT_ZOOM);
 
-        mViewModel.getPois().observe(this, pois -> {
+        mViewModel.getPoisObservable(this).subscribe(pois -> {
             if (mBinding.fragmentMainMapView.getOverlays().size() > 1) {
                 mBinding.fragmentMainMapView.getOverlays().remove(1);
             }
-            mBinding.fragmentMainMapView.getOverlays().add(Utility.loadOverlayFromPois(pois, getActivity()));
+
+            ItemizedIconOverlay.OnItemGestureListener onItemGestureListener = new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+                @Override
+                public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                    Toast.makeText(getActivity(), item.getTitle(), Toast.LENGTH_LONG).show();
+                    return true;
+                }
+
+                @Override
+                public boolean onItemLongPress(final int index, final OverlayItem item) {
+                    editPoi(mViewModel.getLastPois().get(index));
+                    return true;
+                }
+            };
+            mBinding.fragmentMainMapView.getOverlays().add(Utility.loadOverlayFromPois(pois, onItemGestureListener, getActivity()));
         });
 
         if (getArguments() != null && getArguments().containsKey(POI_KEY)) {

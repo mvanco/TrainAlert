@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import cz.intesys.trainalert.utility.Utility;
+
 public class Alarm implements Parcelable {
     public static final Creator<Alarm> CREATOR = new Creator<Alarm>() {
         @Override
@@ -112,5 +114,9 @@ public class Alarm implements Parcelable {
 
     public boolean isDisabled() {
         return !enabled;
+    }
+
+    public void playSound(Context context) {
+        Utility.playSound(ringtone, context);
     }
 }

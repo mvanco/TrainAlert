@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="redCircle_redBorder_width">16dp</dimen>
-    <dimen name="redCircle_stroke_width">2dp</dimen>
-    <dimen name="redCircle_text_size">20sp</dimen>
-    <dimen name="redCircle_textView_margin">48dp</dimen>
+    <dimen name="alarm_whitePadding_width">6dp</dimen>
+    <dimen name="alarm_outerBorder_width">24dp</dimen>
+    <dimen name="alarm_stroke_width">2dp</dimen>
+    <dimen name="alarm_text_size">20sp</dimen>
+    <dimen name="alarm_textView_margin">48dp</dimen>
+    <dimen name="alarm_roundRadius">4dp</dimen>
+
     <dimen name="fabGps_margin">20dp</dimen>
 
     <dimen name="navHeader_height">8dp</dimen>

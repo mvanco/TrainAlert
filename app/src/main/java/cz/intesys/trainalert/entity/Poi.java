@@ -48,11 +48,11 @@ public class Poi implements IGeoPoint, Parcelable {
         this(context.getString(R.string.poi_default_name), location.getLatitude(), location.getLongitude(), POI_TYPE_DEFUALT);
     }
 
-    public Poi(Double latitude, Double longitude, @Utility.POIType int type) {
+    public Poi(Double latitude, Double longitude, @Utility.CategoryId int type) {
         this(null, latitude, longitude, type);
     }
 
-    public Poi(String title, Double latitude, Double longitude, @Utility.POIType int type) {
+    public Poi(String title, Double latitude, Double longitude, @Utility.CategoryId int type) {
         this.title = title;
         this.latitude = latitude;
         this.longitude = longitude;

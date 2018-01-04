@@ -2,25 +2,97 @@
     <string name="app_name">TrainAlert</string>
 
     <!-- Navigation item IDs/titles -->
-    <string name="nav_pois">POIs</string>
+    <string name="nav_pois">POI body</string>
+    <string name="nav_categories">Kategorie</string>
 
     <string name="activity_main_navigation_drawer_open">Open</string>
     <string name="activity_main_navigation_drawer_close">Close</string>
 
+    <!-- Alarm -->
     <string name="fragment_main_poi_type_message_crossing">Přejezd za %1$d metrů</string>
     <string name="fragment_main_poi_type_message_speed_limitation">Omezení rychlosti %1$d km/h</string>
     <string name="fragment_main_poi_type_message_train_station">Stanice %1$d m</string>
     <string name="fragment_main_poi_type_message_turnout">Výhybka %1$d m</string>
     <string name="fragment_main_poi_type_message_bridge">Most %1$d m</string>
 
-    <string name="fragment_main_image_view_desc">Red round sign</string>
-
-    <string name="activity_poi_title">POIs</string>
-
     <!-- Content Descriptions -->
     <string name="fragment_poi_list_icon_desc">Icon</string>
     <string name="fragment_poi_list_title_desc">Title</string>
+    <string name="fragment_main_image_view_desc">Red round sign</string>
     <string name="nav_header_item_image_view_desc">Icon</string>
     <string name="poi_default_name"><![CDATA[<Name>]]></string>
+
+    <!-- Titles -->
+    <string name="title_activity_poi">POI body</string>
+    <string name="title_activity_category">Kategorie</string>
+
+    <string name="pref_title_ringtone">Zvukové upozornění</string>
+    <string name="pref_ringtone_silent">silent</string>
+    <string name="pref_title_vibrate">Vibrovat</string>
+    <string name="pref_title_before_text">Text upozornění</string>
+    <string name="pref_title_include_distance">Zahrnout vzdálenost</string>
+    <string name="pref_title_after_text">Text upozornění za vzdáleností</string>
+    <string name="pref_default_before_text"></string>
+    <string name="pref_default_after_text"></string>
+
+
+    <string name="pref_title_colour">Barva ikonky</string>
+    <string-array name="pref_colour_titles">
+        <item>Červená</item>
+        <item>Zelená</item>
+        <item>Modrá</item>
+        <item>Žlutá</item>
+        <item>Černá</item>
+    </string-array>
+    <string-array name="pref_colour_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
+    <string name="pref_title_graphics">Grafika</string>
+    <string-array name="pref_graphics_titles">
+        <item>Černý čtverec</item>
+        <item>Modrý kruh</item>
+        <item>Modrý prstenec</item>
+        <item>Modrý čtverec</item>
+        <item>Šedý čtverec</item>
+        <item>Červený kruh</item>
+        <item>Červený prstenec</item>
+        <item>Červený čtverec</item>
+        <item>Žlutý čtverec</item>
+    </string-array>
+    <string-array name="pref_graphics_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+
+    <string name="pref_title_distances">Vzdálenosti</string>
+    <string-array name="pref_distances_titles">
+        <item>50m</item>
+        <item>70m</item>
+        <item>100m</item>
+        <item>120m</item>
+        <item>150m</item>
+        <item>300m</item>
+    </string-array>
+    <string-array name="pref_distances_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string name="pref_distances_summary">Nastav vzdálenosti které vyvolávají upozornění</string>
 
 </resources>

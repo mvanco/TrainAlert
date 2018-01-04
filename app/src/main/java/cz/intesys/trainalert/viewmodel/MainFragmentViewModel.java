@@ -13,6 +13,8 @@ import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.repository.Repository;
 import cz.intesys.trainalert.repository.SimulatedRepository;
+import cz.intesys.trainalert.utility.Utility;
+import io.reactivex.Observable;
 
 import static cz.intesys.trainalert.TaConfig.REPOSITORY;
 
@@ -86,8 +88,8 @@ public class MainFragmentViewModel extends ViewModel {
         return mLocation;
     }
 
-    public LiveData<List<Poi>> getPois() {
-        return mPois;
+    public Observable<List<Poi>> getPoisObservable(LifecycleOwner owner) {
+        return Utility.createLongTermUpdateObservable(owner, mPois);
     }
 
     public List<Poi> getLastPois() {

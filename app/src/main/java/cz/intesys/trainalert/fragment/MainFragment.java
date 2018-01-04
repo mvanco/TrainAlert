@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
@@ -22,7 +23,9 @@ import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +44,6 @@ import static cz.intesys.trainalert.TaConfig.MAP_DEFAULT_ZOOM;
 import static cz.intesys.trainalert.TaConfig.REPOSITORY;
 import static cz.intesys.trainalert.utility.Utility.convertToDegrees;
 import static cz.intesys.trainalert.utility.Utility.getMarkerRotation;
-import static cz.intesys.trainalert.utility.Utility.playSound;
 
 public class MainFragment extends Fragment {
 
@@ -109,7 +111,7 @@ public class MainFragment extends Fragment {
         initTrainMarker(mBinding.fragmentMainMapView);
         mBinding.fragmentMainMapView.getOverlayManager().add(mTrainMarker); // Add train marker.
         mViewModel.getLocation().observe(this, currentLocation -> handleLocationChange(mTrainMarker, currentLocation));
-        mViewModel.getPois().observe(this, pois -> handlePOIsChange(pois));
+        mViewModel.getPoisObservable(this).subscribe(pois -> handlePOIsChange(pois));
     }
 
     private void initMap(Context context) {
@@ -219,7 +221,7 @@ public class MainFragment extends Fragment {
         if (getActivity() == null || !mViewModel.areLoadedPois()) { // If not attached or not loaded POIs yet.
             return;
         }
-        for (Poi poi : mViewModel.getPois().getValue()) {
+        for (Poi poi : mViewModel.getLastPois()) {
             Log.d("distance", "distance to " + poi.getMetaIndex() + " is " + currentLocation.distanceTo(poi));
             for (Alarm alarm : poi.getPoiConfiguration().getAlarmList()) {
                 if (alarm.isDisabled()) {
@@ -250,7 +252,7 @@ public class MainFragment extends Fragment {
     private void showTravelNotification(Alarm alarm) {
         mBinding.fragmentMainNotificationText.setText(alarm.getMessageText(getActivity()));
         mBinding.fragmentMainNotificationContainer.setVisibility(View.VISIBLE);
-        playSound(getActivity());
+        alarm.playSound(getActivity());
         Runnable hideNotificationAction = () -> mBinding.fragmentMainNotificationContainer.setVisibility(View.GONE);
         new Handler().postDelayed(hideNotificationAction, 3000);
     }
@@ -267,7 +269,20 @@ public class MainFragment extends Fragment {
         if (mBinding.fragmentMainMapView.getOverlays().size() > 1) {
             mBinding.fragmentMainMapView.getOverlays().remove(1);
         }
-        mBinding.fragmentMainMapView.getOverlays().add(Utility.loadOverlayFromPois(pois, getActivity()));
+
+        ItemizedIconOverlay.OnItemGestureListener onItemGestureListener = new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+            @Override
+            public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                Toast.makeText(getActivity(), item.getTitle(), Toast.LENGTH_LONG).show();
+                return true;
+            }
+
+            @Override
+            public boolean onItemLongPress(final int index, final OverlayItem item) {
+                return false;
+            }
+        };
+        mBinding.fragmentMainMapView.getOverlays().add(Utility.loadOverlayFromPois(pois, onItemGestureListener, getActivity()));
     }
 
     /**

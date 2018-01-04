@@ -67,7 +67,7 @@ public class PoiListFragment extends Fragment {
         mBinding.fragmentPoiListRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new PoiListAdapter(mListener);
         mBinding.fragmentPoiListRecyclerView.setAdapter(mAdapter);
-        mViewModel.getPois().observe(this, pois -> {
+        mViewModel.getPoisObservable(this).subscribe(pois -> {
             mAdapter.setData(pois);
         });
 

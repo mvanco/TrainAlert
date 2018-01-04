@@ -25,7 +25,8 @@ public class NavAdapter extends RecyclerView.Adapter<NavAdapter.ViewHolder> {
 
     public NavAdapter(OnItemClickListener listener) {
         mItems = new ArrayList<NavItem>();
-        mItems.add(new NavItem(R.string.nav_pois, R.drawable.poi_train_station));
+        mItems.add(new NavItem(R.string.nav_pois, R.drawable.nav_pois));
+        mItems.add(new NavItem(R.string.nav_categories, R.drawable.nav_categories));
         mListener = listener;
     }
 

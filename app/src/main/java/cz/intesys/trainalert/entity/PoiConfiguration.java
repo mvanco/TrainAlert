@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import cz.intesys.trainalert.R;
-import cz.intesys.trainalert.utility.Utility.POIType;
+import cz.intesys.trainalert.utility.Utility.CategoryId;
 
 import static cz.intesys.trainalert.utility.Utility.POI_TYPE_BRIDGE;
 import static cz.intesys.trainalert.utility.Utility.POI_TYPE_CROSSING;
@@ -19,7 +19,7 @@ import static cz.intesys.trainalert.utility.Utility.POI_TYPE_TURNOUT;
 
 /**
  * Configuration for Poi - e.g. list of alarms, marker drawable, ... Enable group setting of configuration
- * according to {@link POIType}, however this configuration is
+ * according to {@link CategoryId}, however this configuration is
  * specific for each Poi because it stores unique {@link Alarm} objects which can be enabled/disabled
  * separately for each Poi.
  */
@@ -36,14 +36,14 @@ public class PoiConfiguration implements Parcelable {
             return new PoiConfiguration[size];
         }
     };
-    private @POIType int type;
+    private @CategoryId int type;
     private List<Alarm> alarmList;
 
     /**
-     * @param type    type from predefined Poi types
-     * @param poi     handle to {@link Poi} object, creates 1:1 relationship between Poi and PoiConfiguration
+     * @param type type from predefined Poi types
+     * @param poi  handle to {@link Poi} object, creates 1:1 relationship between Poi and PoiConfiguration
      */
-    public PoiConfiguration(@POIType int type, Poi poi) {
+    public PoiConfiguration(@CategoryId int type, Poi poi) {
         this.type = type;
         this.alarmList = createAlarmList(type, poi);
     }
@@ -64,14 +64,18 @@ public class PoiConfiguration implements Parcelable {
         return 0;
     }
 
+    public int getType() {
+        return type;
+    }
+
     /**
-     * Alarm configuration for each {@link POIType}
+     * Alarm configuration for each {@link CategoryId}
      *
-     * @param type    type of Poi
-     * @param poi     Poi which is being configured
+     * @param type type of Poi
+     * @param poi  Poi which is being configured
      * @return
      */
-    public List<Alarm> createAlarmList(@POIType int type, Poi poi) {
+    public List<Alarm> createAlarmList(@CategoryId int type, Poi poi) {
         switch (type) {
             case POI_TYPE_CROSSING:
                 return Alarm.createAlarms(R.string.fragment_main_poi_type_message_crossing, poi, new int[]{160, 320, 480});
@@ -95,7 +99,7 @@ public class PoiConfiguration implements Parcelable {
     }
 
     /**
-     * Setting of icon for each {@link POIType}
+     * Setting of icon for each {@link CategoryId}
      *
      * @return drawable resource of mapped icon
      */
@@ -106,8 +110,9 @@ public class PoiConfiguration implements Parcelable {
                 return R.drawable.poi_crossing;
             case POI_TYPE_SPEED_LIMITATION_50:
             case POI_TYPE_SPEED_LIMITATION_70:
-            case POI_TYPE_BRIDGE:
                 return R.drawable.poi_speed_limitation;
+            case POI_TYPE_BRIDGE:
+                return R.drawable.poi_bridge;
             case POI_TYPE_TRAIN_STATION:
                 return R.drawable.poi_train_station;
             case POI_TYPE_TURNOUT:

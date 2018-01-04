@@ -31,16 +31,16 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/red_circle"
+                android:background="@drawable/alarm_red_ring"
                 android:contentDescription="@string/fragment_main_image_view_desc" />
 
             <TextView
                 android:id="@+id/fragmentMain_notificationText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="@dimen/redCircle_textView_margin"
+                android:layout_margin="@dimen/alarm_textView_margin"
                 android:gravity="center"
-                android:textSize="@dimen/redCircle_text_size"
+                android:textSize="@dimen/alarm_text_size"
                 tools:text="Prejazd za 500m" />
 
         </FrameLayout>

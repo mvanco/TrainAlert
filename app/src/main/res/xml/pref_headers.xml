@@ -1,0 +1,35 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+
+    <header
+        android:fragment="cz.intesys.trainalert.activity.CategoryActivity$CategoryPreferenceFragment"
+        android:icon="@drawable/poi_crossing"
+        android:title="Přechod" />
+
+    <header
+        android:fragment="cz.intesys.trainalert.activity.CategoryActivity$CategoryPreferenceFragment"
+        android:icon="@drawable/poi_speed_limitation"
+        android:title="Omezení 50" />
+
+    <header
+        android:fragment="cz.intesys.trainalert.activity.CategoryActivity$CategoryPreferenceFragment"
+        android:icon="@drawable/poi_speed_limitation"
+        android:title="Omezení 70" />
+
+    <header
+        android:fragment="cz.intesys.trainalert.activity.CategoryActivity$CategoryPreferenceFragment"
+        android:icon="@drawable/poi_train_station"
+        android:title="Stanice" />
+
+    <header
+        android:fragment="cz.intesys.trainalert.activity.CategoryActivity$CategoryPreferenceFragment"
+        android:icon="@drawable/poi_bridge"
+        android:title="Most" />
+
+    <header
+        android:fragment="cz.intesys.trainalert.activity.CategoryActivity$CategoryPreferenceFragment"
+        android:icon="@drawable/poi_turnout"
+        android:title="Výhybka" />
+
+</preference-headers>

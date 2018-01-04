@@ -46,10 +46,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void onNavigationItemSelected(@StringRes int id) {
         if (id == R.string.nav_pois) { // POIs
-            MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.activity_main_content_main_activity);
-            fragment.setAnimating(false);
             binding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
-            startActivity(PoiActivity.newIntent(MainActivity.this));
+            startActivity(PoiActivity.newIntent(this));
+        } else if (id == R.string.nav_categories) {
+            binding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
+            startActivity(CategoryActivity.newIntent(this));
         }
     }
 

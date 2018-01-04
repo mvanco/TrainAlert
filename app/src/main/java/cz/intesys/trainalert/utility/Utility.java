@@ -1,12 +1,13 @@
 package cz.intesys.trainalert.utility;
 
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.IntDef;
-import android.widget.Toast;
 
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
@@ -21,6 +22,7 @@ import java.util.List;
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.entity.Poi;
+import io.reactivex.Observable;
 
 import static java.lang.Math.PI;
 import static java.lang.Math.atan;
@@ -37,13 +39,12 @@ public class Utility {
 
     @Retention (RetentionPolicy.SOURCE)
     @IntDef ( {POI_TYPE_CROSSING, POI_TYPE_SPEED_LIMITATION_50, POI_TYPE_SPEED_LIMITATION_70, POI_TYPE_TRAIN_STATION, POI_TYPE_TURNOUT, POI_TYPE_BRIDGE})
-    public @interface POIType {
+    public @interface CategoryId {
     }
 
-    public static void playSound(Context context) {
+    public static void playSound(Uri notificationSound, Context context) {
         try {
-            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Ringtone r = RingtoneManager.getRingtone(context, notification);
+            Ringtone r = RingtoneManager.getRingtone(context, notificationSound);
             r.play();
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,7 +90,7 @@ public class Utility {
         return (float) (radians / PI * 180);
     }
 
-    public static ItemizedOverlay<OverlayItem> loadOverlayFromPois(List<Poi> pois, Context context) {
+    public static ItemizedOverlay<OverlayItem> loadOverlayFromPois(List<Poi> pois, ItemizedIconOverlay.OnItemGestureListener<OverlayItem> listener, Context context) {
         final ArrayList<OverlayItem> items = new ArrayList<>();
         for (Poi poi : pois) {
             OverlayItem item = new OverlayItem(poi.getTitle(), "", poi);
@@ -98,28 +99,22 @@ public class Utility {
             items.add(item);
         }
 
-        ItemizedOverlay<OverlayItem> overlay = new ItemizedIconOverlay<>(items, context.getResources().getDrawable(R.drawable.poi_crossing),
-                new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                    @Override
-                    public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                        Toast.makeText(
-                                context,
-                                "Item '" + item.getTitle() + "' (index=" + index
-                                        + ") got single tapped up", Toast.LENGTH_LONG).show();
-                        return true; // We 'handled' this event.
-                    }
-
-                    @Override
-                    public boolean onItemLongPress(final int index, final OverlayItem item) {
-                        Toast.makeText(
-                                context,
-                                "Item '" + item.getTitle() + "' (index=" + index
-                                        + ") got long pressed", Toast.LENGTH_LONG).show();
-                        return false;
-                    }
-                }, context.getApplicationContext());
+        ItemizedOverlay<OverlayItem> overlay = new ItemizedIconOverlay<>(items, context.getResources().getDrawable(R.drawable.poi_crossing), listener, context.getApplicationContext());
 
         return overlay;
+    }
+
+    public static <T> Observable<T> createObservableFromLiveData(LifecycleOwner owner, LiveData<T> liveData) {
+        return Observable.create(emmiter -> liveData.observe(owner, data -> emmiter.onNext(data)));
+
+    }
+
+    public static <T> Observable<T> firstAndSample(Observable<T> observable) {
+        return observable.sample(TaConfig.UPDATE_INTERVAL, TaConfig.UPDATE_INTERVAL_UNIT).mergeWith(observable.take(1));
+    }
+
+    public static <T> Observable<T> createLongTermUpdateObservable(LifecycleOwner owner, LiveData<T> liveData) {
+        return firstAndSample(createObservableFromLiveData(owner, liveData));
     }
 
     public static class LocationPoller {
@@ -157,4 +152,5 @@ public class Utility {
             }
         }
     }
+
 }

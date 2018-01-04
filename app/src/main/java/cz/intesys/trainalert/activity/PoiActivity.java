@@ -89,7 +89,7 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
         setSupportActionBar(mBinding.activityPoiToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setTitle(R.string.activity_poi_title);
+        getSupportActionBar().setTitle(R.string.title_activity_poi);
     }
 
     private void switchToPoiListFragment() {

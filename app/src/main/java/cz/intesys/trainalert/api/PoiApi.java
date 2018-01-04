@@ -64,7 +64,7 @@ public class PoiApi implements IGeoPoint {
         this.title = title;
     }
 
-    public @Utility.POIType
+    public @Utility.CategoryId
     int getType() {
         return type;
     }
