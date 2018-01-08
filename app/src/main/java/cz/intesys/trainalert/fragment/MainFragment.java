@@ -3,8 +3,11 @@ package cz.intesys.trainalert.fragment;
 import android.animation.ValueAnimator;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.osmdroid.api.IGeoPoint;
@@ -27,7 +31,6 @@ import org.osmdroid.views.overlay.ItemizedIconOverlay;
 import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.OverlayItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cz.intesys.trainalert.R;
@@ -214,45 +217,36 @@ public class MainFragment extends Fragment {
 
     /**
      * Warning: Works with activity {@link Context}, activity must be already attached!
-     *
+     * TODO: move to ViewModel
      * @param currentLocation
      */
     private void handleNotification(GeoPoint currentLocation) {
         if (getActivity() == null || !mViewModel.areLoadedPois()) { // If not attached or not loaded POIs yet.
             return;
         }
-        for (Poi poi : mViewModel.getLastPois()) {
-            Log.d("distance", "distance to " + poi.getMetaIndex() + " is " + currentLocation.distanceTo(poi));
-            for (Alarm alarm : poi.getPoiConfiguration().getAlarmList()) {
-                if (alarm.isDisabled()) {
-                    continue;
-                }
-                if (currentLocation.distanceTo(poi) < alarm.getDistance()) {
-                    Log.d("showNotification", "poi: " + poi.getMetaIndex() + ", distance: " + alarm.getDistance());
-                    showTravelNotification(alarm);
-                    mViewModel.disableAlarm(alarm);
-                }
-            }
-        }
 
-        // Enable alarm of Poi with sufficient distance again
-        List<Alarm> alarmsToRemove = new ArrayList<Alarm>();
-
-        for (Alarm alarm : mViewModel.getDisabledAlarms()) {
-            if (currentLocation.distanceTo(alarm.getPoi()) > alarm.getDistance()) {
-                alarmsToRemove.add(alarm);
-            }
-        }
-
-        for (Alarm alarm : alarmsToRemove) {
-            mViewModel.enableAlarm(alarm);
+        for (Alarm currentAlarm : mViewModel.getCurrentAlarms()) {
+            showTravelNotification(currentAlarm);
         }
     }
 
     private void showTravelNotification(Alarm alarm) {
-        mBinding.fragmentMainNotificationText.setText(alarm.getMessageText(getActivity()));
+        mBinding.fragmentMainNotificationText.setText(alarm.getMessage());
         mBinding.fragmentMainNotificationContainer.setVisibility(View.VISIBLE);
-        alarm.playSound(getActivity());
+        ImageView sign = mBinding.fragmentMainNotificationContainer.findViewById(R.id.fragmentMain_sign);
+        sign.setImageResource(alarm.getGraphics(PreferenceManager.getDefaultSharedPreferences(getActivity())));
+
+        Utility.playSound(alarm.getRingtone(mViewModel.getSharedPreferences()), getActivity());
+        if (alarm.shouldVibrate(mViewModel.getSharedPreferences())) {
+            Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                vibrator.vibrate(700);
+            } else {
+                VibrationEffect effect = VibrationEffect.createOneShot(700, 255);
+                vibrator.vibrate(effect);
+            }
+        }
+
         Runnable hideNotificationAction = () -> mBinding.fragmentMainNotificationContainer.setVisibility(View.GONE);
         new Handler().postDelayed(hideNotificationAction, 3000);
     }

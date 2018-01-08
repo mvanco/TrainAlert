@@ -138,7 +138,7 @@ public class PoiMapFragment extends Fragment {
     }
 
     private void bindPoiMapInfo(PoiMapInfoViewHandler poiHandler, Poi poi) {
-        poiHandler.mIcon.setImageResource(poi.getPoiConfiguration().getMarkerDrawable());
+        poiHandler.mIcon.setImageResource(poi.getMarkerDrawable());
         poiHandler.mTitle.setText(poi.getTitle());
         poiHandler.mLatitude.setText(String.valueOf(poi.getLatitude()));
         poiHandler.mLongitude.setText(String.valueOf(poi.getLongitude()));

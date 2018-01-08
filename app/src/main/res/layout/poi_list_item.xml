@@ -34,7 +34,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:contentDescription="@string/fragment_poi_list_icon_desc"
-                android:src="@{data.poiConfiguration.markerDrawable}"
+                android:src="@{data.markerDrawable}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

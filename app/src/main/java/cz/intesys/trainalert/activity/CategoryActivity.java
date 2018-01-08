@@ -2,6 +2,7 @@ package cz.intesys.trainalert.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -16,6 +17,7 @@ import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.RingtonePreference;
 import android.preference.SwitchPreference;
+import android.provider.Settings;
 import android.support.annotation.StringDef;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
@@ -31,7 +33,6 @@ import java.util.List;
 
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.entity.Category;
-import cz.intesys.trainalert.utility.Utility;
 
 import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.CATEGORY_KEY;
 
@@ -124,44 +125,11 @@ public class CategoryActivity extends AppCompatPreferenceActivity {
                         .getString(preference.getKey(), ""));
     }
 
-    /**
-     * TODO: move to better place
-     *
-     * @return
-     */
-    public static List<Category> getCategories() {
-        List<Category> categories = new ArrayList<>();
-        categories.add(Category.createCategory("Přechod", R.drawable.poi_crossing));
-        categories.add(Category.createCategory("Omezení 50", R.drawable.poi_speed_limitation));
-        categories.add(Category.createCategory("Omezení 70", R.drawable.poi_speed_limitation));
-        categories.add(Category.createCategory("Stanice", R.drawable.poi_train_station));
-        categories.add(Category.createCategory("Most", R.drawable.poi_bridge));
-        categories.add(Category.createCategory("Výhybka", R.drawable.poi_turnout));
-        return categories;
-    }
-
-    /**
-     * TODO: move to better place
-     *
-     * @param id
-     * @return
-     */
-    public static Category findCategory(@Utility.CategoryId int id) {
-        for (Category category : getCategories()) {
-            if (category.getId() == id) {
-                return category;
-            }
-        }
-        return null;
-    }
-
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            if (!super.onMenuItemSelected(featureId, item)) {
-                NavUtils.navigateUpFromSameTask(this);
-            }
+            NavUtils.navigateUpFromSameTask(this);
             return true;
         }
         return super.onMenuItemSelected(featureId, item);
@@ -203,6 +171,22 @@ public class CategoryActivity extends AppCompatPreferenceActivity {
                 || CategoryPreferenceFragment.class.getName().equals(fragmentName);
     }
 
+    /**
+     * TODO: move to better place
+     *
+     * @return
+     */
+    public List<Category> getCategories() {
+        List<Category> categories = new ArrayList<>();
+        categories.add(new Category(0, "Přechod", R.drawable.poi_crossing));
+        categories.add(new Category(1, "Omezení 50", R.drawable.poi_speed_limitation));
+        categories.add(new Category(2, "Omezení 70", R.drawable.poi_speed_limitation));
+        categories.add(new Category(3, "Stanice", R.drawable.poi_train_station));
+        categories.add(new Category(4, "Most", R.drawable.poi_bridge));
+        categories.add(new Category(5, "Výhybka", R.drawable.poi_turnout));
+        return categories;
+    }
+
     private Header getHeader(Category category) {
         Header header = new Header();
         header.title = category.getTitle();
@@ -240,6 +224,9 @@ public class CategoryActivity extends AppCompatPreferenceActivity {
         public static final String TEXT_BEFORE_PREF_KEY = "text_before";
         public static final String INCLUDE_DISTANCE_PREF_KEY = "include_distance";
         public static final String TEXT_AFTER_PREF_KEY = "text_after";
+
+        public static final String DEFAULT_VALUE = "0";
+        public static final String DISTANCE_DEFAULT_VALUE = "300";
 
         @Retention (RetentionPolicy.SOURCE)
         @StringDef ( {COLOUR_PREF_KEY, GRAPHICS_PREF_KEY, RINGTONE_PREF_KEY, VIBRATE_PREF_KEY, DISTANCES_PREF_KEY, TEXT_BEFORE_PREF_KEY, INCLUDE_DISTANCE_PREF_KEY, TEXT_AFTER_PREF_KEY})
@@ -280,12 +267,15 @@ public class CategoryActivity extends AppCompatPreferenceActivity {
             PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(getActivity());
             setPreferenceScreen(screen);
 
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            Category.CategoryPref pref = Category.CategoryPref.newInstance(categoryId, sharedPref);
+
             ListPreference colourPref = new ListPreference(getActivity());
             colourPref.setKey(getPrefKey(COLOUR_PREF_KEY, categoryId));
             colourPref.setTitle(R.string.pref_title_colour);
             colourPref.setEntries(R.array.pref_colour_titles);
             colourPref.setEntryValues(R.array.pref_colour_values);
-            colourPref.setDefaultValue("0");
+            colourPref.setDefaultValue(pref.getString(COLOUR_PREF_KEY, DEFAULT_VALUE));
             screen.addPreference(colourPref);
 
             ListPreference graphicsPref = new ListPreference(getActivity());
@@ -293,19 +283,20 @@ public class CategoryActivity extends AppCompatPreferenceActivity {
             graphicsPref.setTitle(R.string.pref_title_graphics);
             graphicsPref.setEntries(R.array.pref_graphics_titles);
             graphicsPref.setEntryValues(R.array.pref_graphics_values);
-            graphicsPref.setDefaultValue("0");
+            graphicsPref.setDefaultValue(pref.getString(GRAPHICS_PREF_KEY, DEFAULT_VALUE));
             screen.addPreference(graphicsPref);
 
             RingtonePreference ringtonePref = new RingtonePreference(getActivity());
             ringtonePref.setKey(getPrefKey(RINGTONE_PREF_KEY, categoryId));
             ringtonePref.setTitle(R.string.pref_title_ringtone);
-            ringtonePref.setDefaultValue("content://settings/system/notification_sound");
+            ringtonePref.setRingtoneType(RingtoneManager.TYPE_NOTIFICATION);
+            ringtonePref.setDefaultValue(pref.getString(RINGTONE_PREF_KEY, Settings.System.DEFAULT_NOTIFICATION_URI.toString()));
             screen.addPreference(ringtonePref);
 
             SwitchPreference switchPref = new SwitchPreference(getActivity());
             switchPref.setKey(getPrefKey(VIBRATE_PREF_KEY, categoryId));
             switchPref.setTitle(R.string.pref_title_vibrate);
-            switchPref.setDefaultValue(true);
+            switchPref.setDefaultValue(pref.getBoolean(VIBRATE_PREF_KEY, true));
             screen.addPreference(switchPref);
 
             MultiSelectListPreference distancesPref = new MultiSelectListPreference(getActivity());
@@ -314,23 +305,25 @@ public class CategoryActivity extends AppCompatPreferenceActivity {
             distancesPref.setEntries(R.array.pref_distances_titles);
             distancesPref.setEntryValues(R.array.pref_distances_values);
             distancesPref.setSummary(R.string.pref_distances_summary);
-            distancesPref.setDefaultValue(new HashSet(Arrays.asList("2")));
+            distancesPref.setDefaultValue(pref.getStringSet(DISTANCES_PREF_KEY, new HashSet(Arrays.asList(DISTANCE_DEFAULT_VALUE))));
             screen.addPreference(distancesPref);
 
             EditTextPreference textBeforePref = new EditTextPreference(getActivity());
             textBeforePref.setKey(getPrefKey(TEXT_BEFORE_PREF_KEY, categoryId));
             textBeforePref.setTitle(R.string.pref_title_before_text);
+            textBeforePref.setDefaultValue(pref.getString(TEXT_BEFORE_PREF_KEY, "Pozor za "));
             screen.addPreference(textBeforePref);
 
             SwitchPreference includeDistancePref = new SwitchPreference(getActivity());
             includeDistancePref.setKey(getPrefKey(INCLUDE_DISTANCE_PREF_KEY, categoryId));
             includeDistancePref.setTitle(R.string.pref_title_include_distance);
-            includeDistancePref.setDefaultValue(false);
+            includeDistancePref.setDefaultValue(pref.getBoolean(INCLUDE_DISTANCE_PREF_KEY, true));
             screen.addPreference(includeDistancePref);
 
             EditTextPreference textAfterPref = new EditTextPreference(getActivity());
             textAfterPref.setKey(getPrefKey(TEXT_AFTER_PREF_KEY, categoryId));
             textAfterPref.setTitle(R.string.pref_title_after_text);
+            textAfterPref.setDefaultValue(pref.getString(TEXT_AFTER_PREF_KEY, "m"));
             screen.addPreference(textAfterPref);
             textAfterPref.setDependency(getPrefKey(INCLUDE_DISTANCE_PREF_KEY, categoryId));
 

@@ -1,17 +1,26 @@
 package cz.intesys.trainalert.entity;
 
-import android.content.Context;
-import android.media.RingtoneManager;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.StringRes;
+import android.provider.Settings;
+import android.support.annotation.DrawableRes;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.entity.Category.CategoryPref;
 import cz.intesys.trainalert.utility.Utility;
+
+import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.DEFAULT_VALUE;
+import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.GRAPHICS_PREF_KEY;
+import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.INCLUDE_DISTANCE_PREF_KEY;
+import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.RINGTONE_PREF_KEY;
+import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.TEXT_AFTER_PREF_KEY;
+import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.TEXT_BEFORE_PREF_KEY;
+import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.VIBRATE_PREF_KEY;
 
 public class Alarm implements Parcelable {
     public static final Creator<Alarm> CREATOR = new Creator<Alarm>() {
@@ -25,48 +34,58 @@ public class Alarm implements Parcelable {
             return new Alarm[size];
         }
     };
-    private @StringRes int message;
-    private Uri ringtone;
     private int distance;
-    private boolean enabled;
+    private String message;
     private Poi poi; // Must have exactly one Poi which is related to
 
-    public Alarm(@StringRes int message, int distance, Poi poi) {
-        this.message = message;
+    public Alarm(int distance, String message, Poi poi) {
         this.distance = distance;
-        this.ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        this.enabled = true; // Default behaviour.
+        this.message = message;
         this.poi = poi;
     }
-
     protected Alarm(Parcel in) {
-        message = in.readInt();
-        ringtone = in.readParcelable(Uri.class.getClassLoader());
-        distance = in.readInt();
-        enabled = in.readByte() != 0;
+
     }
 
-    /**
-     * Simlify creation of multiple alarms using the same message
-     *
-     * @param messageRes must have %1$d format parameter
-     * @param distances  number in unit used by {@link org.osmdroid.util.GeoPoint} distanceTo() method
-     * @return list of created alarms
-     */
-    public static List<Alarm> createAlarms(@StringRes int messageRes, Poi poi, int[] distances) {
-        List<Alarm> alarms = new ArrayList<Alarm>();
-        for (int distance : distances) {
-            alarms.add(new Alarm(messageRes, distance, poi));
+    public static boolean shouldIncludeDistance(@Utility.CategoryId int categoryId, SharedPreferences sharedPref) {
+        return CategoryPref.newInstance(categoryId, sharedPref).getBoolean(INCLUDE_DISTANCE_PREF_KEY, true);
+    }
+
+    public static String createMessage(int distance, @Utility.CategoryId int categoryId, SharedPreferences sharedPref) {
+        CategoryPref categoryPref = CategoryPref.newInstance(categoryId, sharedPref);
+
+        String beforeText = categoryPref.getString(TEXT_BEFORE_PREF_KEY, DEFAULT_VALUE);
+        if (shouldIncludeDistance(categoryId, sharedPref)) {
+            String afterText = categoryPref.getString(TEXT_AFTER_PREF_KEY, DEFAULT_VALUE);
+            return beforeText + distance + afterText;
+        } else {
+            return beforeText;
         }
-        return alarms;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Alarm alarm = (Alarm) o;
+
+        if (distance != alarm.distance) return false;
+        if (!message.equals(alarm.message)) return false;
+        return poi.equals(alarm.poi);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = distance;
+        result = 31 * result + message.hashCode();
+        result = 31 * result + poi.hashCode();
+        return result;
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(message);
-        dest.writeParcelable(ringtone, flags);
-        dest.writeInt(distance);
-        dest.writeByte((byte) (enabled ? 1 : 0));
+
     }
 
     @Override
@@ -74,49 +93,115 @@ public class Alarm implements Parcelable {
         return 0;
     }
 
-    public List<Alarm> toArray() {
-        return Collections.singletonList(this);
-    }
-
-    public @StringRes
-    int getMessage() {
+    public String getMessage() {
         return message;
     }
 
-    public String getMessageText(Context context) {
-        String plainMessage = context.getResources().getString(message);
-        if (plainMessage.contains("%1$d")) {
-            return context.getResources().getString(message, distance);
-        } else {
-            return plainMessage;
-        }
+//    private void disable() {
+//        enabled = false;
+//    }
+//
+//    private void enable() {
+//        enabled = true;
+//    }
+
+//    private boolean isEnabled() {
+//        return enabled;
+//    }
+//
+//    private boolean isDisabled() {
+//        return !enabled;
+//    }
+
+    public List<Alarm> toArray() {
+        return Collections.singletonList(this);
     }
 
     public Poi getPoi() {
         return poi;
     }
 
+    public @DrawableRes
+    int getGraphics(SharedPreferences sharedPref) {
+        String graphics = CategoryPref.newInstance(getCategoryId(), sharedPref).getString(GRAPHICS_PREF_KEY, DEFAULT_VALUE);
+        switch (graphics) {
+            case "0":
+                return R.drawable.alarm_black_square;
+            case "1":
+                return R.drawable.alarm_blue_circle;
+            case "2":
+                return R.drawable.alarm_blue_ring;
+            case "3":
+                return R.drawable.alarm_blue_square;
+            case "4":
+                return R.drawable.alarm_grey_square;
+            case "5":
+                return R.drawable.alarm_red_circle;
+            case "6":
+                return R.drawable.alarm_red_ring;
+            case "7":
+                return R.drawable.alarm_red_square;
+            case "8":
+                return R.drawable.alarm_yellow_grey_square;
+            default:
+                return R.drawable.alarm_black_square;
+        }
+    }
+
+    public Uri getRingtone(SharedPreferences sharedPref) {
+        String ringtone = CategoryPref.newInstance(getCategoryId(), sharedPref).getString(RINGTONE_PREF_KEY, Settings.System.DEFAULT_NOTIFICATION_URI.toString());
+        return Uri.parse(ringtone);
+    }
+
+    public boolean shouldVibrate(SharedPreferences sharedPref) {
+        return CategoryPref.newInstance(getCategoryId(), sharedPref).getBoolean(VIBRATE_PREF_KEY, true);
+    }
+
+    public boolean shouldIncludeDistance(SharedPreferences sharedPref) {
+        String includeDistance = CategoryPref.newInstance(getCategoryId(), sharedPref).getString(INCLUDE_DISTANCE_PREF_KEY, DEFAULT_VALUE);
+        return "true".equals(includeDistance);
+    }
+
     public int getDistance() {
         return distance;
     }
 
-    public void disable() {
-        enabled = false;
+    private @Utility.CategoryId
+    int getCategoryId() {
+        return poi.getCategory();
     }
 
-    public void enable() {
-        enabled = true;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public boolean isDisabled() {
-        return !enabled;
-    }
-
-    public void playSound(Context context) {
-        Utility.playSound(ringtone, context);
-    }
+//    public class FriendMethods {
+//        public void disable() {
+//            Alarm.this.disable();
+//        }
+//
+//        public void enable() {
+//            Alarm.this.enable();
+//        }
+//
+//        public boolean isEnabled() {
+//            return Alarm.this.isEnabled();
+//        }
+//
+//        public boolean isDisabled() {
+//            return Alarm.this.isDisabled();
+//        }
+//
+//        private FriendMethods() {
+//        }
+//    }
+//
+//    /**
+//     * @param object in which the friend methods are requested
+//     * @return friend methods if object is friend
+//     */
+//    public FriendMethods getFriendMethods(Object object) {
+//        if (object instanceof MainFragmentViewModel) {
+//            return new FriendMethods();
+//        }
+//        else {
+//            return null;
+//        }
+//    }
 }

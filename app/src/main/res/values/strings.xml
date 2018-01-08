@@ -86,12 +86,12 @@
         <item>300m</item>
     </string-array>
     <string-array name="pref_distances_values">
-        <item>0</item>
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
+        <item>50</item>
+        <item>70</item>
+        <item>100</item>
+        <item>120</item>
+        <item>150</item>
+        <item>300</item>
     </string-array>
     <string name="pref_distances_summary">Nastav vzdálenosti které vyvolávají upozornění</string>
 

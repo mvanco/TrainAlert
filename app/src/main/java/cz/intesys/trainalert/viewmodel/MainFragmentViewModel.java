@@ -1,9 +1,14 @@
 package cz.intesys.trainalert.viewmodel;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.ViewModel;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +23,7 @@ import io.reactivex.Observable;
 
 import static cz.intesys.trainalert.TaConfig.REPOSITORY;
 
-public class MainFragmentViewModel extends ViewModel {
+public class MainFragmentViewModel extends AndroidViewModel {
 
     private MediatorLiveData<Location> mLocation;
     private MediatorLiveData<List<Poi>> mPois;
@@ -26,10 +31,11 @@ public class MainFragmentViewModel extends ViewModel {
     private List<Alarm> mDisabledAlarms;
     private boolean mShouldSwitchToFreeMode = false;
     private boolean mFreeMode = false;
-    private List<Poi> mRawPois;
     private boolean animating = true;
+    private SharedPreferences mSharedPreferences;
 
-    public MainFragmentViewModel() {
+    public MainFragmentViewModel(@NonNull Application application) {
+        super(application);
         mLocation = new MediatorLiveData<Location>();
 
         mPois = new MediatorLiveData<List<Poi>>();
@@ -38,10 +44,14 @@ public class MainFragmentViewModel extends ViewModel {
 
         mLocation.addSource(mRepository.getCurrentLocation(), currentLocation -> mLocation.setValue(currentLocation));
         mPois.addSource(mRepository.getPois(), pois -> {
-            mRawPois = pois;
             mPois.setValue(pois);
         });
         loadPOIs();
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(application.getApplicationContext());
+    }
+
+    public SharedPreferences getSharedPreferences() {
+        return mSharedPreferences;
     }
 
     public boolean isAnimating() {
@@ -93,21 +103,11 @@ public class MainFragmentViewModel extends ViewModel {
     }
 
     public List<Poi> getLastPois() {
-        return mRawPois;
+        return mPois.getValue();
     }
 
     public boolean areLoadedPois() {
-        return mRawPois != null;
-    }
-
-    public void disableAlarm(Alarm alarm) {
-        mDisabledAlarms.add(alarm);
-        alarm.disable();
-    }
-
-    public void enableAlarm(Alarm alarm) {
-        alarm.enable();
-        mDisabledAlarms.remove(alarm);
+        return mPois.getValue() != null;
     }
 
     public List<Alarm> getDisabledAlarms() {
@@ -123,7 +123,6 @@ public class MainFragmentViewModel extends ViewModel {
     public void loadPOIs() {
         mRepository.loadPois();
     }
-
 
     /**
      * Enables getLastPois() funcionality without handling all location updates
@@ -144,4 +143,87 @@ public class MainFragmentViewModel extends ViewModel {
         mPois.observe(owner, (pois) -> {
         });
     }
+
+    /**
+     * @return current alarms and dis
+     */
+    public List<Alarm> getCurrentAlarms() {
+        List<Alarm> currentAlarms = new ArrayList<>();
+        if (!areLoadedPois()) {
+            return currentAlarms;
+        }
+        for (Poi poi : mPois.getValue()) {
+            Log.d("distance", "distance to " + poi.getMetaIndex() + " is " + getLastLocation().toGeoPoint().distanceTo(poi));
+            for (Alarm alarm : poi.getAlarmList(mSharedPreferences)) {
+                Log.d("alarmDistances", "poi: " + poi.getMetaIndex() + ", alarmDistance: " + alarm.getDistance());
+                if (isDisabled(alarm)) {
+                    continue;
+                }
+                if (getLastLocation().toGeoPoint().distanceTo(poi) < alarm.getDistance()) {
+                    Log.d("showNotification", "poi: " + poi.getMetaIndex() + ", distance: " + alarm.getDistance());
+                    currentAlarms.add(alarm);
+                    mDisabledAlarms.add(alarm);
+                }
+            }
+
+        }
+
+        // Enable alarm of Poi with sufficient distance again
+        List<Alarm> alarmsToEnable = new ArrayList<Alarm>();
+
+        for (Alarm alarm : getDisabledAlarms()) {
+            if (getLastLocation().toGeoPoint().distanceTo(alarm.getPoi()) > alarm.getDistance()) {
+                alarmsToEnable.add(alarm);
+            }
+        }
+
+        for (Alarm alarm : alarmsToEnable) {
+            mDisabledAlarms.remove(alarm);
+        }
+
+        return currentAlarms;
+    }
+
+    private boolean isDisabled(Alarm alarm) {
+        for (Alarm disabledAlarm : mDisabledAlarms) {
+            if (disabledAlarm.equals(alarm)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+//    private void handleNotification(GeoPoint currentLocation) {
+//        if (getActivity() == null || !mViewModel.areLoadedPois()) { // If not attached or not loaded POIs yet.
+//            return;
+//        }
+//        for (Poi poi : mViewModel.getLastPois()) {
+//            Log.d("distance", "distance to " + poi.getMetaIndex() + " is " + currentLocation.distanceTo(poi));
+//            for (Alarm alarm : poi.getAlarmList(PreferenceManager.getDefaultSharedPreferences(getActivity()))) {
+//                Log.d("alarmDistances", "poi: " + poi.getMetaIndex() + ", alarmDistance: " + alarm.getDistance());
+//                if (alarm.isDisabled()) {
+//                    continue;
+//                }
+//                if (currentLocation.distanceTo(poi) < alarm.getDistance()) {
+//                    Log.d("showNotification", "poi: " + poi.getMetaIndex() + ", distance: " + alarm.getDistance());
+//                    showTravelNotification(alarm);
+//                    mViewModel.disableAlarm(alarm);
+//                }
+//            }
+//        }
+//
+//        // Enable alarm of Poi with sufficient distance again
+//        List<Alarm> alarmsToRemove = new ArrayList<Alarm>();
+//
+//        for (Alarm alarm : mViewModel.getDisabledAlarms()) {
+//            if (currentLocation.distanceTo(alarm.getPoi()) > alarm.getDistance()) {
+//                alarmsToRemove.add(alarm);
+//            }
+//        }
+//
+//        for (Alarm alarm : alarmsToRemove) {
+//            mViewModel.enableAlarm(alarm);
+//        }
+//    }
 }

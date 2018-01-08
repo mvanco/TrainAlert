@@ -94,7 +94,7 @@ public class Utility {
         final ArrayList<OverlayItem> items = new ArrayList<>();
         for (Poi poi : pois) {
             OverlayItem item = new OverlayItem(poi.getTitle(), "", poi);
-            item.setMarker(context.getResources().getDrawable(poi.getPoiConfiguration().getMarkerDrawable()));
+            item.setMarker(context.getResources().getDrawable(poi.getMarkerDrawable()));
             item.setMarkerHotspot(OverlayItem.HotspotPlace.CENTER);
             items.add(item);
         }
