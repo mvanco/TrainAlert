@@ -2,39 +2,29 @@ package cz.intesys.trainalert.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.ListPreference;
-import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
 import android.preference.RingtonePreference;
-import android.preference.SwitchPreference;
-import android.provider.Settings;
-import android.support.annotation.StringDef;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.entity.Category;
+import cz.intesys.trainalert.fragment.CategoryDetailFragment;
 
-import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.CATEGORY_KEY;
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.CATEGORY_KEY;
 
 public class CategoryActivity extends AppCompatPreferenceActivity {
 
@@ -168,7 +158,7 @@ public class CategoryActivity extends AppCompatPreferenceActivity {
      */
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
-                || CategoryPreferenceFragment.class.getName().equals(fragmentName);
+                || CategoryDetailFragment.class.getName().equals(fragmentName);
     }
 
     /**
@@ -191,7 +181,7 @@ public class CategoryActivity extends AppCompatPreferenceActivity {
         Header header = new Header();
         header.title = category.getTitle();
         header.iconRes = category.getIconRes();
-        header.fragment = "cz.intesys.trainalert.activity.CategoryActivity$CategoryPreferenceFragment";
+        header.fragment = "cz.intesys.trainalert.fragment.CategoryDetailFragment";
         Bundle bundle = new Bundle();
         bundle.putInt(CATEGORY_KEY, category.getId());
         header.fragmentArguments = bundle;
@@ -209,125 +199,4 @@ public class CategoryActivity extends AppCompatPreferenceActivity {
         }
     }
 
-    /**
-     * This fragment shows data and sync preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
-     */
-    public static class CategoryPreferenceFragment extends PreferenceFragment {
-
-        public static final String CATEGORY_KEY = "cz.intesys.trainalert.categorypreferencefragment.category";
-        public static final String COLOUR_PREF_KEY = "colour";
-        public static final String GRAPHICS_PREF_KEY = "graphics";
-        public static final String RINGTONE_PREF_KEY = "ringtone";
-        public static final String VIBRATE_PREF_KEY = "vibrate";
-        public static final String DISTANCES_PREF_KEY = "distances";
-        public static final String TEXT_BEFORE_PREF_KEY = "text_before";
-        public static final String INCLUDE_DISTANCE_PREF_KEY = "include_distance";
-        public static final String TEXT_AFTER_PREF_KEY = "text_after";
-
-        public static final String DEFAULT_VALUE = "0";
-        public static final String DISTANCE_DEFAULT_VALUE = "300";
-
-        @Retention (RetentionPolicy.SOURCE)
-        @StringDef ( {COLOUR_PREF_KEY, GRAPHICS_PREF_KEY, RINGTONE_PREF_KEY, VIBRATE_PREF_KEY, DISTANCES_PREF_KEY, TEXT_BEFORE_PREF_KEY, INCLUDE_DISTANCE_PREF_KEY, TEXT_AFTER_PREF_KEY})
-        public @interface CategoryPrefKey {
-        }
-
-        public static String getPrefKey(String title, int categoryId) {
-            return String.format("category_%d_%s", categoryId, title);
-        }
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            //addPreferencesFromResource(R.xml.pref_category);
-            addPreferences(getArguments().getInt(CATEGORY_KEY));
-
-            setHasOptionsMenu(true);
-
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            //bindPreferenceSummaryToValue(findPreference("sync_frequency"));
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), CategoryActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
-        }
-
-        private void addPreferences(int categoryId) {
-
-            PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(getActivity());
-            setPreferenceScreen(screen);
-
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            Category.CategoryPref pref = Category.CategoryPref.newInstance(categoryId, sharedPref);
-
-            ListPreference colourPref = new ListPreference(getActivity());
-            colourPref.setKey(getPrefKey(COLOUR_PREF_KEY, categoryId));
-            colourPref.setTitle(R.string.pref_title_colour);
-            colourPref.setEntries(R.array.pref_colour_titles);
-            colourPref.setEntryValues(R.array.pref_colour_values);
-            colourPref.setDefaultValue(pref.getString(COLOUR_PREF_KEY, DEFAULT_VALUE));
-            screen.addPreference(colourPref);
-
-            ListPreference graphicsPref = new ListPreference(getActivity());
-            graphicsPref.setKey(getPrefKey(GRAPHICS_PREF_KEY, categoryId));
-            graphicsPref.setTitle(R.string.pref_title_graphics);
-            graphicsPref.setEntries(R.array.pref_graphics_titles);
-            graphicsPref.setEntryValues(R.array.pref_graphics_values);
-            graphicsPref.setDefaultValue(pref.getString(GRAPHICS_PREF_KEY, DEFAULT_VALUE));
-            screen.addPreference(graphicsPref);
-
-            RingtonePreference ringtonePref = new RingtonePreference(getActivity());
-            ringtonePref.setKey(getPrefKey(RINGTONE_PREF_KEY, categoryId));
-            ringtonePref.setTitle(R.string.pref_title_ringtone);
-            ringtonePref.setRingtoneType(RingtoneManager.TYPE_NOTIFICATION);
-            ringtonePref.setDefaultValue(pref.getString(RINGTONE_PREF_KEY, Settings.System.DEFAULT_NOTIFICATION_URI.toString()));
-            screen.addPreference(ringtonePref);
-
-            SwitchPreference switchPref = new SwitchPreference(getActivity());
-            switchPref.setKey(getPrefKey(VIBRATE_PREF_KEY, categoryId));
-            switchPref.setTitle(R.string.pref_title_vibrate);
-            switchPref.setDefaultValue(pref.getBoolean(VIBRATE_PREF_KEY, true));
-            screen.addPreference(switchPref);
-
-            MultiSelectListPreference distancesPref = new MultiSelectListPreference(getActivity());
-            distancesPref.setKey(getPrefKey(DISTANCES_PREF_KEY, categoryId));
-            distancesPref.setTitle(R.string.pref_title_distances);
-            distancesPref.setEntries(R.array.pref_distances_titles);
-            distancesPref.setEntryValues(R.array.pref_distances_values);
-            distancesPref.setSummary(R.string.pref_distances_summary);
-            distancesPref.setDefaultValue(pref.getStringSet(DISTANCES_PREF_KEY, new HashSet(Arrays.asList(DISTANCE_DEFAULT_VALUE))));
-            screen.addPreference(distancesPref);
-
-            EditTextPreference textBeforePref = new EditTextPreference(getActivity());
-            textBeforePref.setKey(getPrefKey(TEXT_BEFORE_PREF_KEY, categoryId));
-            textBeforePref.setTitle(R.string.pref_title_before_text);
-            textBeforePref.setDefaultValue(pref.getString(TEXT_BEFORE_PREF_KEY, "Pozor za "));
-            screen.addPreference(textBeforePref);
-
-            SwitchPreference includeDistancePref = new SwitchPreference(getActivity());
-            includeDistancePref.setKey(getPrefKey(INCLUDE_DISTANCE_PREF_KEY, categoryId));
-            includeDistancePref.setTitle(R.string.pref_title_include_distance);
-            includeDistancePref.setDefaultValue(pref.getBoolean(INCLUDE_DISTANCE_PREF_KEY, true));
-            screen.addPreference(includeDistancePref);
-
-            EditTextPreference textAfterPref = new EditTextPreference(getActivity());
-            textAfterPref.setKey(getPrefKey(TEXT_AFTER_PREF_KEY, categoryId));
-            textAfterPref.setTitle(R.string.pref_title_after_text);
-            textAfterPref.setDefaultValue(pref.getString(TEXT_AFTER_PREF_KEY, "m"));
-            screen.addPreference(textAfterPref);
-            textAfterPref.setDependency(getPrefKey(INCLUDE_DISTANCE_PREF_KEY, categoryId));
-
-
-        }
-    }
 }

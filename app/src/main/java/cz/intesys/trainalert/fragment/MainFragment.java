@@ -234,10 +234,10 @@ public class MainFragment extends Fragment {
         mBinding.fragmentMainNotificationText.setText(alarm.getMessage());
         mBinding.fragmentMainNotificationContainer.setVisibility(View.VISIBLE);
         ImageView sign = mBinding.fragmentMainNotificationContainer.findViewById(R.id.fragmentMain_sign);
-        sign.setImageResource(alarm.getGraphics(PreferenceManager.getDefaultSharedPreferences(getActivity())));
+        sign.setImageResource(alarm.getGraphics());
 
-        Utility.playSound(alarm.getRingtone(mViewModel.getSharedPreferences()), getActivity());
-        if (alarm.shouldVibrate(mViewModel.getSharedPreferences())) {
+        Utility.playSound(alarm.getRingtone(), getActivity());
+        if (alarm.shouldVibrate()) {
             Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
                 vibrator.vibrate(700);

@@ -1,7 +1,6 @@
 package cz.intesys.trainalert.entity;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
@@ -13,17 +12,18 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import cz.intesys.trainalert.R;
-import cz.intesys.trainalert.activity.CategoryActivity;
 import cz.intesys.trainalert.api.PoiApi;
-import cz.intesys.trainalert.entity.Category.CategoryPref;
+import cz.intesys.trainalert.di.CategoryModule;
 import cz.intesys.trainalert.utility.Utility;
 
-import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.DISTANCES_PREF_KEY;
-import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.DISTANCE_DEFAULT_VALUE;
-import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.INCLUDE_DISTANCE_PREF_KEY;
-import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.TEXT_AFTER_PREF_KEY;
-import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.TEXT_BEFORE_PREF_KEY;
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.DISTANCES_PREF_KEY;
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.DISTANCE_DEFAULT_VALUE;
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.INCLUDE_DISTANCE_PREF_KEY;
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.TEXT_AFTER_PREF_KEY;
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.TEXT_BEFORE_PREF_KEY;
 import static cz.intesys.trainalert.utility.Utility.POI_TYPE_BRIDGE;
 import static cz.intesys.trainalert.utility.Utility.POI_TYPE_CROSSING;
 import static cz.intesys.trainalert.utility.Utility.POI_TYPE_DEFUALT;
@@ -44,6 +44,8 @@ public class Poi implements IGeoPoint, Parcelable {
             return new Poi[size];
         }
     };
+    @Inject
+    public CategorySharedPrefs sharedPrefs;
     private String title;
     private Double latitude;
     private Double longitude;
@@ -75,6 +77,8 @@ public class Poi implements IGeoPoint, Parcelable {
         this.latitude = latitude;
         this.longitude = longitude;
         this.category = category;
+
+        CategoryModule.getCategoryComponent(category).inject(this);
     }
 
 
@@ -170,13 +174,11 @@ public class Poi implements IGeoPoint, Parcelable {
         this.metaIndex = metaIndex;
     }
 
-    public List<Alarm> getAlarmList(SharedPreferences sharedPref) {
-        CategoryPref categoryPref = CategoryPref.newInstance(category, sharedPref);
-
+    public List<Alarm> getAlarmList() {
         List<Alarm> alarmList = new ArrayList<>();
-        for (String strDistance : new ArrayList<String>(categoryPref.getStringSet(DISTANCES_PREF_KEY, new HashSet(Arrays.asList(DISTANCE_DEFAULT_VALUE))))) {
+        for (String strDistance : new ArrayList<String>(sharedPrefs.getStringSet(DISTANCES_PREF_KEY, new HashSet(Arrays.asList(DISTANCE_DEFAULT_VALUE))))) {
             int distance = Integer.parseInt(strDistance);
-            alarmList.add(new Alarm(distance, createMessage(distance, sharedPref), this));
+            alarmList.add(new Alarm(distance, createMessage(distance), this));
         }
 
         return alarmList;
@@ -206,20 +208,18 @@ public class Poi implements IGeoPoint, Parcelable {
         }
     }
 
-    private String createMessage(int distance, SharedPreferences sharedPref) {
-        CategoryPref categoryPref = CategoryPref.newInstance(category, sharedPref);
-
-        String beforeText = categoryPref.getString(TEXT_BEFORE_PREF_KEY, "Pozor za ");
-        if (shouldIncludeDistance(category, sharedPref)) {
-            String afterText = categoryPref.getString(TEXT_AFTER_PREF_KEY, "m");
+    private String createMessage(int distance) {
+        String beforeText = sharedPrefs.getString(TEXT_BEFORE_PREF_KEY, "Pozor za ");
+        if (shouldIncludeDistance(category)) {
+            String afterText = sharedPrefs.getString(TEXT_AFTER_PREF_KEY, "m");
             return beforeText + distance + afterText;
         } else {
             return beforeText;
         }
     }
 
-    private boolean shouldIncludeDistance(@Utility.CategoryId int categoryId, SharedPreferences sharedPref) {
-        String prefKey = CategoryActivity.CategoryPreferenceFragment.getPrefKey(INCLUDE_DISTANCE_PREF_KEY, categoryId);
-        return sharedPref.getBoolean(prefKey, false);
+    private boolean shouldIncludeDistance(@Utility.CategoryId int categoryId) {
+        String prefKey = CategorySharedPrefs.getPrefKey(INCLUDE_DISTANCE_PREF_KEY, categoryId);
+        return sharedPrefs.getBoolean(prefKey, false);
     }
 }

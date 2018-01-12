@@ -1,6 +1,5 @@
 package cz.intesys.trainalert.entity;
 
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -10,17 +9,15 @@ import android.support.annotation.DrawableRes;
 import java.util.Collections;
 import java.util.List;
 
-import cz.intesys.trainalert.R;
-import cz.intesys.trainalert.entity.Category.CategoryPref;
-import cz.intesys.trainalert.utility.Utility;
+import javax.inject.Inject;
 
-import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.DEFAULT_VALUE;
-import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.GRAPHICS_PREF_KEY;
-import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.INCLUDE_DISTANCE_PREF_KEY;
-import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.RINGTONE_PREF_KEY;
-import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.TEXT_AFTER_PREF_KEY;
-import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.TEXT_BEFORE_PREF_KEY;
-import static cz.intesys.trainalert.activity.CategoryActivity.CategoryPreferenceFragment.VIBRATE_PREF_KEY;
+import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.di.CategoryModule;
+
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.DEFAULT_VALUE;
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.GRAPHICS_PREF_KEY;
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.RINGTONE_PREF_KEY;
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.VIBRATE_PREF_KEY;
 
 public class Alarm implements Parcelable {
     public static final Creator<Alarm> CREATOR = new Creator<Alarm>() {
@@ -34,6 +31,8 @@ public class Alarm implements Parcelable {
             return new Alarm[size];
         }
     };
+    @Inject
+    public CategorySharedPrefs sharedPrefs;
     private int distance;
     private String message;
     private Poi poi; // Must have exactly one Poi which is related to
@@ -42,25 +41,10 @@ public class Alarm implements Parcelable {
         this.distance = distance;
         this.message = message;
         this.poi = poi;
+        CategoryModule.getCategoryComponent(poi.getCategory()).inject(this);
     }
     protected Alarm(Parcel in) {
 
-    }
-
-    public static boolean shouldIncludeDistance(@Utility.CategoryId int categoryId, SharedPreferences sharedPref) {
-        return CategoryPref.newInstance(categoryId, sharedPref).getBoolean(INCLUDE_DISTANCE_PREF_KEY, true);
-    }
-
-    public static String createMessage(int distance, @Utility.CategoryId int categoryId, SharedPreferences sharedPref) {
-        CategoryPref categoryPref = CategoryPref.newInstance(categoryId, sharedPref);
-
-        String beforeText = categoryPref.getString(TEXT_BEFORE_PREF_KEY, DEFAULT_VALUE);
-        if (shouldIncludeDistance(categoryId, sharedPref)) {
-            String afterText = categoryPref.getString(TEXT_AFTER_PREF_KEY, DEFAULT_VALUE);
-            return beforeText + distance + afterText;
-        } else {
-            return beforeText;
-        }
     }
 
     @Override
@@ -97,22 +81,6 @@ public class Alarm implements Parcelable {
         return message;
     }
 
-//    private void disable() {
-//        enabled = false;
-//    }
-//
-//    private void enable() {
-//        enabled = true;
-//    }
-
-//    private boolean isEnabled() {
-//        return enabled;
-//    }
-//
-//    private boolean isDisabled() {
-//        return !enabled;
-//    }
-
     public List<Alarm> toArray() {
         return Collections.singletonList(this);
     }
@@ -122,8 +90,8 @@ public class Alarm implements Parcelable {
     }
 
     public @DrawableRes
-    int getGraphics(SharedPreferences sharedPref) {
-        String graphics = CategoryPref.newInstance(getCategoryId(), sharedPref).getString(GRAPHICS_PREF_KEY, DEFAULT_VALUE);
+    int getGraphics() {
+        String graphics = sharedPrefs.getString(GRAPHICS_PREF_KEY, DEFAULT_VALUE);
         switch (graphics) {
             case "0":
                 return R.drawable.alarm_black_square;
@@ -148,60 +116,17 @@ public class Alarm implements Parcelable {
         }
     }
 
-    public Uri getRingtone(SharedPreferences sharedPref) {
-        String ringtone = CategoryPref.newInstance(getCategoryId(), sharedPref).getString(RINGTONE_PREF_KEY, Settings.System.DEFAULT_NOTIFICATION_URI.toString());
+    public Uri getRingtone() {
+        String ringtone = sharedPrefs.getString(RINGTONE_PREF_KEY, Settings.System.DEFAULT_NOTIFICATION_URI.toString());
         return Uri.parse(ringtone);
     }
 
-    public boolean shouldVibrate(SharedPreferences sharedPref) {
-        return CategoryPref.newInstance(getCategoryId(), sharedPref).getBoolean(VIBRATE_PREF_KEY, true);
-    }
-
-    public boolean shouldIncludeDistance(SharedPreferences sharedPref) {
-        String includeDistance = CategoryPref.newInstance(getCategoryId(), sharedPref).getString(INCLUDE_DISTANCE_PREF_KEY, DEFAULT_VALUE);
-        return "true".equals(includeDistance);
+    public boolean shouldVibrate() {
+        return sharedPrefs.getBoolean(VIBRATE_PREF_KEY, true);
     }
 
     public int getDistance() {
         return distance;
     }
 
-    private @Utility.CategoryId
-    int getCategoryId() {
-        return poi.getCategory();
-    }
-
-//    public class FriendMethods {
-//        public void disable() {
-//            Alarm.this.disable();
-//        }
-//
-//        public void enable() {
-//            Alarm.this.enable();
-//        }
-//
-//        public boolean isEnabled() {
-//            return Alarm.this.isEnabled();
-//        }
-//
-//        public boolean isDisabled() {
-//            return Alarm.this.isDisabled();
-//        }
-//
-//        private FriendMethods() {
-//        }
-//    }
-//
-//    /**
-//     * @param object in which the friend methods are requested
-//     * @return friend methods if object is friend
-//     */
-//    public FriendMethods getFriendMethods(Object object) {
-//        if (object instanceof MainFragmentViewModel) {
-//            return new FriendMethods();
-//        }
-//        else {
-//            return null;
-//        }
-//    }
 }

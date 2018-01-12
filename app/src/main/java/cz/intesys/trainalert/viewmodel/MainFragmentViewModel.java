@@ -5,8 +5,6 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -32,7 +30,6 @@ public class MainFragmentViewModel extends AndroidViewModel {
     private boolean mShouldSwitchToFreeMode = false;
     private boolean mFreeMode = false;
     private boolean animating = true;
-    private SharedPreferences mSharedPreferences;
 
     public MainFragmentViewModel(@NonNull Application application) {
         super(application);
@@ -47,11 +44,6 @@ public class MainFragmentViewModel extends AndroidViewModel {
             mPois.setValue(pois);
         });
         loadPOIs();
-        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(application.getApplicationContext());
-    }
-
-    public SharedPreferences getSharedPreferences() {
-        return mSharedPreferences;
     }
 
     public boolean isAnimating() {
@@ -154,7 +146,7 @@ public class MainFragmentViewModel extends AndroidViewModel {
         }
         for (Poi poi : mPois.getValue()) {
             Log.d("distance", "distance to " + poi.getMetaIndex() + " is " + getLastLocation().toGeoPoint().distanceTo(poi));
-            for (Alarm alarm : poi.getAlarmList(mSharedPreferences)) {
+            for (Alarm alarm : poi.getAlarmList()) {
                 Log.d("alarmDistances", "poi: " + poi.getMetaIndex() + ", alarmDistance: " + alarm.getDistance());
                 if (isDisabled(alarm)) {
                     continue;
