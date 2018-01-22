@@ -1,27 +1,40 @@
 package cz.intesys.trainalert.viewmodel;
 
-import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.support.annotation.IntDef;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
+import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
+import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.repository.Repository;
 import cz.intesys.trainalert.repository.SimulatedRepository;
-import cz.intesys.trainalert.utility.Utility;
-import io.reactivex.Observable;
 
 import static cz.intesys.trainalert.TaConfig.REPOSITORY;
 
 public class PoiMapFragmentViewModel extends ViewModel {
+    public static final int MODE_NONE = 0;
+    public static final int MODE_ADD_POI = 1;
+    public static final int MODE_EDIT_POI = 2;
+
     private MediatorLiveData<Location> mLocation;
     private MediatorLiveData<List<Poi>> mPois;
     private Repository mRepository;
-    private List<Poi> mRawPois;
+    private List<Poi> mRawPois; // TODO: probably redundant field?
     private boolean mInFreeMode = false;
+    private @PoiActivityMode int mode;
+    private long poiId;
+
+    @Retention (RetentionPolicy.SOURCE)
+    @IntDef ( {MODE_NONE, MODE_ADD_POI, MODE_EDIT_POI})
+    public @interface PoiActivityMode {
+    }
 
     public PoiMapFragmentViewModel() {
         mLocation = new MediatorLiveData<Location>();
@@ -34,7 +47,22 @@ public class PoiMapFragmentViewModel extends ViewModel {
             mRawPois = pois;
             mPois.setValue(pois);
         });
-        loadPOIs();
+    }
+
+    public long getPoiId() {
+        return poiId;
+    }
+
+    public void setPoiId(long poiId) {
+        this.poiId = poiId;
+    }
+
+    public int getMode() {
+        return mode;
+    }
+
+    public void setMode(int mode) {
+        this.mode = mode;
     }
 
     public boolean isInFreeMode() {
@@ -49,24 +77,16 @@ public class PoiMapFragmentViewModel extends ViewModel {
         if (isLoadedLocation()) {
             return mLocation.getValue();
         } else {
-            return getStarterLocation();
+            return TaConfig.DEFAULT_LOCATION;
         }
     }
 
-    public Location getStarterLocation() {
-        return new Location(50.48365189588503, 14.039404579177328);
-    }
-
-    public boolean isLoadedLocation() {
-        return mLocation.getValue() != null;
+    public void addPoi(Poi poi, TaCallback callback) {
+        mRepository.addPoi(poi, callback);
     }
 
     public LiveData<Location> getLocation() {
         return mLocation;
-    }
-
-    public Observable<List<Poi>> getPoisObservable(LifecycleOwner owner) {
-        return Utility.createLongTermUpdateObservable(owner, mPois);
     }
 
     public List<Poi> getLastPois() {
@@ -77,35 +97,17 @@ public class PoiMapFragmentViewModel extends ViewModel {
         return mRawPois != null;
     }
 
-
     public void restartRepository() {
         if (mRepository instanceof SimulatedRepository) {
             ((SimulatedRepository) mRepository).restartRepository();
         }
     }
 
-    public void loadPOIs() {
-        mRepository.loadPois();
+    public MediatorLiveData<List<Poi>> getPois() {
+        return mPois;
     }
 
-
-    /**
-     * Enables getLastPois() funcionality without handling all location updates
-     *
-     * @param owner
-     */
-    public void enableLastLocation(LifecycleOwner owner) {
-        mLocation.observe(owner, (location) -> {
-        });
-    }
-
-    /**
-     * Enables getLastPois() funcionality without handling all pois updates
-     *
-     * @param owner
-     */
-    public void enableLastPois(LifecycleOwner owner) {
-        mPois.observe(owner, (pois) -> {
-        });
+    private boolean isLoadedLocation() {
+        return mLocation.getValue() != null;
     }
 }

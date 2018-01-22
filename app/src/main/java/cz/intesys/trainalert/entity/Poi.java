@@ -44,12 +44,14 @@ public class Poi implements IGeoPoint, Parcelable {
             return new Poi[size];
         }
     };
+
     @Inject
     public CategorySharedPrefs sharedPrefs;
+
+    private long id;
     private String title;
     private Double latitude;
     private Double longitude;
-    private int metaIndex;
     private @Utility.CategoryId int category;
 
     /**
@@ -58,21 +60,26 @@ public class Poi implements IGeoPoint, Parcelable {
      * @param poiApi
      */
     public Poi(PoiApi poiApi) {
-        this(poiApi.getTitle(), poiApi.getLatitude(), poiApi.getLongitude(), poiApi.getType());
+        this(poiApi.getId(), poiApi.getTitle(), poiApi.getLatitude(), poiApi.getLongitude(), poiApi.getType());
     }
 
     /**
      * Create new default Poi from location.
      */
     public Poi(Location location, Context context) {
-        this(context.getString(R.string.poi_default_name), location.getLatitude(), location.getLongitude(), POI_TYPE_DEFUALT);
-    }
-
-    public Poi(Double latitude, Double longitude, @Utility.CategoryId int category) {
-        this(null, latitude, longitude, category);
+        this(0, context.getString(R.string.poi_default_name), location.getLatitude(), location.getLongitude(), POI_TYPE_DEFUALT);
     }
 
     public Poi(String title, Double latitude, Double longitude, @Utility.CategoryId int category) {
+        this(0, title, latitude, longitude, category);
+    }
+
+    public Poi(String title, String latitude, String longitude, @Utility.CategoryId int category) {
+        this(0, title, Double.parseDouble(latitude), Double.parseDouble(longitude), category);
+    }
+
+    public Poi(long id, String title, Double latitude, Double longitude, @Utility.CategoryId int category) {
+        this.id = id;
         this.title = title;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -94,7 +101,7 @@ public class Poi implements IGeoPoint, Parcelable {
         } else {
             longitude = in.readDouble();
         }
-        metaIndex = in.readInt();
+        id = in.readLong();
     }
 
     @Override
@@ -112,7 +119,7 @@ public class Poi implements IGeoPoint, Parcelable {
             dest.writeByte((byte) 1);
             dest.writeDouble(longitude);
         }
-        dest.writeInt(metaIndex);
+        dest.writeLong(id);
     }
 
     @Override
@@ -166,12 +173,12 @@ public class Poi implements IGeoPoint, Parcelable {
         return category;
     }
 
-    public int getMetaIndex() {
-        return metaIndex;
+    public long getId() {
+        return id;
     }
 
-    public void setMetaIndex(int metaIndex) {
-        this.metaIndex = metaIndex;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public List<Alarm> getAlarmList() {

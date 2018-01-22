@@ -1,5 +1,6 @@
 package cz.intesys.trainalert.activity;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -11,8 +12,11 @@ import android.view.MenuItem;
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.databinding.ActivityPoiBinding;
 import cz.intesys.trainalert.entity.Poi;
+import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.fragment.PoiListFragment;
 import cz.intesys.trainalert.fragment.PoiMapFragment;
+import cz.intesys.trainalert.viewmodel.PoiActivityViewModel;
+import cz.intesys.trainalert.viewmodel.PoiMapFragmentViewModel;
 
 public class PoiActivity extends AppCompatActivity implements PoiListFragment.OnFragmentInteractionListener, PoiMapFragment.OnFragmentInteractionListener {
 
@@ -20,6 +24,7 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
     private static final String POI_LIST_FRAGMENT_TAG = "cz.intesys.trainAlert.poiActivity.poiListTag";
 
     private ActivityPoiBinding mBinding;
+    private PoiActivityViewModel mViewModel;
 
     public static Intent newIntent(Context context) {
         Intent intent = new Intent(context, PoiActivity.class);
@@ -30,6 +35,7 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_poi);
+        mViewModel = ViewModelProviders.of(this).get(PoiActivityViewModel.class);
 
         setupActionBar();
         setupLayout();
@@ -39,7 +45,7 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                if (mBinding.activityPoiFragmentContainer != null) { // In portrait mode with single fragment.
+                if (inSingleFragmentMode()) { // In portrait mode with single fragment.
                     if (getSupportFragmentManager().findFragmentByTag(POI_MAP_FRAGMENT_TAG) != null) {
                         switchToPoiListFragment();
                     } else {
@@ -48,35 +54,79 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
                 } else { // In landscape mode with combined fragments.
                     onBackPressed();
                 }
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onPoiSelect(Poi poi) {
-        if (isInSingleFragmentMode()) {
-            switchToPoiMapFragment(poi);
-        } else {
-            PoiMapFragment fragment = (PoiMapFragment) getSupportFragmentManager().findFragmentById(R.id.activityPoi_mapFragment);
-            fragment.editPoi(poi);
+    public void onPoiSave(Poi poi) { // TODO: replace with two calls onEditPoiSave onNewPoiSaved
+        if (getPoiMapFragment().getFragmentMode() == PoiMapFragmentViewModel.MODE_ADD_POI) {
+            mViewModel.addPoi(poi, new TaCallback() { // TODO: probably use viewmodel on this activity
+                @Override
+                public void onResponse(Object response) {
+                    getPoiMapFragment().showNewPoiAddedNotification();
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+
+                }
+            });
+        } else if (getPoiMapFragment().getFragmentMode() == PoiMapFragmentViewModel.MODE_EDIT_POI) {
+            mViewModel.editPoi(getPoiMapFragment().getPoiId(), poi, new TaCallback<Poi>() {
+                @Override
+                public void onResponse(Poi response) {
+                    getPoiMapFragment().showNewPoiEditedNotification();
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+
+                }
+            });
         }
-        Log.d("fraginteraction", "was clicked on poi " + poi.getTitle());
-    }
-
-    @Override
-    public void onPoiSave(Poi poi) {
-
     }
 
     @Override
     public void onPoiAdd() {
-        if (isInSingleFragmentMode()) {
+        if (inSingleFragmentMode()) {
             switchToPoiMapFragment(PoiMapFragment.MODE_NEW_POI);
         } else {
             PoiMapFragment fragment = (PoiMapFragment) getSupportFragmentManager().findFragmentById(R.id.activityPoi_mapFragment);
             fragment.addPoi();
         }
+    }
 
+    @Override
+    public void onPoiSelect(Poi poi) {
+        if (inSingleFragmentMode()) {
+            if (inPoiListFragment()) {
+                switchToPoiMapFragment(poi);
+            } else {
+                getPoiMapFragment().editPoi(poi);
+            }
+        } else {
+            getPoiMapFragment().editPoi(poi);
+        }
+
+        Log.d("fraginteraction", "was clicked on poi " + poi.getTitle());
+    }
+
+    private PoiMapFragment getPoiMapFragment() {
+        if (inSingleFragmentMode()) {
+            return (PoiMapFragment) getSupportFragmentManager().findFragmentByTag(POI_MAP_FRAGMENT_TAG);
+        } else {
+            return (PoiMapFragment) getSupportFragmentManager().findFragmentById(R.id.activityPoi_mapFragment);
+        }
+    }
+
+    private PoiListFragment getPoiListFragment() {
+        if (inSingleFragmentMode()) {
+            return (PoiListFragment) getSupportFragmentManager().findFragmentByTag(POI_LIST_FRAGMENT_TAG);
+        } else {
+            return (PoiListFragment) getSupportFragmentManager().findFragmentById(R.id.activityPoi_listFragment);
+        }
     }
 
     private void setupLayout() {
@@ -107,7 +157,16 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
         getSupportFragmentManager().beginTransaction().replace(R.id.activityPoi_fragmentContainer, fragment, POI_MAP_FRAGMENT_TAG).commit();
     }
 
-    private boolean isInSingleFragmentMode() {
+    private boolean inSingleFragmentMode() {
         return mBinding.activityPoiFragmentContainer != null;
+    }
+
+    private boolean inPoiListFragment() {
+        if (inSingleFragmentMode()) {
+            return getSupportFragmentManager().findFragmentByTag(POI_LIST_FRAGMENT_TAG) != null;
+        } else {
+            return true;
+        }
+
     }
 }

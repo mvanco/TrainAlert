@@ -14,9 +14,10 @@
         android:id="@+id/poiListItem_cardView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/poiListItem_height"
-        android:layout_marginBottom="@dimen/poiListItem_cardView_margin"
-        android:layout_marginEnd="@dimen/poiListItem_cardView_margin"
-        android:layout_marginStart="@dimen/poiListItem_cardView_margin"
+        android:layout_marginBottom="@dimen/poiListItem_cardView_margin_bottom"
+        android:layout_marginLeft="@dimen/poiListItem_cardView_margin_left"
+        android:layout_marginRight="@dimen/poiListItem_cardView_margin_right"
+        android:layout_marginTop="@dimen/poiListItem_cardView_margin_top"
         android:padding="@dimen/poiListItem_cardView_padding"
         app:cardCornerRadius="@dimen/poiListItem_cardView_cornerRadius"
         app:cardElevation="@dimen/poiListItem_cardView_elevation">

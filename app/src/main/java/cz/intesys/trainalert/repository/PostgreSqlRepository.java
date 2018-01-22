@@ -15,6 +15,7 @@ import cz.intesys.trainalert.api.PoisApi;
 import cz.intesys.trainalert.api.TaServerApi;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
+import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.rest.TaClient;
 import cz.intesys.trainalert.utility.Utility.LocationPoller;
 import retrofit2.Call;
@@ -23,7 +24,7 @@ import retrofit2.Response;
 
 /**
  * Note: If used with location, there must be added getLifecycle().addObserver(PostgreSqlRepository.getInstance())
- * on fragment or activity. For loading POIs, loadPois() method should be used.
+ * on fragment or activity. For loading POIs, reloadPois() method should be used.
  */
 public class PostgreSqlRepository implements Repository {
     private static PostgreSqlRepository sInstance;
@@ -37,6 +38,7 @@ public class PostgreSqlRepository implements Repository {
         mLocationPoller = new LocationPoller(() -> loadCurrentLocation());
         mCurrentLocation = new MutableLiveData<>();
         mPois = new MutableLiveData<>();
+        reloadPois();
     }
 
     public static PostgreSqlRepository getInstance() {
@@ -47,17 +49,95 @@ public class PostgreSqlRepository implements Repository {
     }
 
     @Override
+    public LiveData<List<Poi>> getPois() {
+        return mPois;
+    }
+
+    @Override
+    public void addPoi(Poi poi, TaCallback<Poi> taCallback) {
+        Call<PoiApi> call = mApiService.addPoi(new PoiApi(poi));
+        call.enqueue(new Callback<PoiApi>() {
+            @Override
+            public void onResponse(Call<PoiApi> call, Response<PoiApi> response) {
+                if (response.body() == null) {
+                    taCallback.onFailure(new Throwable("body is null"));
+                    return;
+                }
+
+                reloadPois();
+                taCallback.onResponse(new Poi(response.body()));
+            }
+
+            @Override
+            public void onFailure(Call<PoiApi> call, Throwable t) {
+                taCallback.onFailure(t);
+            }
+        });
+    }
+
+    @Override
+    public void editPoi(long id, Poi poi, TaCallback<Poi> taCallback) {
+        Call<PoiApi> call = mApiService.editPoi(id, new PoiApi(poi));
+        call.enqueue(new Callback<PoiApi>() {
+            @Override
+            public void onResponse(Call<PoiApi> call, Response<PoiApi> response) {
+                if (response.body() == null) {
+                    taCallback.onFailure(new Throwable("body is null"));
+                    return;
+                }
+
+                reloadPois();
+                taCallback.onResponse(new Poi(response.body()));
+            }
+
+            @Override
+            public void onFailure(Call<PoiApi> call, Throwable t) {
+                taCallback.onFailure(t);
+            }
+        });
+    }
+
+    @Override
     public LiveData<Location> getCurrentLocation() {
         return mCurrentLocation;
     }
 
-    @Override
-    public void loadPois() {
+    @OnLifecycleEvent (Lifecycle.Event.ON_RESUME)
+    public void startLocationPolling() {
+        mLocationPoller.startPolling();
+    }
+
+    @OnLifecycleEvent (Lifecycle.Event.ON_PAUSE)
+    public void stopLocationPolling() {
+        mLocationPoller.stopPolling();
+    }
+
+    public void loadCurrentLocation() {
+        Log.d("testorder", "loadCurrentLocation()");
+        Call<LocationAPI> call = mApiService.getLocation();
+        call.enqueue(new Callback<LocationAPI>() {
+            @Override
+            public void onResponse(Call<LocationAPI> call, Response<LocationAPI> response) {
+                if (response.body() == null) {
+                    return;
+                }
+                Log.e("testorder", "onResponse() id:" + response.body().getId());
+                mCurrentLocation.setValue(new Location(response.body()));
+            }
+
+            @Override
+            public void onFailure(Call<LocationAPI> call, Throwable t) {
+                // TODO: handle this
+            }
+        });
+    }
+
+    private void reloadPois() {
         Call<PoisApi> call = mApiService.getPois();
         call.enqueue(new Callback<PoisApi>() {
             @Override
             public void onResponse(Call<PoisApi> call, Response<PoisApi> response) {
-                if (response.body() == null) {
+                if (response.body() == null || response.body().getPois() == null) {
                     return;
                 }
                 List<Poi> pois = new ArrayList<>();
@@ -73,42 +153,6 @@ public class PostgreSqlRepository implements Repository {
 
             @Override
             public void onFailure(Call<PoisApi> call, Throwable t) {
-                // TODO: handle this
-            }
-        });
-    }
-
-    @Override
-    public LiveData<List<Poi>> getPois() {
-        return mPois;
-    }
-
-    @OnLifecycleEvent (Lifecycle.Event.ON_RESUME)
-    public void startLocationPolling() {
-        mLocationPoller.startPolling();
-    }
-
-    @OnLifecycleEvent (Lifecycle.Event.ON_PAUSE)
-    public void stopLocationPolling() {
-        mLocationPoller.stopPolling();
-    }
-
-
-    void loadCurrentLocation() {
-        Log.d("testorder", "loadCurrentLocation()");
-        Call<LocationAPI> call = mApiService.getLocation();
-        call.enqueue(new Callback<LocationAPI>() {
-            @Override
-            public void onResponse(Call<LocationAPI> call, Response<LocationAPI> response) {
-                if (response.body() == null) {
-                    return;
-                }
-                Log.e("testorder", "onResponse() id:" + response.body().getId());
-                mCurrentLocation.setValue(new Location(response.body()));
-            }
-
-            @Override
-            public void onFailure(Call<LocationAPI> call, Throwable t) {
                 // TODO: handle this
             }
         });

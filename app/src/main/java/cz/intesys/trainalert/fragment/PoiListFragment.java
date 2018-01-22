@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import cz.intesys.trainalert.adapter.PoiListAdapter;
 import cz.intesys.trainalert.databinding.FragmentPoiListBinding;
+import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 
 public class PoiListFragment extends Fragment {
@@ -67,9 +68,7 @@ public class PoiListFragment extends Fragment {
         mBinding.fragmentPoiListRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new PoiListAdapter(mListener);
         mBinding.fragmentPoiListRecyclerView.setAdapter(mAdapter);
-        mViewModel.getPoisObservable(this).subscribe(pois -> {
-            mAdapter.setData(pois);
-        });
+        mViewModel.getPois().observe(this, pois -> mAdapter.setData(pois));
 
 //        TODO: find why this causes bug, if it is called right after onResume(), bigger delay is ok
 //        List<Poi> sExamplePOIs = new ArrayList<Poi>();
@@ -81,10 +80,13 @@ public class PoiListFragment extends Fragment {
 //        }, 5);
     }
 
-
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void select(Poi poi) {
+        // TODO: select an item
     }
 }

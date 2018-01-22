@@ -35,6 +35,8 @@
     <string name="pref_default_before_text"></string>
     <string name="pref_default_after_text"></string>
 
+    <string name="new_poi_added">Bod zájmu byl přidán</string>
+    <string name="new_poi_edited">Bod zájmu byl editován</string>
 
     <string name="pref_title_colour">Barva ikonky</string>
     <string-array name="pref_colour_titles">

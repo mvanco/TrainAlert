@@ -4,8 +4,12 @@ import com.google.gson.annotations.Expose;
 
 import org.osmdroid.api.IGeoPoint;
 
+import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.utility.Utility;
 
+/**
+ * Exposed field names must correspond to server response JSON
+ */
 public class PoiApi implements IGeoPoint {
     @Expose
     private long id;
@@ -21,6 +25,14 @@ public class PoiApi implements IGeoPoint {
 
     @Expose
     private int type;
+
+    public PoiApi(Poi poi) {
+        this.id = 0;
+        this.title = poi.getTitle();
+        this.latitude = poi.getLatitude();
+        this.longitude = poi.getLongitude();
+        this.type = poi.getCategory();
+    }
 
     @Override
     public int getLatitudeE6() {

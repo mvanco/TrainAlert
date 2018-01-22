@@ -104,6 +104,10 @@ public class Utility {
         return overlay;
     }
 
+    public static <T> Observable<T> createLongTermUpdateObservable(LifecycleOwner owner, LiveData<T> liveData) {
+        return firstAndSample(createObservableFromLiveData(owner, liveData));
+    }
+
     public static <T> Observable<T> createObservableFromLiveData(LifecycleOwner owner, LiveData<T> liveData) {
         return Observable.create(emmiter -> liveData.observe(owner, data -> emmiter.onNext(data)));
 
@@ -111,10 +115,6 @@ public class Utility {
 
     public static <T> Observable<T> firstAndSample(Observable<T> observable) {
         return observable.sample(TaConfig.UPDATE_INTERVAL, TaConfig.UPDATE_INTERVAL_UNIT).mergeWith(observable.take(1));
-    }
-
-    public static <T> Observable<T> createLongTermUpdateObservable(LifecycleOwner owner, LiveData<T> liveData) {
-        return firstAndSample(createObservableFromLiveData(owner, liveData));
     }
 
     public static class LocationPoller {
@@ -152,5 +152,4 @@ public class Utility {
             }
         }
     }
-
 }

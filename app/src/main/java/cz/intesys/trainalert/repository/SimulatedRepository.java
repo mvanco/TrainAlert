@@ -12,6 +12,7 @@ import java.util.Random;
 
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
+import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.utility.Utility.LocationPoller;
 
 import static cz.intesys.trainalert.TaConfig.SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE;
@@ -39,6 +40,7 @@ public class SimulatedRepository implements Repository {
         mPois = new MutableLiveData<>();
         mExampleRoute = getExampleRoute();
         mExamplePois = getExamplePois();
+        reloadPois();
     }
 
     public static SimulatedRepository getInstance() {
@@ -54,18 +56,25 @@ public class SimulatedRepository implements Repository {
         return mCurrentLocation;
     }
 
-    public void loadPois() {
-        if (!mLoaded) {
-            new Handler().postDelayed(() -> {
-                mPois.setValue(mExamplePois);
-                mLoaded = true;
-            }, getRandomServerDelay());
-        }
-    }
-
     @Override
     public LiveData<List<Poi>> getPois() {
         return mPois;
+    }
+
+    @Override
+    public void addPoi(Poi poi, TaCallback<Poi> taCallback) {
+        mExamplePois.add(poi);
+        new Handler().postDelayed(() -> {
+            taCallback.onResponse(poi);
+        }, getRandomServerDelay());
+    }
+
+    @Override
+    public void editPoi(long id, Poi poi, TaCallback<Poi> taCallback) {
+        mExamplePois.set((int) id - 1, poi);
+        new Handler().postDelayed(() -> {
+            taCallback.onResponse(poi);
+        }, getRandomServerDelay());
     }
 
     @OnLifecycleEvent (Lifecycle.Event.ON_RESUME)
@@ -97,24 +106,8 @@ public class SimulatedRepository implements Repository {
         sExamplePOIs.add(new Poi("Most 2", 50.45158, 13.88418, POI_TYPE_BRIDGE));
         sExamplePOIs.add(new Poi("Výhybka 1", 50.47950, 13.69669, POI_TYPE_TURNOUT));
 
-//        sExamplePOIs.add(new Poi(50.47902254646468, 14.03452249583824, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.47817915699491, 14.033283647782222, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.468671536801395, 13.976941624253527, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.46681518367927, 13.967698539937949, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.46711419751372, 13.96569837980194, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.470352221395615, 13.95201231288346, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.457425251189875, 13.906925863491022, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.45325162770703, 13.892963746152365, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.44820354253554, 13.865930429153735, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.44444858393916, 13.85523290545108, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.44753197413999, 13.825485004491675, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.443651263354525, 13.81312538535105, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.45203159415806, 13.76749867754598, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.455747679477696, 13.75331515627523, POI_TYPE_CROSSING));
-//        sExamplePOIs.add(new Poi(50.46815261073638, 13.719186194335025, POI_TYPE_CROSSING));
-
         for (int i = 0; i < sExamplePOIs.size(); i++) {
-            sExamplePOIs.get(i).setMetaIndex(i);
+            sExamplePOIs.get(i).setId(i);
         }
 
         return sExamplePOIs;
@@ -128,6 +121,15 @@ public class SimulatedRepository implements Repository {
         int rangeSize = SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[1] - SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0];
         int serverDelay = new Random().nextInt(rangeSize) + SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0]; // <500, 1500)
         return serverDelay;
+    }
+
+    private void reloadPois() {
+        if (!mLoaded) {
+            new Handler().postDelayed(() -> {
+                mPois.setValue(mExamplePois);
+                mLoaded = true;
+            }, getRandomServerDelay());
+        }
     }
 
     private List<Location> getExampleRoute() {

@@ -44,7 +44,7 @@ public class CategorySharedPrefs {
     }
 
     /**
-     * Simlify basic call on SharedPreferences instance, finds actual preference key according to category
+     * Simplify basic call on SharedPreferences instance, finds actual preference key according to category
      *
      * @param key
      * @param defaultValue

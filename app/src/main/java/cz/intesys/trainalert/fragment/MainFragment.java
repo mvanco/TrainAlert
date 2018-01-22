@@ -114,7 +114,7 @@ public class MainFragment extends Fragment {
         initTrainMarker(mBinding.fragmentMainMapView);
         mBinding.fragmentMainMapView.getOverlayManager().add(mTrainMarker); // Add train marker.
         mViewModel.getLocation().observe(this, currentLocation -> handleLocationChange(mTrainMarker, currentLocation));
-        mViewModel.getPoisObservable(this).subscribe(pois -> handlePOIsChange(pois));
+        mViewModel.getPois().observe(this, pois -> handlePOIsChange(pois));
     }
 
     private void initMap(Context context) {

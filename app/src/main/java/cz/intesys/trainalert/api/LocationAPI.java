@@ -2,6 +2,9 @@ package cz.intesys.trainalert.api;
 
 import com.google.gson.annotations.Expose;
 
+/**
+ * Exposed field names must correspond to server response JSON
+ */
 public class LocationAPI {
     @Expose
     private long id;
