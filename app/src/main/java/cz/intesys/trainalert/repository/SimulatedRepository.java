@@ -1,9 +1,5 @@
 package cz.intesys.trainalert.repository;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.OnLifecycleEvent;
 import android.os.Handler;
 
 import java.util.ArrayList;
@@ -13,7 +9,6 @@ import java.util.Random;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.TaCallback;
-import cz.intesys.trainalert.utility.Utility.LocationPoller;
 
 import static cz.intesys.trainalert.TaConfig.SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE;
 import static cz.intesys.trainalert.utility.Utility.POI_TYPE_BRIDGE;
@@ -27,20 +22,12 @@ public class SimulatedRepository implements Repository {
     private final List<Poi> mExamplePois;
     private static SimulatedRepository sInstance;
     private int mLocationIterator = 0; // 0 - the most right Poi, 230 - the most left Poi
-    private boolean mLoaded = false;
     private boolean toTheLeftDirection = true;
     private List<Location> mExampleRoute;
-    private LocationPoller mLocationPoller;
-    private MutableLiveData<Location> mCurrentLocation;
-    private MutableLiveData<List<Poi>> mPois;
 
     private SimulatedRepository() {
-        mLocationPoller = new LocationPoller(() -> loadCurrentLocation());
-        mCurrentLocation = new MutableLiveData<>();
-        mPois = new MutableLiveData<>();
         mExampleRoute = getExampleRoute();
         mExamplePois = getExamplePois();
-        reloadPois();
     }
 
     public static SimulatedRepository getInstance() {
@@ -52,13 +39,34 @@ public class SimulatedRepository implements Repository {
     }
 
     @Override
-    public MutableLiveData<Location> getCurrentLocation() {
-        return mCurrentLocation;
+    public void getCurrentLocation(TaCallback<Location> taCallback) {
+        new Handler().postDelayed(() -> {
+            taCallback.onResponse(mExampleRoute.get(mLocationIterator));
+        }, getRandomServerDelay());
+
+        // Prepare next location
+        if (toTheLeftDirection) {
+            if (mLocationIterator < mExampleRoute.size() - 1) {
+                mLocationIterator++;
+            } else {
+                toTheLeftDirection = false;
+                mLocationIterator--;
+            }
+        } else {
+            if (mLocationIterator > 1) {
+                mLocationIterator--;
+            } else {
+                toTheLeftDirection = true;
+                mLocationIterator++;
+            }
+        }
     }
 
     @Override
-    public LiveData<List<Poi>> getPois() {
-        return mPois;
+    public void getPois(TaCallback<List<Poi>> taCallback) {
+        new Handler().postDelayed(() -> {
+            taCallback.onResponse(mExamplePois);
+        }, getRandomServerDelay());
     }
 
     @Override
@@ -71,40 +79,31 @@ public class SimulatedRepository implements Repository {
 
     @Override
     public void editPoi(long id, Poi poi, TaCallback<Poi> taCallback) {
-        mExamplePois.set((int) id - 1, poi);
-        new Handler().postDelayed(() -> {
-            taCallback.onResponse(poi);
-        }, getRandomServerDelay());
+        for (int i = 0; i < mExamplePois.size(); i++) {
+            Poi examplePoi = mExamplePois.get(i);
+            if (examplePoi.getId() == id) {
+                mExamplePois.set(i, poi);
+                taCallback.onResponse(poi);
+            }
+        }
+
+        taCallback.onFailure(null);
     }
 
-    @OnLifecycleEvent (Lifecycle.Event.ON_RESUME)
-    public void startLocationPolling() {
-        mLocationPoller.startPolling();
-    }
-
-    @OnLifecycleEvent (Lifecycle.Event.ON_PAUSE)
-    public void stopLocationPolling() {
-        mLocationPoller.stopPolling();
-    }
-
-    public void restartRepository() {
-        mLocationIterator = 0;
-    }
-
-    public List<Poi> getExamplePois() {
+    private List<Poi> getExamplePois() {
         List<Poi> sExamplePOIs = new ArrayList<Poi>();
+        sExamplePOIs.add(new Poi(1, "Přechod 1", 50.47902, 14.03453, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(2, "Omezení (50) 1", 50.47394, 14.00254, POI_TYPE_SPEED_LIMITATION_50));
+        sExamplePOIs.add(new Poi(3, "Přechod 2", 50.47916, 13.99642, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(4, "Stanice 1", 50.48079, 13.99086, POI_TYPE_TRAIN_STATION));
+        sExamplePOIs.add(new Poi(5, "Přechod 3", 50.46866, 13.97693, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(6, "Omezení (70) 1", 50.46641, 13.96887, POI_TYPE_SPEED_LIMITATION_70));
+        sExamplePOIs.add(new Poi(7, "Přechod 4", 50.46964, 13.95576, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(8, "Most 1", 50.46404, 13.93943, POI_TYPE_BRIDGE));
+        sExamplePOIs.add(new Poi(9, "Omezení (70) 2", 50.45779, 13.92928, POI_TYPE_SPEED_LIMITATION_70));
+        sExamplePOIs.add(new Poi(10, "Most 2", 50.45158, 13.88418, POI_TYPE_BRIDGE));
+        sExamplePOIs.add(new Poi(11, "Výhybka 1", 50.47950, 13.69669, POI_TYPE_TURNOUT));
 
-        sExamplePOIs.add(new Poi("Přechod 1", 50.47902, 14.03453, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi("Omezení (50) 1", 50.47394, 14.00254, POI_TYPE_SPEED_LIMITATION_50));
-        sExamplePOIs.add(new Poi("Přechod 2", 50.47916, 13.99642, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi("Stanice 1", 50.48079, 13.99086, POI_TYPE_TRAIN_STATION));
-        sExamplePOIs.add(new Poi("Přechod 3", 50.46866, 13.97693, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi("Omezení (70) 1", 50.46641, 13.96887, POI_TYPE_SPEED_LIMITATION_70));
-        sExamplePOIs.add(new Poi("Přechod 4", 50.46964, 13.95576, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi("Most 1", 50.46404, 13.93943, POI_TYPE_BRIDGE));
-        sExamplePOIs.add(new Poi("Omezení (70) 2", 50.45779, 13.92928, POI_TYPE_SPEED_LIMITATION_70));
-        sExamplePOIs.add(new Poi("Most 2", 50.45158, 13.88418, POI_TYPE_BRIDGE));
-        sExamplePOIs.add(new Poi("Výhybka 1", 50.47950, 13.69669, POI_TYPE_TURNOUT));
 
         for (int i = 0; i < sExamplePOIs.size(); i++) {
             sExamplePOIs.get(i).setId(i);
@@ -113,7 +112,7 @@ public class SimulatedRepository implements Repository {
         return sExamplePOIs;
     }
 
-    public int getRandomServerDelay() {
+    private int getRandomServerDelay() {
         if (SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0] == 0 && SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0] == 0) {
             return 0;
         }
@@ -121,15 +120,6 @@ public class SimulatedRepository implements Repository {
         int rangeSize = SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[1] - SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0];
         int serverDelay = new Random().nextInt(rangeSize) + SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0]; // <500, 1500)
         return serverDelay;
-    }
-
-    private void reloadPois() {
-        if (!mLoaded) {
-            new Handler().postDelayed(() -> {
-                mPois.setValue(mExamplePois);
-                mLoaded = true;
-            }, getRandomServerDelay());
-        }
     }
 
     private List<Location> getExampleRoute() {
@@ -375,26 +365,4 @@ public class SimulatedRepository implements Repository {
         return exampleRoute;
     }
 
-    private void loadCurrentLocation() {
-        new Handler().postDelayed(() -> {
-            mCurrentLocation.setValue(mExampleRoute.get(mLocationIterator));
-        }, getRandomServerDelay());
-
-        // Prepare next location
-        if (toTheLeftDirection) {
-            if (mLocationIterator < mExampleRoute.size() - 1) {
-                mLocationIterator++;
-            } else {
-                toTheLeftDirection = false;
-                mLocationIterator--;
-            }
-        } else {
-            if (mLocationIterator > 1) {
-                mLocationIterator--;
-            } else {
-                toTheLeftDirection = true;
-                mLocationIterator++;
-            }
-        }
-    }
 }

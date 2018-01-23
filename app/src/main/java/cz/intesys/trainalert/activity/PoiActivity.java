@@ -16,7 +16,6 @@ import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.fragment.PoiListFragment;
 import cz.intesys.trainalert.fragment.PoiMapFragment;
 import cz.intesys.trainalert.viewmodel.PoiActivityViewModel;
-import cz.intesys.trainalert.viewmodel.PoiMapFragmentViewModel;
 
 public class PoiActivity extends AppCompatActivity implements PoiListFragment.OnFragmentInteractionListener, PoiMapFragment.OnFragmentInteractionListener {
 
@@ -60,38 +59,39 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
     }
 
     @Override
-    public void onPoiSave(Poi poi) { // TODO: replace with two calls onEditPoiSave onNewPoiSaved
-        if (getPoiMapFragment().getFragmentMode() == PoiMapFragmentViewModel.MODE_ADD_POI) {
-            mViewModel.addPoi(poi, new TaCallback() { // TODO: probably use viewmodel on this activity
-                @Override
-                public void onResponse(Object response) {
-                    getPoiMapFragment().showNewPoiAddedNotification();
-                }
+    public void onPoiAdded(Poi poi) {
+        mViewModel.addPoi(poi, new TaCallback() { // TODO: probably use viewmodel on this activity
+            @Override
+            public void onResponse(Object response) {
+                getPoiMapFragment().showNewPoiAddedNotification();
+            }
 
-                @Override
-                public void onFailure(Throwable t) {
+            @Override
+            public void onFailure(Throwable t) {
 
-                }
-            });
-        } else if (getPoiMapFragment().getFragmentMode() == PoiMapFragmentViewModel.MODE_EDIT_POI) {
-            mViewModel.editPoi(getPoiMapFragment().getPoiId(), poi, new TaCallback<Poi>() {
-                @Override
-                public void onResponse(Poi response) {
-                    getPoiMapFragment().showNewPoiEditedNotification();
-                }
+            }
+        });
+    }
 
-                @Override
-                public void onFailure(Throwable t) {
+    @Override
+    public void onPoiEdited(long id, Poi poi) {
+        mViewModel.editPoi(id, poi, new TaCallback<Poi>() {
+            @Override
+            public void onResponse(Poi response) {
+                getPoiMapFragment().showNewPoiEditedNotification();
+            }
 
-                }
-            });
-        }
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
     }
 
     @Override
     public void onPoiAdd() {
         if (inSingleFragmentMode()) {
-            switchToPoiMapFragment(PoiMapFragment.MODE_NEW_POI);
+            switchToPoiMapFragment(PoiMapFragment.MODE_ADD_POI);
         } else {
             PoiMapFragment fragment = (PoiMapFragment) getSupportFragmentManager().findFragmentById(R.id.activityPoi_mapFragment);
             fragment.addPoi();

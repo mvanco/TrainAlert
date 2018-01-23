@@ -36,6 +36,26 @@ public class Location implements IGeoPoint {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Location location = (Location) o;
+
+        if (metaIndex != location.metaIndex) return false;
+        if (!latitude.equals(location.latitude)) return false;
+        return longitude.equals(location.longitude);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = latitude.hashCode();
+        result = 31 * result + longitude.hashCode();
+        result = 31 * result + metaIndex;
+        return result;
+    }
+
+    @Override
     public double getLongitude() {
         return longitude;
     }

@@ -14,14 +14,14 @@ import android.view.ViewGroup;
 import cz.intesys.trainalert.adapter.PoiListAdapter;
 import cz.intesys.trainalert.databinding.FragmentPoiListBinding;
 import cz.intesys.trainalert.entity.Poi;
-import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
+import cz.intesys.trainalert.viewmodel.PoiListFragmentViewModel;
 
 public class PoiListFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private FragmentPoiListBinding mBinding;
     private RecyclerView.LayoutManager mLayoutManager;
-    private MainFragmentViewModel mViewModel;
+    private PoiListFragmentViewModel mViewModel;
     private PoiListAdapter mAdapter;
 
     public interface OnFragmentInteractionListener extends PoiListAdapter.OnItemClickListener {
@@ -50,7 +50,7 @@ public class PoiListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(MainFragmentViewModel.class);
+        mViewModel = ViewModelProviders.of(this).get(PoiListFragmentViewModel.class);
     }
 
     @Override
@@ -68,7 +68,10 @@ public class PoiListFragment extends Fragment {
         mBinding.fragmentPoiListRecyclerView.setLayoutManager(mLayoutManager);
         mAdapter = new PoiListAdapter(mListener);
         mBinding.fragmentPoiListRecyclerView.setAdapter(mAdapter);
-        mViewModel.getPois().observe(this, pois -> mAdapter.setData(pois));
+        mViewModel.getPoisLiveData().observe(this, pois -> {
+            mAdapter.setData(pois);
+            mAdapter.notifyDataSetChanged();
+        });
 
 //        TODO: find why this causes bug, if it is called right after onResume(), bigger delay is ok
 //        List<Poi> sExamplePOIs = new ArrayList<Poi>();

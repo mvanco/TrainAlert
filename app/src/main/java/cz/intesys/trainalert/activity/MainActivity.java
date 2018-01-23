@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.activity_main_content_main_activity);
+        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.activityMainContent_mainFragment);
         fragment.setAnimating(true);
     }
 
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         binding.activityMainDrawerLayout.addDrawerListener(mToggle);
         binding.activityMainDrawerLayout.setScrimColor(Color.TRANSPARENT);
         mToggle.syncState();
-        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.activity_main_content_main_activity);
+        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.activityMainContent_mainFragment);
         binding.activityMainDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {

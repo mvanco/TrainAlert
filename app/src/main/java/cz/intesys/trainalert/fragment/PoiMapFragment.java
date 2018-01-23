@@ -40,27 +40,29 @@ import cz.intesys.trainalert.utility.Utility;
 import cz.intesys.trainalert.viewmodel.PoiMapFragmentViewModel;
 
 import static cz.intesys.trainalert.TaConfig.MAP_DEFAULT_ZOOM;
-import static cz.intesys.trainalert.TaConfig.REPOSITORY;
-import static cz.intesys.trainalert.viewmodel.PoiMapFragmentViewModel.MODE_EDIT_POI;
 
 public class PoiMapFragment extends Fragment {
 
     public static final String POI_KEY = "cz.intesys.trainalert.poimapfragment.poi";
     public static final String MODE_KEY = "cz.intesys.trainalert.poimapfragment.mode";
-    public static final int MODE_NORMAL = 0;
-    public static final int MODE_NEW_POI = 1;
+
+    public static final int MODE_NONE = 0;
+    public static final int MODE_EDIT_POI = 1; //edit poi
+    public static final int MODE_ADD_POI = 2; //add poi
+
     private OnFragmentInteractionListener mListener;
     private FragmentPoiMapBinding mBinding;
     private PoiMapFragmentViewModel mViewModel;
 
     @Retention (RetentionPolicy.SOURCE)
-    @IntDef ( {MODE_NORMAL, MODE_NEW_POI})
+    @IntDef ( {MODE_NONE, MODE_EDIT_POI, MODE_ADD_POI})
     public @interface PoiMapFragmentMode {
     }
 
     public interface OnFragmentInteractionListener extends PoiListAdapter.OnItemClickListener {
-        void onPoiSave(Poi poi);
+        void onPoiAdded(Poi poi);
 
+        void onPoiEdited(long id, Poi poi);
     }
 
     public static PoiMapFragment newInstance() {
@@ -101,14 +103,14 @@ public class PoiMapFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(PoiMapFragmentViewModel.class);
-        getLifecycle().addObserver(REPOSITORY);
+        getLifecycle().addObserver(mViewModel);
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentPoiMapBinding.inflate(inflater, container, false);
-        mBinding.fragmentMainFab.setOnClickListener((view) -> onFabClick());
+        mBinding.fragmentPoiMapFab.setOnClickListener((view) -> onFabClick());
         return mBinding.getRoot();
     }
 
@@ -126,33 +128,24 @@ public class PoiMapFragment extends Fragment {
     }
 
     public void editPoi(Poi poi) {
-        mBinding.fragmentMainMapView.getController().setCenter(poi);
-        mBinding.fragmentMainMapView.getController().setZoom(MAP_DEFAULT_ZOOM);
-        PoiMapInfoViewHandler poiHandler = new PoiMapInfoViewHandler(mBinding.fragmentMainPoiMapInfo);
-        bindPoiMapInfo(poiHandler, poi);
+        mBinding.fragmentPoiMapMapView.getController().setCenter(poi);
+        mBinding.fragmentPoiMapMapView.getController().setZoom(MAP_DEFAULT_ZOOM);
+        PoiMapInfoViewHandler poiHandler = new PoiMapInfoViewHandler(mBinding.fragmentPoiMapPoiMapInfo);
+        bindPoiMapInfo(poiHandler, poi, MODE_EDIT_POI);
         mViewModel.setMode(MODE_EDIT_POI);
         mViewModel.setPoiId(poi.getId());
     }
 
-    public long getPoiId() {
-        return mViewModel.getPoiId();
-    }
-
     public void addPoi() {
-        mBinding.fragmentMainMapView.getController().setCenter(mViewModel.getLastLocation());
-        mBinding.fragmentMainMapView.getController().setZoom(MAP_DEFAULT_ZOOM);
-        PoiMapInfoViewHandler poiHandler = new PoiMapInfoViewHandler(mBinding.fragmentMainPoiMapInfo);
-        bindPoiMapInfo(poiHandler, getNewPoi(getActivity()));
-        mViewModel.setMode(PoiMapFragmentViewModel.MODE_ADD_POI);
-    }
-
-    public @PoiMapFragmentViewModel.PoiActivityMode
-    int getFragmentMode() {
-        return mViewModel.getMode();
+        mBinding.fragmentPoiMapMapView.getController().setCenter(mViewModel.getLocation());
+        mBinding.fragmentPoiMapMapView.getController().setZoom(MAP_DEFAULT_ZOOM);
+        PoiMapInfoViewHandler poiHandler = new PoiMapInfoViewHandler(mBinding.fragmentPoiMapPoiMapInfo);
+        bindPoiMapInfo(poiHandler, getNewPoi(getActivity()), MODE_ADD_POI);
+        mViewModel.setMode(MODE_ADD_POI);
     }
 
     public Poi getNewPoi(Context context) {
-        return new Poi(mViewModel.getLastLocation(), context);
+        return new Poi(mViewModel.getLocation(), context);
     }
 
     public void showNewPoiAddedNotification() {
@@ -163,12 +156,18 @@ public class PoiMapFragment extends Fragment {
         showNotification(R.string.new_poi_edited);
     }
 
-    private void bindPoiMapInfo(PoiMapInfoViewHandler poiHandler, Poi poi) { // TODO: make as custom view
+    private void bindPoiMapInfo(PoiMapInfoViewHandler poiHandler, Poi poi, @PoiMapFragmentMode int mode) { // TODO: make as custom view
         poiHandler.mIcon.setImageResource(poi.getMarkerDrawable());
         poiHandler.mTitle.setText(poi.getTitle());
         poiHandler.mLatitude.setText(String.valueOf(poi.getLatitude()));
         poiHandler.mLongitude.setText(String.valueOf(poi.getLongitude()));
-        poiHandler.mOkButton.setOnClickListener((view) -> mListener.onPoiSave(obtainPoi(poiHandler)));
+        poiHandler.mOkButton.setOnClickListener((view) -> {
+            if (mViewModel.getMode() == MODE_ADD_POI) {
+                mListener.onPoiAdded(obtainPoi(poiHandler));
+            } else if (mViewModel.getMode() == MODE_EDIT_POI) {
+                mListener.onPoiEdited(mViewModel.getPoiId(), obtainPoi(poiHandler));
+            }
+        });
     }
 
     private Poi obtainPoi(PoiMapInfoViewHandler handler) {
@@ -179,8 +178,8 @@ public class PoiMapFragment extends Fragment {
     }
 
     private void showNotification(@StringRes int text) {
-        ConstraintLayout poiMapInfo = mBinding.fragmentMainPoiMapInfo.findViewById(R.id.poiMapInfo_root);
-        ConstraintLayout newPoiAdded = mBinding.fragmentMainPoiMapInfo.findViewById(R.id.newPoiAdded_root);
+        ConstraintLayout poiMapInfo = mBinding.fragmentPoiMapPoiMapInfo.findViewById(R.id.poiMapInfo_root);
+        ConstraintLayout newPoiAdded = mBinding.fragmentPoiMapPoiMapInfo.findViewById(R.id.newPoiAdded_root);
         TextView tv = newPoiAdded.findViewById(R.id.newPoiAdded_textView);
         tv.setText(text);
         poiMapInfo.setVisibility(View.INVISIBLE);
@@ -197,10 +196,10 @@ public class PoiMapFragment extends Fragment {
 
     private void initMap(Context context) {
         Configuration.getInstance().load(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Load configuration.
-        mBinding.fragmentMainMapView.getController().setCenter(mViewModel.getLastLocation()); // Set map to current location.
-        mBinding.fragmentMainMapView.setMultiTouchControls(true);
-        mBinding.fragmentMainMapView.setTilesScaledToDpi(true);
-        mBinding.fragmentMainMapView.setMapListener(new MapListener() {
+        mBinding.fragmentPoiMapMapView.getController().setCenter(mViewModel.getLocation()); // Set map to current location.
+        mBinding.fragmentPoiMapMapView.setMultiTouchControls(true);
+        mBinding.fragmentPoiMapMapView.setTilesScaledToDpi(true);
+        mBinding.fragmentPoiMapMapView.setMapListener(new MapListener() {
             @Override
             public boolean onScroll(ScrollEvent event) {
                 setFreeMode(true);
@@ -212,11 +211,11 @@ public class PoiMapFragment extends Fragment {
                 return false;
             }
         });
-        mBinding.fragmentMainMapView.getController().setZoom(MAP_DEFAULT_ZOOM);
+        mBinding.fragmentPoiMapMapView.getController().setZoom(MAP_DEFAULT_ZOOM);
 
-        mViewModel.getPois().observe(this, pois -> {
-            if (mBinding.fragmentMainMapView.getOverlays().size() > 1) {
-                mBinding.fragmentMainMapView.getOverlays().remove(1);
+        mViewModel.getPoisLiveData().observe(this, pois -> {
+            if (mBinding.fragmentPoiMapMapView.getOverlays().size() > 1) {
+                mBinding.fragmentPoiMapMapView.getOverlays().remove(1);
             }
 
             ItemizedIconOverlay.OnItemGestureListener onItemGestureListener = new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
@@ -228,12 +227,11 @@ public class PoiMapFragment extends Fragment {
 
                 @Override
                 public boolean onItemLongPress(final int index, final OverlayItem item) {
-//                    editPoi(mViewModel.getLastPois().get(index));
-                    mListener.onPoiSelect(mViewModel.getLastPois().get(index));
+                    mListener.onPoiSelect(pois.get(index));
                     return true;
                 }
             };
-            mBinding.fragmentMainMapView.getOverlays().add(Utility.loadOverlayFromPois(pois, onItemGestureListener, getActivity()));
+            mBinding.fragmentPoiMapMapView.getOverlays().add(Utility.loadOverlayFromPois(pois, onItemGestureListener, getActivity()));
         });
 
         if (getArguments() != null && getArguments().containsKey(POI_KEY)) {
@@ -245,10 +243,10 @@ public class PoiMapFragment extends Fragment {
             @Override
             public void onChanged(@Nullable Location location) {
                 handleMode();
-                mViewModel.getLocation().removeObserver(this);
+                mViewModel.getLocationLiveData().removeObserver(this);
             }
         };
-        mViewModel.getLocation().observe(this, observer);
+        mViewModel.getLocationLiveData().observe(this, observer);
 
         Configuration.getInstance().save(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Save configuration.
     }
@@ -260,7 +258,7 @@ public class PoiMapFragment extends Fragment {
 
         @PoiMapFragmentMode int mode = getArguments().getInt(MODE_KEY);
         switch (mode) {
-            case MODE_NEW_POI:
+            case MODE_ADD_POI:
                 addPoi();
                 break;
         }
@@ -268,8 +266,8 @@ public class PoiMapFragment extends Fragment {
 
     private boolean onMapScroll(ScrollEvent event) {
         IGeoPoint centerPoint = event.getSource().getMapCenter();
-        EditText latitude = mBinding.fragmentMainPoiMapInfo.findViewById(R.id.poiMapInfo_latitude);
-        EditText longitude = mBinding.fragmentMainPoiMapInfo.findViewById(R.id.poiMapInfo_longitude);
+        EditText latitude = mBinding.fragmentPoiMapPoiMapInfo.findViewById(R.id.poiMapInfo_latitude);
+        EditText longitude = mBinding.fragmentPoiMapPoiMapInfo.findViewById(R.id.poiMapInfo_longitude);
         latitude.setText(String.valueOf(centerPoint.getLatitude()));
         longitude.setText(String.valueOf(centerPoint.getLongitude()));
         return true;
@@ -284,11 +282,11 @@ public class PoiMapFragment extends Fragment {
             if (isFreeMode()) {
                 return;
             }
-            mBinding.fragmentMainFab.setImageResource(R.drawable.fab_gps_not_fixed);
+            mBinding.fragmentPoiMapFab.setImageResource(R.drawable.fab_gps_not_fixed);
             mViewModel.setInFreeMode(true);
         } else {
-            mBinding.fragmentMainMapView.getController().setCenter(mViewModel.getLastLocation());
-            mBinding.fragmentMainFab.setImageResource(R.drawable.fab_gps_fixed);
+            mBinding.fragmentPoiMapMapView.getController().setCenter(mViewModel.getLocation());
+            mBinding.fragmentPoiMapFab.setImageResource(R.drawable.fab_gps_fixed);
             mViewModel.setInFreeMode(false);
         }
     }
@@ -332,11 +330,11 @@ public class PoiMapFragment extends Fragment {
         }
 
         private void hidePoiInfo() {
-            mBinding.fragmentMainPoiMapInfo.setVisibility(View.GONE);
+            mBinding.fragmentPoiMapPoiMapInfo.setVisibility(View.GONE);
         }
 
         private void showPoiInfo() {
-            mBinding.fragmentMainPoiMapInfo.setVisibility(View.VISIBLE);
+            mBinding.fragmentPoiMapPoiMapInfo.setVisibility(View.VISIBLE);
         }
     }
 }

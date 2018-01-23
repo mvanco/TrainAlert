@@ -4,18 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/fragmentMain_mapContainer"
+        android:id="@+id/fragmentPoiMap_mapContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="cz.intesys.trainalert.fragment.MainFragment">
 
         <org.osmdroid.views.MapView
-            android:id="@+id/fragmentMain_mapView"
+            android:id="@+id/fragmentPoiMap_mapView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
         <FrameLayout
-            android:id="@+id/fragmentMain_poiMapInfo"
+            android:id="@+id/fragmentPoiMap_poiMapInfo"
             android:layout_width="216dp"
             android:layout_height="294dp"
             android:layout_marginBottom="8dp"
@@ -39,7 +39,7 @@
         </FrameLayout>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fragmentMain_fab"
+            android:id="@+id/fragmentPoiMap_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
@@ -48,8 +48,8 @@
             android:layout_marginRight="@dimen/fabGps_margin"
             android:src="@drawable/fab_gps_fixed"
             app:backgroundTint="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="@+id/fragmentMain_mapView"
-            app:layout_constraintEnd_toEndOf="@+id/fragmentMain_mapView" />
+            app:layout_constraintBottom_toBottomOf="@id/fragmentPoiMap_mapView"
+            app:layout_constraintEnd_toEndOf="@id/fragmentPoiMap_mapView" />
 
     </android.support.constraint.ConstraintLayout>
 

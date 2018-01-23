@@ -1,18 +1,15 @@
 package cz.intesys.trainalert.repository;
 
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.LiveData;
-
 import java.util.List;
 
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.TaCallback;
 
-public interface Repository extends LifecycleObserver {
-    LiveData<Location> getCurrentLocation();
+public interface Repository {
+    void getCurrentLocation(TaCallback<Location> taCallback);
 
-    LiveData<List<Poi>> getPois(); // Return LiveData and calls initial loading of POIs
+    void getPois(TaCallback<List<Poi>> taCallback);
 
     void addPoi(Poi poi, TaCallback<Poi> taCallback);
 

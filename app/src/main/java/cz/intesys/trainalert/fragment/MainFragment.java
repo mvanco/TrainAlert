@@ -44,7 +44,6 @@ import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 
 import static cz.intesys.trainalert.TaConfig.GPS_TIME_INTERVAL;
 import static cz.intesys.trainalert.TaConfig.MAP_DEFAULT_ZOOM;
-import static cz.intesys.trainalert.TaConfig.REPOSITORY;
 import static cz.intesys.trainalert.utility.Utility.convertToDegrees;
 import static cz.intesys.trainalert.utility.Utility.getMarkerRotation;
 
@@ -65,7 +64,7 @@ public class MainFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(MainFragmentViewModel.class);
-        getLifecycle().addObserver(REPOSITORY);
+        getLifecycle().addObserver(mViewModel);
     }
 
     @Override
@@ -85,7 +84,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mTrainMarker.setPosition(mViewModel.getLastLocation().toGeoPoint());
+        mTrainMarker.setPosition(mViewModel.getLocation().toGeoPoint());
     }
 
     public void restartAnimation(Context context) {
@@ -101,7 +100,7 @@ public class MainFragment extends Fragment {
     }
 
     private void onFabClick() {
-        setMapPosition(mViewModel.getLastLocation().toGeoPoint());
+        setMapPosition(mViewModel.getLocation().toGeoPoint());
         setFabAsFixed();
     }
 
@@ -113,8 +112,8 @@ public class MainFragment extends Fragment {
         initMap(getActivity()); // Initialize map using osmdroid library and set current position on the map.
         initTrainMarker(mBinding.fragmentMainMapView);
         mBinding.fragmentMainMapView.getOverlayManager().add(mTrainMarker); // Add train marker.
-        mViewModel.getLocation().observe(this, currentLocation -> handleLocationChange(mTrainMarker, currentLocation));
-        mViewModel.getPois().observe(this, pois -> handlePOIsChange(pois));
+        mViewModel.getLocationLiveData().observe(this, currentLocation -> handleLocationChange(mTrainMarker, currentLocation));
+        mViewModel.getPoisLiveData().observe(this, pois -> handlePOIsChange(pois));
     }
 
     private void initMap(Context context) {
@@ -161,7 +160,7 @@ public class MainFragment extends Fragment {
         if (mTrainMarker == null) {
             mTrainMarker = new Marker(mapView);
             mTrainMarker.setTitle("Train LocationAPI");
-            mTrainMarker.setPosition(mViewModel.getLastLocation().toGeoPoint());
+            mTrainMarker.setPosition(mViewModel.getLocation().toGeoPoint());
             mTrainMarker.setIcon(getResources().getDrawable(R.drawable.marker_train_left));
         }
     }

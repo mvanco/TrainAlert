@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <fragment
-        android:id="@+id/activity_main_content_main_activity"
+        android:id="@+id/activityMainContent_mainFragment"
         android:name="cz.intesys.trainalert.fragment.MainFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
