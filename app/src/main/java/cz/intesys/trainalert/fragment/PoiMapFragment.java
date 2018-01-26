@@ -30,6 +30,7 @@ import org.osmdroid.views.overlay.OverlayItem;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.List;
 
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.adapter.PoiListAdapter;
@@ -53,17 +54,6 @@ public class PoiMapFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private FragmentPoiMapBinding mBinding;
     private PoiMapFragmentViewModel mViewModel;
-
-    @Retention (RetentionPolicy.SOURCE)
-    @IntDef ( {MODE_NONE, MODE_EDIT_POI, MODE_ADD_POI})
-    public @interface PoiMapFragmentMode {
-    }
-
-    public interface OnFragmentInteractionListener extends PoiListAdapter.OnItemClickListener {
-        void onPoiAdded(Poi poi);
-
-        void onPoiEdited(long id, Poi poi);
-    }
 
     public static PoiMapFragment newInstance() {
         PoiMapFragment fragment = new PoiMapFragment();
@@ -98,14 +88,12 @@ public class PoiMapFragment extends Fragment {
         }
     }
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(PoiMapFragmentViewModel.class);
         getLifecycle().addObserver(mViewModel);
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -213,26 +201,7 @@ public class PoiMapFragment extends Fragment {
         });
         mBinding.fragmentPoiMapMapView.getController().setZoom(MAP_DEFAULT_ZOOM);
 
-        mViewModel.getPoisLiveData().observe(this, pois -> {
-            if (mBinding.fragmentPoiMapMapView.getOverlays().size() > 1) {
-                mBinding.fragmentPoiMapMapView.getOverlays().remove(1);
-            }
-
-            ItemizedIconOverlay.OnItemGestureListener onItemGestureListener = new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-                @Override
-                public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                    Toast.makeText(getActivity(), item.getTitle(), Toast.LENGTH_LONG).show();
-                    return true;
-                }
-
-                @Override
-                public boolean onItemLongPress(final int index, final OverlayItem item) {
-                    mListener.onPoiSelect(pois.get(index));
-                    return true;
-                }
-            };
-            mBinding.fragmentPoiMapMapView.getOverlays().add(Utility.loadOverlayFromPois(pois, onItemGestureListener, getActivity()));
-        });
+        mViewModel.getPoisLiveData().observe(this, pois -> loadPois(pois));
 
         if (getArguments() != null && getArguments().containsKey(POI_KEY)) {
             Poi poi = getArguments().getParcelable(POI_KEY);
@@ -249,6 +218,29 @@ public class PoiMapFragment extends Fragment {
         mViewModel.getLocationLiveData().observe(this, observer);
 
         Configuration.getInstance().save(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Save configuration.
+    }
+
+    public void loadPois(List<Poi> pois) {
+        if (mBinding.fragmentPoiMapMapView.getOverlays().size() > 1) {
+            mBinding.fragmentPoiMapMapView.getOverlays().remove(1);
+        }
+
+        ItemizedIconOverlay.OnItemGestureListener onItemGestureListener = new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+            @Override
+            public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                Toast.makeText(getActivity(), item.getTitle(), Toast.LENGTH_LONG).show();
+                return true;
+            }
+
+            @Override
+            public boolean onItemLongPress(final int index, final OverlayItem item) {
+                mListener.onPoiSelect(pois.get(index));
+                return true;
+            }
+        };
+        mBinding.fragmentPoiMapMapView.getOverlays().clear();
+        mBinding.fragmentPoiMapMapView.getOverlays().add(Utility.loadOverlayFromPois(pois, onItemGestureListener, getActivity()));
+        mBinding.fragmentPoiMapMapView.invalidate();
     }
 
     private void handleMode() {
@@ -289,6 +281,17 @@ public class PoiMapFragment extends Fragment {
             mBinding.fragmentPoiMapFab.setImageResource(R.drawable.fab_gps_fixed);
             mViewModel.setInFreeMode(false);
         }
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({MODE_NONE, MODE_EDIT_POI, MODE_ADD_POI})
+    public @interface PoiMapFragmentMode {
+    }
+
+    public interface OnFragmentInteractionListener extends PoiListAdapter.OnItemClickListener {
+        void onPoiAdded(Poi poi);
+
+        void onPoiEdited(long id, Poi poi);
     }
 
     public class PoiMapInfoViewHandler {

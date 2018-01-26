@@ -62,7 +62,7 @@ public class PostgreSqlRepository implements Repository {
         call.enqueue(new Callback<PoisApi>() {
             @Override
             public void onResponse(Call<PoisApi> call, Response<PoisApi> response) {
-                if (response.body() == null) {
+                if (response.body() == null || response.body().getPois() == null) {
                     return;
                 }
                 List<Poi> pois = new ArrayList<>();

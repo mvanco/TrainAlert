@@ -2,138 +2,74 @@ package cz.intesys.trainalert.viewmodel;
 
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.arch.lifecycle.ViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.TaCallback;
-import cz.intesys.trainalert.repository.Repository;
-import cz.intesys.trainalert.utility.Utility;
-
-import static cz.intesys.trainalert.TaConfig.REPOSITORY;
+import cz.intesys.trainalert.repository.DataHelper;
 
 /**
  * Works with repository
  */
 public class BaseViewModel extends ViewModel implements LifecycleObserver {
-    private Repository mRepository;
-    private Location mLocation;
-    private MutableLiveData<Location> mLocationLiveData;
-    private List<Poi> mPois;
-    private MutableLiveData<List<Poi>> mPoisLiveData;
-    private Utility.LocationPoller mLocationPoller;
+    private DataHelper mDataHelper;
+    private MediatorLiveData<Location> mLocation;
+    private MediatorLiveData<List<Poi>> mPois;
 
     public BaseViewModel() {
-        mRepository = REPOSITORY;
-        mLocation = TaConfig.DEFAULT_LOCATION;
-        mLocationLiveData = new MutableLiveData<Location>();
-        mPois = new ArrayList<>();
-        mPoisLiveData = new MutableLiveData<>();
-
-        mLocationPoller = new Utility.LocationPoller(() -> {
-            if (!mLocation.equals(mLocationLiveData.getValue())) {
-                mLocationLiveData.setValue(mLocation);
-            }
-            mRepository.getCurrentLocation(new TaCallback<Location>() {
-                @Override
-                public void onResponse(Location response) {
-                    mLocation = response;
-                }
-
-                @Override
-                public void onFailure(Throwable t) {
-
-                }
-            });
-        });
+        mDataHelper = DataHelper.getInstance();
+        mLocation = new MediatorLiveData<>();
+        mPois = new MediatorLiveData<>();
+        mLocation.addSource(mDataHelper.getLocationLiveData(), location -> mLocation.setValue(location));
+        mPois.addSource(mDataHelper.getPoisLiveData(), pois -> mPois.setValue(pois));
     }
 
-    @OnLifecycleEvent (Lifecycle.Event.ON_RESUME)
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     public void startLocationPolling() {
-        mLocationPoller.startPolling();
+        mDataHelper.startLocationPolling();
     }
 
-    @OnLifecycleEvent (Lifecycle.Event.ON_PAUSE)
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     public void stopLocationPolling() {
-        mLocationPoller.stopPolling();
+        mDataHelper.stopLocationPolling();
     }
 
-    public MutableLiveData<Location> getLocationLiveData() {
-        return mLocationLiveData;
-    }
-
-    public Location getLocation() {
+    public LiveData<Location> getLocationLiveData() {
         return mLocation;
     }
 
-    public List<Poi> getPois() {
+    public LiveData<List<Poi>> getPoisLiveData() {
         return mPois;
     }
 
-    public MutableLiveData<List<Poi>> getPoisLiveData() {
-        reloadPois();
-        return mPoisLiveData;
+    public Location getLocation() {
+        return mDataHelper.getLocation();
     }
 
-    public void addPoi(Poi poi, TaCallback<Poi> taCallback) {
-        mRepository.addPoi(poi, new TaCallback<Poi>() {
-            @Override
-            public void onResponse(Poi response) {
-                taCallback.onResponse(response);
-                reloadPois();
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                taCallback.onFailure(t);
-            }
-        });
+    public List<Poi> getPois() {
+        return mDataHelper.getPois();
     }
 
-    public void editPoi(long id, Poi poi, TaCallback<Poi> taCallback) {
-        mRepository.editPoi(id, poi, new TaCallback<Poi>() {
-            @Override
-            public void onResponse(Poi response) {
-                taCallback.onResponse(response);
-                reloadPois();
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                taCallback.onFailure(t);
-            }
-        });
-    }
 
     public boolean areLoadedPois() {
-        return mPoisLiveData.getValue() != null;
+        return mDataHelper.getPoisLiveData().getValue() != null;
     }
 
     public boolean isLoadedLocation() {
-        return mLocationLiveData.getValue() != null;
+        return mDataHelper.getLocationLiveData().getValue() != null;
     }
 
-    private void reloadPois() {
-        mRepository.getPois(new TaCallback<List<Poi>>() {
-            @Override
-            public void onResponse(List<Poi> response) {
-                if (!mPois.equals(response)) {
-                    mPois.clear();
-                    mPois.addAll(response);
-                    mPoisLiveData.setValue(response);
-                }
-            }
+    public void addPoi(Poi poi, TaCallback<Poi> taCallback) {
+        mDataHelper.addPoi(poi, taCallback);
+    }
 
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        });
+    public void editPoi(long id, Poi poi, TaCallback<Poi> taCallback) {
+        mDataHelper.editPoi(id, poi, taCallback);
     }
 }

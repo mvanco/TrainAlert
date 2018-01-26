@@ -2,6 +2,9 @@ package cz.intesys.trainalert.viewmodel;
 
 import cz.intesys.trainalert.fragment.PoiMapFragment;
 
+/**
+ * BaseViewModel is used only for floatbutton to obtain current location
+ */
 public class PoiMapFragmentViewModel extends BaseViewModel {
 
     private boolean mInFreeMode = false;
