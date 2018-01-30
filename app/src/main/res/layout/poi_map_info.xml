@@ -1,100 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/poiMapInfo_root"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout>
 
+    <data>
 
-    <EditText
-        android:id="@+id/poiMapInfo_latitude"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        app:layout_constraintBottom_toTopOf="@+id/poiMapInfo_marker"
-        app:layout_constraintEnd_toStartOf="@+id/poiMapInfo_longitude"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
+        <variable
+            name="viewModel"
+            type="cz.intesys.trainalert.viewmodel.PoiMapFragmentViewModel" />
+    </data>
 
-    <EditText
-        android:id="@+id/poiMapInfo_longitude"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        app:layout_constraintBaseline_toBaselineOf="@+id/poiMapInfo_latitude"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/poiMapInfo_latitude" />
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/poiMapInfo_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/poiMapInfo_marker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/poiMapInfo_horizontalLine"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_edit_location" />
-
-    <Button
-        android:id="@+id/poiMapInfo_confirmButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="OK"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/poiMapInfo_horizontalLine" />
-
-    <android.support.constraint.Guideline
-        android:id="@+id/poiMapInfo_horizontalLine"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
-
-    <GridLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toTopOf="@id/poiMapInfo_latitude"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="91dp">
-
-        <ImageView
-            android:id="@+id/poiMapInfo_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            app:srcCompat="@drawable/poi_crossing"
-            tools:layout_editor_absoluteX="200dp"
-            tools:layout_editor_absoluteY="94dp" />
 
         <EditText
-            android:id="@+id/poiMapInfo_title"
+            android:id="@+id/poiMapInfo_latitude"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="@{String.valueOf(viewModel.poi.latitude)}"
+            app:layout_constraintBottom_toTopOf="@+id/poiMapInfo_marker"
+            app:layout_constraintEnd_toStartOf="@+id/poiMapInfo_longitude"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/poiMapInfo_longitude"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="@{String.valueOf(viewModel.poi.longitude)}"
+            app:layout_constraintBaseline_toBaselineOf="@+id/poiMapInfo_latitude"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/poiMapInfo_latitude" />
+
+        <ImageView
+            android:id="@+id/poiMapInfo_marker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="Name"
-            tools:layout_editor_absoluteX="40dp"
-            tools:layout_editor_absoluteY="357dp">
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/poiMapInfo_horizontalLine"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/ic_edit_location" />
 
-            <requestFocus />
+        <Button
+            android:id="@+id/poiMapInfo_confirmButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/button_text_save"
+            android:textAllCaps="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/poiMapInfo_horizontalLine" />
 
-        </EditText>
+        <android.support.constraint.Guideline
+            android:id="@+id/poiMapInfo_horizontalLine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
 
-    </GridLayout>
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toTopOf="@id/poiMapInfo_latitude"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="91dp">
 
-</android.support.constraint.ConstraintLayout>
+            <ImageView
+                android:id="@+id/poiMapInfo_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                app:category="@{viewModel.poi.category}"
+                app:srcCompat="@drawable/poi_crossing"
+                tools:layout_editor_absoluteX="200dp"
+                tools:layout_editor_absoluteY="94dp" />
+
+            <EditText
+                android:id="@+id/poiMapInfo_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@{viewModel.poi.title}"
+                tools:layout_editor_absoluteX="40dp"
+                tools:layout_editor_absoluteY="357dp">
+
+                <requestFocus />
+
+            </EditText>
+
+        </GridLayout>
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

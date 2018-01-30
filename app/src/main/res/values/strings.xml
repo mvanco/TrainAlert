@@ -25,6 +25,7 @@
     <!-- Titles -->
     <string name="title_activity_poi">POI body</string>
     <string name="title_activity_category">Kategorie</string>
+    <string name="title_fragment_category_picker">Vyber kategorii</string>
 
     <string name="pref_title_ringtone">Zvukové upozornění</string>
     <string name="pref_ringtone_silent">silent</string>
@@ -96,5 +97,6 @@
         <item>300</item>
     </string-array>
     <string name="pref_distances_summary">Nastav vzdálenosti které vyvolávají upozornění</string>
+    <string name="button_text_save">Ulož</string>
 
 </resources>

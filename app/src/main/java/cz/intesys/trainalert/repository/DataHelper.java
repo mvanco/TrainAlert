@@ -6,7 +6,9 @@ import android.arch.lifecycle.MutableLiveData;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.TaConfig;
+import cz.intesys.trainalert.entity.Category;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.TaCallback;
@@ -59,6 +61,22 @@ public class DataHelper implements LifecycleObserver {
             sInstance = new DataHelper();
         }
         return sInstance;
+    }
+
+    /**
+     * Warning, index in the List must correspond category id!
+     *
+     * @return list of statically defined categories
+     */
+    public List<Category> getCategories() {
+        List<Category> categories = new ArrayList<>();
+        categories.add(new Category(0, "Přechod", R.drawable.poi_crossing));
+        categories.add(new Category(1, "Omezení 50", R.drawable.poi_speed_limitation));
+        categories.add(new Category(2, "Omezení 70", R.drawable.poi_speed_limitation));
+        categories.add(new Category(3, "Stanice", R.drawable.poi_train_station));
+        categories.add(new Category(4, "Most", R.drawable.poi_bridge));
+        categories.add(new Category(5, "Výhybka", R.drawable.poi_turnout));
+        return categories;
     }
 
 

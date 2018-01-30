@@ -37,7 +37,10 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
         mViewModel = ViewModelProviders.of(this).get(PoiActivityViewModel.class);
 
         setupActionBar();
-        setupLayout();
+
+        if (savedInstanceState == null) { // Not restoring from previous state, otherwise performance issue
+            setupLayout();
+        }
     }
 
     @Override
@@ -86,6 +89,11 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
 
             }
         });
+    }
+
+    @Override
+    public void onCategoryIconClick() {
+
     }
 
     @Override

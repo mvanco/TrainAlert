@@ -17,12 +17,12 @@ import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.entity.Category;
 import cz.intesys.trainalert.fragment.CategoryDetailFragment;
+import cz.intesys.trainalert.repository.DataHelper;
 
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.CATEGORY_KEY;
 
@@ -141,7 +141,7 @@ public class CategoryActivity extends AppCompatPreferenceActivity {
     public void onBuildHeaders(List<Header> target) {
         //loadHeadersFromResource(R.xml.pref_headers, target);
 
-        for (Category category : getCategories()) {
+        for (Category category : DataHelper.getInstance().getCategories()) {
             target.add(getHeader(category));
         }
     }
@@ -159,22 +159,6 @@ public class CategoryActivity extends AppCompatPreferenceActivity {
     protected boolean isValidFragment(String fragmentName) {
         return PreferenceFragment.class.getName().equals(fragmentName)
                 || CategoryDetailFragment.class.getName().equals(fragmentName);
-    }
-
-    /**
-     * TODO: move to better place
-     *
-     * @return
-     */
-    public List<Category> getCategories() {
-        List<Category> categories = new ArrayList<>();
-        categories.add(new Category(0, "Přechod", R.drawable.poi_crossing));
-        categories.add(new Category(1, "Omezení 50", R.drawable.poi_speed_limitation));
-        categories.add(new Category(2, "Omezení 70", R.drawable.poi_speed_limitation));
-        categories.add(new Category(3, "Stanice", R.drawable.poi_train_station));
-        categories.add(new Category(4, "Most", R.drawable.poi_bridge));
-        categories.add(new Category(5, "Výhybka", R.drawable.poi_turnout));
-        return categories;
     }
 
     private Header getHeader(Category category) {

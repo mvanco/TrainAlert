@@ -11,7 +11,7 @@ public class Category {
     private String title;
     private @DrawableRes int iconRes;
 
-    public Category(int id, String title, int iconRes) {
+    public Category(int id, String title, @DrawableRes int iconRes) {
         this.id = id;
         this.title = title;
         this.iconRes = iconRes;

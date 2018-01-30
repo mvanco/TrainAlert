@@ -14,9 +14,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +51,19 @@ public class PoiMapFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private FragmentPoiMapBinding mBinding;
     private PoiMapFragmentViewModel mViewModel;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({MODE_NONE, MODE_EDIT_POI, MODE_ADD_POI})
+    public @interface PoiMapFragmentMode {
+    }
+
+    public interface OnFragmentInteractionListener extends PoiListAdapter.OnItemClickListener {
+        void onPoiAdded(Poi poi);
+
+        void onPoiEdited(long id, Poi poi);
+
+        void onCategoryIconClick();
+    }
 
     public static PoiMapFragment newInstance() {
         PoiMapFragment fragment = new PoiMapFragment();
@@ -98,37 +108,52 @@ public class PoiMapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mBinding = FragmentPoiMapBinding.inflate(inflater, container, false);
+        mBinding.setViewModel(mViewModel);
+
+        // Click events.
         mBinding.fragmentPoiMapFab.setOnClickListener((view) -> onFabClick());
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoConfirmButton.setOnClickListener(view -> {
+            if (mViewModel.getMode() == MODE_ADD_POI) {
+                mListener.onPoiAdded(mViewModel.getWorkingPoi());
+            } else if (mViewModel.getMode() == MODE_EDIT_POI) {
+                mListener.onPoiEdited(mViewModel.getWorkingPoi().getId(), mViewModel.getWorkingPoi());
+            }
+        });
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoIcon.setOnClickListener(v -> mListener.onCategoryIconClick());
+
         return mBinding.getRoot();
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        initMap(getActivity());
+        initMap();
     }
 
     @Override
     public void onDetach() {
-
         super.onDetach();
         mListener = null;
     }
 
+    /**
+     * Swich fragment to editPoi mode and pripare UI
+     *
+     * @param poi
+     */
     public void editPoi(Poi poi) {
         mBinding.fragmentPoiMapMapView.getController().setCenter(poi);
-        mBinding.fragmentPoiMapMapView.getController().setZoom(MAP_DEFAULT_ZOOM);
-        PoiMapInfoViewHandler poiHandler = new PoiMapInfoViewHandler(mBinding.fragmentPoiMapPoiMapInfo);
-        bindPoiMapInfo(poiHandler, poi, MODE_EDIT_POI);
+        mViewModel.setWorkingPoi(poi);
         mViewModel.setMode(MODE_EDIT_POI);
         mViewModel.setPoiId(poi.getId());
     }
 
+    /**
+     * Swich fragment to addPoi mode and pripare UI
+     */
     public void addPoi() {
         mBinding.fragmentPoiMapMapView.getController().setCenter(mViewModel.getLocation());
-        mBinding.fragmentPoiMapMapView.getController().setZoom(MAP_DEFAULT_ZOOM);
-        PoiMapInfoViewHandler poiHandler = new PoiMapInfoViewHandler(mBinding.fragmentPoiMapPoiMapInfo);
-        bindPoiMapInfo(poiHandler, getNewPoi(getActivity()), MODE_ADD_POI);
+        mViewModel.setWorkingPoi(getNewPoi(getActivity()));
         mViewModel.setMode(MODE_ADD_POI);
     }
 
@@ -144,26 +169,34 @@ public class PoiMapFragment extends Fragment {
         showNotification(R.string.new_poi_edited);
     }
 
-    private void bindPoiMapInfo(PoiMapInfoViewHandler poiHandler, Poi poi, @PoiMapFragmentMode int mode) { // TODO: make as custom view
-        poiHandler.mIcon.setImageResource(poi.getMarkerDrawable());
-        poiHandler.mTitle.setText(poi.getTitle());
-        poiHandler.mLatitude.setText(String.valueOf(poi.getLatitude()));
-        poiHandler.mLongitude.setText(String.valueOf(poi.getLongitude()));
-        poiHandler.mOkButton.setOnClickListener((view) -> {
-            if (mViewModel.getMode() == MODE_ADD_POI) {
-                mListener.onPoiAdded(obtainPoi(poiHandler));
-            } else if (mViewModel.getMode() == MODE_EDIT_POI) {
-                mListener.onPoiEdited(mViewModel.getPoiId(), obtainPoi(poiHandler));
+    public void loadPois(List<Poi> pois) {
+        if (mBinding.fragmentPoiMapMapView.getOverlays().size() > 1) {
+            mBinding.fragmentPoiMapMapView.getOverlays().remove(1);
+        }
+
+        ItemizedIconOverlay.OnItemGestureListener onItemGestureListener = new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
+            @Override
+            public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
+                Toast.makeText(getActivity(), item.getTitle(), Toast.LENGTH_LONG).show();
+                return true;
             }
-        });
+
+            @Override
+            public boolean onItemLongPress(final int index, final OverlayItem item) {
+                mListener.onPoiSelect(pois.get(index));
+                return true;
+            }
+        };
+        mBinding.fragmentPoiMapMapView.getOverlays().clear();
+        mBinding.fragmentPoiMapMapView.getOverlays().add(Utility.loadOverlayFromPois(pois, onItemGestureListener, getActivity()));
+        mBinding.fragmentPoiMapMapView.invalidate();
     }
 
-    private Poi obtainPoi(PoiMapInfoViewHandler handler) {
-        return new Poi(handler.getTitle().getText().toString(),
-                handler.getLatitude().getText().toString(),
-                handler.getLongitude().getText().toString(),
-                Utility.POI_TYPE_CROSSING);
+    public void setCategory(int categoryId) {
+        // something like mViewModel.setCategory() and it will change also layout
+//        new PoiMapInfoViewHandleler(mBinding.fragmentPoiMapPoiMapInfo).mIcon.setImageResource(iconRes);
     }
+
 
     private void showNotification(@StringRes int text) {
         ConstraintLayout poiMapInfo = mBinding.fragmentPoiMapPoiMapInfo.findViewById(R.id.poiMapInfo_root);
@@ -182,7 +215,7 @@ public class PoiMapFragment extends Fragment {
         setFreeMode(false);
     }
 
-    private void initMap(Context context) {
+    private void initMap() {
         Configuration.getInstance().load(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Load configuration.
         mBinding.fragmentPoiMapMapView.getController().setCenter(mViewModel.getLocation()); // Set map to current location.
         mBinding.fragmentPoiMapMapView.setMultiTouchControls(true);
@@ -220,29 +253,6 @@ public class PoiMapFragment extends Fragment {
         Configuration.getInstance().save(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Save configuration.
     }
 
-    public void loadPois(List<Poi> pois) {
-        if (mBinding.fragmentPoiMapMapView.getOverlays().size() > 1) {
-            mBinding.fragmentPoiMapMapView.getOverlays().remove(1);
-        }
-
-        ItemizedIconOverlay.OnItemGestureListener onItemGestureListener = new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
-            @Override
-            public boolean onItemSingleTapUp(final int index, final OverlayItem item) {
-                Toast.makeText(getActivity(), item.getTitle(), Toast.LENGTH_LONG).show();
-                return true;
-            }
-
-            @Override
-            public boolean onItemLongPress(final int index, final OverlayItem item) {
-                mListener.onPoiSelect(pois.get(index));
-                return true;
-            }
-        };
-        mBinding.fragmentPoiMapMapView.getOverlays().clear();
-        mBinding.fragmentPoiMapMapView.getOverlays().add(Utility.loadOverlayFromPois(pois, onItemGestureListener, getActivity()));
-        mBinding.fragmentPoiMapMapView.invalidate();
-    }
-
     private void handleMode() {
         if (getArguments() == null || !getArguments().containsKey(MODE_KEY)) {
             return;
@@ -258,10 +268,8 @@ public class PoiMapFragment extends Fragment {
 
     private boolean onMapScroll(ScrollEvent event) {
         IGeoPoint centerPoint = event.getSource().getMapCenter();
-        EditText latitude = mBinding.fragmentPoiMapPoiMapInfo.findViewById(R.id.poiMapInfo_latitude);
-        EditText longitude = mBinding.fragmentPoiMapPoiMapInfo.findViewById(R.id.poiMapInfo_longitude);
-        latitude.setText(String.valueOf(centerPoint.getLatitude()));
-        longitude.setText(String.valueOf(centerPoint.getLongitude()));
+        mViewModel.setPoiCoordinates(centerPoint.getLatitude(), centerPoint.getLongitude());
+
         return true;
     }
 
@@ -280,64 +288,6 @@ public class PoiMapFragment extends Fragment {
             mBinding.fragmentPoiMapMapView.getController().setCenter(mViewModel.getLocation());
             mBinding.fragmentPoiMapFab.setImageResource(R.drawable.fab_gps_fixed);
             mViewModel.setInFreeMode(false);
-        }
-    }
-
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({MODE_NONE, MODE_EDIT_POI, MODE_ADD_POI})
-    public @interface PoiMapFragmentMode {
-    }
-
-    public interface OnFragmentInteractionListener extends PoiListAdapter.OnItemClickListener {
-        void onPoiAdded(Poi poi);
-
-        void onPoiEdited(long id, Poi poi);
-    }
-
-    public class PoiMapInfoViewHandler {
-        private ImageView mIcon;
-        private EditText mTitle;
-        private EditText mLatitude;
-        private EditText mLongitude;
-        private Button mOkButton;
-
-        /**
-         * @param parent which views are searched in
-         */
-        public PoiMapInfoViewHandler(ViewGroup parent) {
-            mIcon = parent.findViewById(R.id.poiMapInfo_icon);
-            mTitle = parent.findViewById(R.id.poiMapInfo_title);
-            mLatitude = parent.findViewById(R.id.poiMapInfo_latitude);
-            mLongitude = parent.findViewById(R.id.poiMapInfo_longitude);
-            mOkButton = parent.findViewById(R.id.poiMapInfo_confirmButton);
-        }
-
-        public ImageView getIcon() {
-            return mIcon;
-        }
-
-        public EditText getTitle() {
-            return mTitle;
-        }
-
-        public EditText getLatitude() {
-            return mLatitude;
-        }
-
-        public EditText getLongitude() {
-            return mLongitude;
-        }
-
-        public Button getOkButton() {
-            return mOkButton;
-        }
-
-        private void hidePoiInfo() {
-            mBinding.fragmentPoiMapPoiMapInfo.setVisibility(View.GONE);
-        }
-
-        private void showPoiInfo() {
-            mBinding.fragmentPoiMapPoiMapInfo.setVisibility(View.VISIBLE);
         }
     }
 }

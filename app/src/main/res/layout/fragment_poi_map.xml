@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="viewModel"
+            type="cz.intesys.trainalert.viewmodel.PoiMapFragmentViewModel" />
+    </data>
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/fragmentPoiMap_mapContainer"
         android:layout_width="match_parent"
@@ -30,7 +37,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <include layout="@layout/poi_map_info" />
+            <include
+                android:id="@+id/fragmentPoiMap_poiMapInfoInclude"
+                layout="@layout/poi_map_info"
+                app:viewModel="@{viewModel}" />
 
             <include
                 layout="@layout/new_poi_added"

@@ -18,6 +18,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.TaConfig;
@@ -115,6 +117,10 @@ public class Utility {
 
     public static <T> Observable<T> firstAndSample(Observable<T> observable) {
         return observable.sample(TaConfig.UPDATE_INTERVAL, TaConfig.UPDATE_INTERVAL_UNIT).mergeWith(observable.take(1));
+    }
+
+    public static <T, U> U[] convertArray(List<T> from, Function<T, U> func, IntFunction<U[]> generator) {
+        return from.stream().map(func).toArray(generator);
     }
 
     public static class LocationPoller {

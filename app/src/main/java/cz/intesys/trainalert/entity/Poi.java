@@ -15,6 +15,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.api.PoiApi;
 import cz.intesys.trainalert.di.CategoryModule;
 import cz.intesys.trainalert.utility.Utility;
@@ -68,6 +69,10 @@ public class Poi implements IGeoPoint, Parcelable {
      */
     public Poi(Location location, Context context) {
         this(0, context.getString(R.string.poi_default_name), location.getLatitude(), location.getLongitude(), POI_TYPE_DEFUALT);
+    }
+
+    public Poi() {
+        this(0, "Name", TaConfig.DEFAULT_LOCATION.getLatitude(), TaConfig.DEFAULT_LOCATION.getLongitude(), POI_TYPE_DEFUALT);
     }
 
     public Poi(String title, Double latitude, Double longitude, @Utility.CategoryId int category) {
@@ -177,7 +182,7 @@ public class Poi implements IGeoPoint, Parcelable {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
