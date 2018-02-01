@@ -31,18 +31,22 @@ public class Alarm implements Parcelable {
             return new Alarm[size];
         }
     };
+
     @Inject
     public CategorySharedPrefs sharedPrefs;
     private int distance;
+
     private String message;
     private Poi poi; // Must have exactly one Poi which is related to
 
     public Alarm(int distance, String message, Poi poi) {
+        CategoryModule.getCategoryComponent(poi.getCategory()).inject(this);
+
         this.distance = distance;
         this.message = message;
         this.poi = poi;
-        CategoryModule.getCategoryComponent(poi.getCategory()).inject(this);
     }
+
     protected Alarm(Parcel in) {
 
     }

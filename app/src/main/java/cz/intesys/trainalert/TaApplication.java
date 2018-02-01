@@ -33,6 +33,9 @@ public class TaApplication extends Application {
         mApplicationComponent.inject(this);
     }
 
+    /**
+     * For possible future use
+     */
     public SharedPreferences getSharedPreferences() {
         return mSharedPreferences;
     }
@@ -40,7 +43,6 @@ public class TaApplication extends Application {
     public ApplicationComponent getApplicationComponent() {
         return mApplicationComponent;
     }
-
 }
 
 

@@ -11,12 +11,10 @@ import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.TaCallback;
 
 import static cz.intesys.trainalert.TaConfig.SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_BRIDGE;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_CROSSING;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_SPEED_LIMITATION_50;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_SPEED_LIMITATION_70;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_TRAIN_STATION;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_TURNOUT;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_CROSSING;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_50;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_70;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_TRAIN_STATION;
 
 public class SimulatedRepository implements Repository {
     private final List<Poi> mExamplePois;
@@ -99,11 +97,7 @@ public class SimulatedRepository implements Repository {
         sExamplePOIs.add(new Poi(5, "Přechod 3", 50.46866, 13.97693, POI_TYPE_CROSSING));
         sExamplePOIs.add(new Poi(6, "Omezení (70) 1", 50.46641, 13.96887, POI_TYPE_SPEED_LIMITATION_70));
         sExamplePOIs.add(new Poi(7, "Přechod 4", 50.46964, 13.95576, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi(8, "Most 1", 50.46404, 13.93943, POI_TYPE_BRIDGE));
-        sExamplePOIs.add(new Poi(9, "Omezení (70) 2", 50.45779, 13.92928, POI_TYPE_SPEED_LIMITATION_70));
-        sExamplePOIs.add(new Poi(10, "Most 2", 50.45158, 13.88418, POI_TYPE_BRIDGE));
-        sExamplePOIs.add(new Poi(11, "Výhybka 1", 50.47950, 13.69669, POI_TYPE_TURNOUT));
-
+        sExamplePOIs.add(new Poi(8, "Omezení (70) 2", 50.45779, 13.92928, POI_TYPE_SPEED_LIMITATION_70));
 
         for (int i = 0; i < sExamplePOIs.size(); i++) {
             sExamplePOIs.get(i).setId(i);

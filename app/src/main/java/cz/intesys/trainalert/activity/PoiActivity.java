@@ -13,14 +13,17 @@ import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.databinding.ActivityPoiBinding;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.TaCallback;
+import cz.intesys.trainalert.fragment.CategoryPickerDialogFragment;
 import cz.intesys.trainalert.fragment.PoiListFragment;
 import cz.intesys.trainalert.fragment.PoiMapFragment;
+import cz.intesys.trainalert.repository.DataHelper;
 import cz.intesys.trainalert.viewmodel.PoiActivityViewModel;
 
-public class PoiActivity extends AppCompatActivity implements PoiListFragment.OnFragmentInteractionListener, PoiMapFragment.OnFragmentInteractionListener {
+public class PoiActivity extends AppCompatActivity implements PoiListFragment.OnFragmentInteractionListener, PoiMapFragment.OnFragmentInteractionListener, CategoryPickerDialogFragment.OnFragmentInteractionListener {
 
     private static final String POI_MAP_FRAGMENT_TAG = "cz.intesys.trainAlert.poiActivity.poiMapTag";
     private static final String POI_LIST_FRAGMENT_TAG = "cz.intesys.trainAlert.poiActivity.poiListTag";
+    private static final String CATEGORY_PICKER_DIALOG_FRAGMENT_TAG = "cz.intesys.trainAlert.poiActivity.categoryPickerTag";
 
     private ActivityPoiBinding mBinding;
     private PoiActivityViewModel mViewModel;
@@ -92,8 +95,8 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
     }
 
     @Override
-    public void onCategoryIconClick() {
-
+    public void onCategoryIconClick(@DataHelper.CategoryId int categoryId) {
+        CategoryPickerDialogFragment.newInstance(categoryId).show(getSupportFragmentManager(), CATEGORY_PICKER_DIALOG_FRAGMENT_TAG);
     }
 
     @Override
@@ -119,6 +122,11 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
         }
 
         Log.d("fraginteraction", "was clicked on poi " + poi.getTitle());
+    }
+
+    @Override
+    public void onCategorySelected(int categoryId) {
+        getPoiMapFragment().setCategory(categoryId);
     }
 
     private PoiMapFragment getPoiMapFragment() {

@@ -1,5 +1,6 @@
 package cz.intesys.trainalert.di;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import cz.intesys.trainalert.TaApplication;
@@ -12,4 +13,6 @@ public interface ApplicationComponent {
     void inject(TaApplication taApplication);
 
     SharedPreferences getSharedPreferences();
+
+    Context getContext();
 }

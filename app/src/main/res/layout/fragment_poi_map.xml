@@ -43,8 +43,10 @@
                 app:viewModel="@{viewModel}" />
 
             <include
+                android:id="@+id/fragmentPoiMap_newPoiAddedInclude"
                 layout="@layout/new_poi_added"
-                android:visibility="invisible" />
+                android:visibility="invisible"
+                app:viewModel="@{viewModel}" />
 
         </FrameLayout>
 

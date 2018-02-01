@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.hasFixedSize();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new NavAdapter((id) -> onNavigationItemSelected(id)));
+
     }
 
     @Override

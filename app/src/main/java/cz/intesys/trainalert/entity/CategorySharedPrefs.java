@@ -7,7 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Set;
 
-import cz.intesys.trainalert.utility.Utility;
+import cz.intesys.trainalert.repository.DataHelper;
 
 public class CategorySharedPrefs {
     public static final String CATEGORY_KEY = "cz.intesys.trainalert.categorypreferencefragment.category";
@@ -22,7 +22,8 @@ public class CategorySharedPrefs {
     public static final String DEFAULT_VALUE = "0";
     public static final String DISTANCE_DEFAULT_VALUE = "300";
 
-    private @Utility.CategoryId int mCategoryId;
+    private @DataHelper.CategoryId
+    int mCategoryId;
     private SharedPreferences mSharedPref;
 
     @Retention (RetentionPolicy.SOURCE)
@@ -35,7 +36,7 @@ public class CategorySharedPrefs {
         mSharedPref = sharedPref;
     }
 
-    public static CategorySharedPrefs newInstance(@Utility.CategoryId int id, SharedPreferences sharedPref) {
+    public static CategorySharedPrefs newInstance(@DataHelper.CategoryId int id, SharedPreferences sharedPref) {
         return new CategorySharedPrefs(id, sharedPref);
     }
 

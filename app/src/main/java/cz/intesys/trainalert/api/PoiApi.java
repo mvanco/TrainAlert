@@ -5,7 +5,7 @@ import com.google.gson.annotations.Expose;
 import org.osmdroid.api.IGeoPoint;
 
 import cz.intesys.trainalert.entity.Poi;
-import cz.intesys.trainalert.utility.Utility;
+import cz.intesys.trainalert.repository.DataHelper;
 
 /**
  * Exposed field names must correspond to server response JSON
@@ -76,7 +76,7 @@ public class PoiApi implements IGeoPoint {
         this.title = title;
     }
 
-    public @Utility.CategoryId
+    public @DataHelper.CategoryId
     int getType() {
         return type;
     }

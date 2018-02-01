@@ -64,13 +64,13 @@ public class CategoryDetailFragment extends PreferenceFragment {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
         CategorySharedPrefs pref = CategorySharedPrefs.newInstance(categoryId, sharedPref);
 
-        ListPreference colourPref = new ListPreference(getActivity());
-        colourPref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.COLOUR_PREF_KEY, categoryId));
-        colourPref.setTitle(R.string.pref_title_colour);
-        colourPref.setEntries(R.array.pref_colour_titles);
-        colourPref.setEntryValues(R.array.pref_colour_values);
-        colourPref.setDefaultValue(pref.getString(CategorySharedPrefs.COLOUR_PREF_KEY, CategorySharedPrefs.DEFAULT_VALUE));
-        screen.addPreference(colourPref);
+//        ListPreference colourPref = new ListPreference(getActivity());
+//        colourPref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.COLOUR_PREF_KEY, categoryId));
+//        colourPref.setTitle(R.string.pref_title_colour);
+//        colourPref.setEntries(R.array.pref_colour_titles);
+//        colourPref.setEntryValues(R.array.pref_colour_values);
+//        colourPref.setDefaultValue(pref.getString(CategorySharedPrefs.COLOUR_PREF_KEY, CategorySharedPrefs.DEFAULT_VALUE));
+//        screen.addPreference(colourPref);
 
         ListPreference graphicsPref = new ListPreference(getActivity());
         graphicsPref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.GRAPHICS_PREF_KEY, categoryId));

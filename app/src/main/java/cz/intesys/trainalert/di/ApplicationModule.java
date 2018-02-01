@@ -1,6 +1,7 @@
 package cz.intesys.trainalert.di;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -18,5 +19,10 @@ public class ApplicationModule {
     @Provides
     SharedPreferences provideSharedPreferences() {
         return PreferenceManager.getDefaultSharedPreferences(mApplication);
+    }
+
+    @Provides
+    Context provideContext() {
+        return mApplication.getApplicationContext();
     }
 }

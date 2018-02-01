@@ -4,17 +4,16 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.osmdroid.api.IGeoPoint;
@@ -34,6 +33,7 @@ import cz.intesys.trainalert.adapter.PoiListAdapter;
 import cz.intesys.trainalert.databinding.FragmentPoiMapBinding;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
+import cz.intesys.trainalert.repository.DataHelper;
 import cz.intesys.trainalert.utility.Utility;
 import cz.intesys.trainalert.viewmodel.PoiMapFragmentViewModel;
 
@@ -62,7 +62,7 @@ public class PoiMapFragment extends Fragment {
 
         void onPoiEdited(long id, Poi poi);
 
-        void onCategoryIconClick();
+        void onCategoryIconClick(@DataHelper.CategoryId int categoryId);
     }
 
     public static PoiMapFragment newInstance() {
@@ -110,7 +110,7 @@ public class PoiMapFragment extends Fragment {
         mBinding = FragmentPoiMapBinding.inflate(inflater, container, false);
         mBinding.setViewModel(mViewModel);
 
-        // Click events.
+        // Click events. TODO: make part of UI using data binding
         mBinding.fragmentPoiMapFab.setOnClickListener((view) -> onFabClick());
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoConfirmButton.setOnClickListener(view -> {
             if (mViewModel.getMode() == MODE_ADD_POI) {
@@ -119,7 +119,35 @@ public class PoiMapFragment extends Fragment {
                 mListener.onPoiEdited(mViewModel.getWorkingPoi().getId(), mViewModel.getWorkingPoi());
             }
         });
-        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoIcon.setOnClickListener(v -> mListener.onCategoryIconClick());
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoIcon.setOnClickListener(v -> mListener.onCategoryIconClick(mViewModel.getWorkingPoi().getCategory()));
+
+//        View.OnClickListener inputListener = v -> {
+//
+//        };
+        TextWatcher tw = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // Nothing to do here.
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                mViewModel.setPoiTitle(s.toString());
+//                mViewModel.setPoiCoordinates(
+//                        Double.valueOf(mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoLatitude.getText().toString()),
+//                        Double.valueOf(mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoLongitude.getText().toString())
+//                );
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Nothing to do here.
+            }
+        };
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.addTextChangedListener(tw);
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setOnClickListener(v ->
+                mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setText("")
+        );
 
         return mBinding.getRoot();
     }
@@ -153,12 +181,8 @@ public class PoiMapFragment extends Fragment {
      */
     public void addPoi() {
         mBinding.fragmentPoiMapMapView.getController().setCenter(mViewModel.getLocation());
-        mViewModel.setWorkingPoi(getNewPoi(getActivity()));
+        mViewModel.setWorkingPoi(new Poi(mViewModel.getLocation()));
         mViewModel.setMode(MODE_ADD_POI);
-    }
-
-    public Poi getNewPoi(Context context) {
-        return new Poi(mViewModel.getLocation(), context);
     }
 
     public void showNewPoiAddedNotification() {
@@ -193,22 +217,19 @@ public class PoiMapFragment extends Fragment {
     }
 
     public void setCategory(int categoryId) {
-        // something like mViewModel.setCategory() and it will change also layout
-//        new PoiMapInfoViewHandleler(mBinding.fragmentPoiMapPoiMapInfo).mIcon.setImageResource(iconRes);
+        mViewModel.setPoiCategory(categoryId);
     }
 
 
     private void showNotification(@StringRes int text) {
-        ConstraintLayout poiMapInfo = mBinding.fragmentPoiMapPoiMapInfo.findViewById(R.id.poiMapInfo_root);
-        ConstraintLayout newPoiAdded = mBinding.fragmentPoiMapPoiMapInfo.findViewById(R.id.newPoiAdded_root);
-        TextView tv = newPoiAdded.findViewById(R.id.newPoiAdded_textView);
-        tv.setText(text);
-        poiMapInfo.setVisibility(View.INVISIBLE);
-        newPoiAdded.setVisibility(View.VISIBLE);
-        new Handler().postDelayed(() -> {
-            poiMapInfo.setVisibility(View.VISIBLE);
-            newPoiAdded.setVisibility(View.INVISIBLE);
-        }, 3000);
+        Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+//        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoRoot.setVisibility(View.INVISIBLE);
+//        mBinding.fragmentPoiMapNewPoiAddedInclude.newPoiAddedRoot.setVisibility(View.VISIBLE);
+//        mBinding.fragmentPoiMapNewPoiAddedInclude.newPoiAddedTextView.setText(text);
+//        new Handler().postDelayed(() -> {
+//            mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoRoot.setVisibility(View.VISIBLE);
+//            mBinding.fragmentPoiMapNewPoiAddedInclude.newPoiAddedRoot.setVisibility(View.INVISIBLE);
+//        }, 3000);
     }
 
     private void onFabClick() {

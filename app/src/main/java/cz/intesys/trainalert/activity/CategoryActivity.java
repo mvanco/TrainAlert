@@ -163,7 +163,7 @@ public class CategoryActivity extends AppCompatPreferenceActivity {
 
     private Header getHeader(Category category) {
         Header header = new Header();
-        header.title = category.getTitle();
+        header.title = getString(category.getTitleRes());
         header.iconRes = category.getIconRes();
         header.fragment = "cz.intesys.trainalert.fragment.CategoryDetailFragment";
         Bundle bundle = new Bundle();

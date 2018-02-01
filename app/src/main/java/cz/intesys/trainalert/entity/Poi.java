@@ -18,20 +18,14 @@ import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.api.PoiApi;
 import cz.intesys.trainalert.di.CategoryModule;
-import cz.intesys.trainalert.utility.Utility;
+import cz.intesys.trainalert.repository.DataHelper;
 
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.DISTANCES_PREF_KEY;
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.DISTANCE_DEFAULT_VALUE;
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.INCLUDE_DISTANCE_PREF_KEY;
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.TEXT_AFTER_PREF_KEY;
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.TEXT_BEFORE_PREF_KEY;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_BRIDGE;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_CROSSING;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_DEFUALT;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_SPEED_LIMITATION_50;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_SPEED_LIMITATION_70;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_TRAIN_STATION;
-import static cz.intesys.trainalert.utility.Utility.POI_TYPE_TURNOUT;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_DEFUALT;
 
 public class Poi implements IGeoPoint, Parcelable {
     public static final Creator<Poi> CREATOR = new Creator<Poi>() {
@@ -49,11 +43,15 @@ public class Poi implements IGeoPoint, Parcelable {
     @Inject
     public CategorySharedPrefs sharedPrefs;
 
+    @Inject
+    public Context context;
+
     private long id;
     private String title;
     private Double latitude;
     private Double longitude;
-    private @Utility.CategoryId int category;
+    private @DataHelper.CategoryId
+    int category;
 
     /**
      * Conversion function
@@ -64,33 +62,39 @@ public class Poi implements IGeoPoint, Parcelable {
         this(poiApi.getId(), poiApi.getTitle(), poiApi.getLatitude(), poiApi.getLongitude(), poiApi.getType());
     }
 
+    public Poi() {
+        this(null, TaConfig.DEFAULT_LOCATION.getLatitude(), TaConfig.DEFAULT_LOCATION.getLongitude(), POI_TYPE_DEFUALT);
+    }
+
     /**
      * Create new default Poi from location.
      */
-    public Poi(Location location, Context context) {
-        this(0, context.getString(R.string.poi_default_name), location.getLatitude(), location.getLongitude(), POI_TYPE_DEFUALT);
+    public Poi(Location location) {
+        this(null, location.getLatitude(), location.getLongitude(), POI_TYPE_DEFUALT);
     }
 
-    public Poi() {
-        this(0, "Name", TaConfig.DEFAULT_LOCATION.getLatitude(), TaConfig.DEFAULT_LOCATION.getLongitude(), POI_TYPE_DEFUALT);
+    public Poi(String title, String latitude, String longitude, @DataHelper.CategoryId int category) {
+        this(title, Double.parseDouble(latitude), Double.parseDouble(longitude), category);
     }
 
-    public Poi(String title, Double latitude, Double longitude, @Utility.CategoryId int category) {
+    public Poi(String title, Double latitude, Double longitude, @DataHelper.CategoryId int category) {
         this(0, title, latitude, longitude, category);
     }
 
-    public Poi(String title, String latitude, String longitude, @Utility.CategoryId int category) {
-        this(0, title, Double.parseDouble(latitude), Double.parseDouble(longitude), category);
-    }
+    public Poi(long id, String title, Double latitude, Double longitude, @DataHelper.CategoryId int category) {
+        CategoryModule.getCategoryComponent(category).inject(this);
 
-    public Poi(long id, String title, Double latitude, Double longitude, @Utility.CategoryId int category) {
         this.id = id;
-        this.title = title;
+
+        if (title == null) {
+            this.title = context.getString(R.string.poi_default_name);
+        } else {
+            this.title = title;
+        }
+
         this.latitude = latitude;
         this.longitude = longitude;
         this.category = category;
-
-        CategoryModule.getCategoryComponent(category).inject(this);
     }
 
 
@@ -157,6 +161,8 @@ public class Poi implements IGeoPoint, Parcelable {
 
         Poi poi = (Poi) o;
 
+        if (id != poi.id) return false;
+        if (category != poi.category) return false;
         if (!title.equals(poi.title)) return false;
         if (!latitude.equals(poi.latitude)) return false;
         return longitude.equals(poi.longitude);
@@ -164,9 +170,11 @@ public class Poi implements IGeoPoint, Parcelable {
 
     @Override
     public int hashCode() {
-        int result = title.hashCode();
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + title.hashCode();
         result = 31 * result + latitude.hashCode();
         result = 31 * result + longitude.hashCode();
+        result = 31 * result + category;
         return result;
     }
 
@@ -197,27 +205,13 @@ public class Poi implements IGeoPoint, Parcelable {
     }
 
     /**
-     * Setting of icon for each {@link Utility.CategoryId}
+     * Setting of icon for each {@link DataHelper.CategoryId}
      *
      * @return drawable resource of mapped icon
      */
     @DrawableRes
     public int getMarkerDrawable() {
-        switch (category) {
-            case POI_TYPE_CROSSING:
-                return R.drawable.poi_crossing;
-            case POI_TYPE_SPEED_LIMITATION_50:
-            case POI_TYPE_SPEED_LIMITATION_70:
-                return R.drawable.poi_speed_limitation;
-            case POI_TYPE_BRIDGE:
-                return R.drawable.poi_bridge;
-            case POI_TYPE_TRAIN_STATION:
-                return R.drawable.poi_train_station;
-            case POI_TYPE_TURNOUT:
-                return R.drawable.poi_turnout;
-            default:
-                return R.drawable.poi_crossing;
-        }
+        return DataHelper.getInstance().findCategoryById(category).getIconRes();
     }
 
     private String createMessage(int distance) {
@@ -230,7 +224,7 @@ public class Poi implements IGeoPoint, Parcelable {
         }
     }
 
-    private boolean shouldIncludeDistance(@Utility.CategoryId int categoryId) {
+    private boolean shouldIncludeDistance(@DataHelper.CategoryId int categoryId) {
         String prefKey = CategorySharedPrefs.getPrefKey(INCLUDE_DISTANCE_PREF_KEY, categoryId);
         return sharedPrefs.getBoolean(prefKey, false);
     }

@@ -2,7 +2,10 @@ package cz.intesys.trainalert.repository;
 
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.MutableLiveData;
+import android.support.annotation.IntDef;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,11 +19,19 @@ import cz.intesys.trainalert.utility.Utility;
 
 import static cz.intesys.trainalert.TaConfig.REPOSITORY;
 
-/**
- * Created by Matus on 26.01.2018.
- */
-
 public class DataHelper implements LifecycleObserver {
+
+    public static final int POI_TYPE_CROSSING = 0; // Přejezd
+    public static final int POI_TYPE_TRAIN_STATION = 1; // Železniční stanice
+    public static final int POI_TYPE_STOP = 2; // Zastávka
+    public static final int POI_TYPE_LIGHTS = 3; // Vjezdové návěstidlo
+    public static final int POI_TYPE_BEFORE_LIGHTS = 4; // Předvěst
+    public static final int POI_TYPE_SPEED_LIMITATION_20 = 5; // Omezení rychlosti 20km/h
+    public static final int POI_TYPE_SPEED_LIMITATION_30 = 6; // Omezení rychlosti 30km/h
+    public static final int POI_TYPE_SPEED_LIMITATION_40 = 7; // Omezení rychlosti 40km/h
+    public static final int POI_TYPE_SPEED_LIMITATION_50 = 8; // Omezení rychlosti 50km/h
+    public static final int POI_TYPE_SPEED_LIMITATION_70 = 9; // Omezení rychlosti 70km/h
+    public static final int POI_TYPE_DEFUALT = POI_TYPE_CROSSING;
 
     private static DataHelper sInstance;
 
@@ -30,6 +41,12 @@ public class DataHelper implements LifecycleObserver {
     private List<Poi> mPois;
     private MutableLiveData<List<Poi>> mPoisLiveData;
     private Utility.LocationPoller mLocationPoller;
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({POI_TYPE_CROSSING, POI_TYPE_TRAIN_STATION, POI_TYPE_STOP, POI_TYPE_LIGHTS, POI_TYPE_BEFORE_LIGHTS, POI_TYPE_SPEED_LIMITATION_20,
+            POI_TYPE_SPEED_LIMITATION_30, POI_TYPE_SPEED_LIMITATION_40, POI_TYPE_SPEED_LIMITATION_50, POI_TYPE_SPEED_LIMITATION_70})
+    public @interface CategoryId {
+    }
 
     private DataHelper() {
         mRepository = REPOSITORY;
@@ -70,13 +87,21 @@ public class DataHelper implements LifecycleObserver {
      */
     public List<Category> getCategories() {
         List<Category> categories = new ArrayList<>();
-        categories.add(new Category(0, "Přechod", R.drawable.poi_crossing));
-        categories.add(new Category(1, "Omezení 50", R.drawable.poi_speed_limitation));
-        categories.add(new Category(2, "Omezení 70", R.drawable.poi_speed_limitation));
-        categories.add(new Category(3, "Stanice", R.drawable.poi_train_station));
-        categories.add(new Category(4, "Most", R.drawable.poi_bridge));
-        categories.add(new Category(5, "Výhybka", R.drawable.poi_turnout));
+        categories.add(POI_TYPE_CROSSING, new Category(POI_TYPE_CROSSING, R.string.category_crossing, R.drawable.poi_crossing));
+        categories.add(POI_TYPE_TRAIN_STATION, new Category(POI_TYPE_TRAIN_STATION, R.string.category_trainstation, R.drawable.poi_train_station));
+        categories.add(POI_TYPE_STOP, new Category(POI_TYPE_STOP, R.string.category_stop, R.drawable.poi_train_station));
+        categories.add(POI_TYPE_LIGHTS, new Category(POI_TYPE_LIGHTS, R.string.category_lights, R.drawable.poi_turnout));
+        categories.add(POI_TYPE_BEFORE_LIGHTS, new Category(POI_TYPE_BEFORE_LIGHTS, R.string.category_beforelights, R.drawable.poi_turnout));
+        categories.add(POI_TYPE_SPEED_LIMITATION_20, new Category(POI_TYPE_SPEED_LIMITATION_20, R.string.category_speed_limitation_20, R.drawable.poi_speed_limitation));
+        categories.add(POI_TYPE_SPEED_LIMITATION_30, new Category(POI_TYPE_SPEED_LIMITATION_30, R.string.category_speed_limitation_30, R.drawable.poi_speed_limitation));
+        categories.add(POI_TYPE_SPEED_LIMITATION_40, new Category(POI_TYPE_SPEED_LIMITATION_40, R.string.category_speed_limitation_40, R.drawable.poi_speed_limitation));
+        categories.add(POI_TYPE_SPEED_LIMITATION_50, new Category(POI_TYPE_SPEED_LIMITATION_50, R.string.category_speed_limitation_50, R.drawable.poi_speed_limitation));
+        categories.add(POI_TYPE_SPEED_LIMITATION_70, new Category(POI_TYPE_SPEED_LIMITATION_70, R.string.category_speed_limitation_70, R.drawable.poi_speed_limitation));
         return categories;
+    }
+
+    public Category findCategoryById(@CategoryId int categoryId) {
+        return getCategories().get(categoryId);
     }
 
 
