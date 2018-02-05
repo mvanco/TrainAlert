@@ -7,7 +7,7 @@ import cz.intesys.trainalert.repository.DataHelper;
 
 public class Category {
     private static int sCount = 0;
-    //TODO: add getter from shared preferences
+    //TODO: Add getter from shared preferences.
     private @DataHelper.CategoryId int id;
     private @StringRes int titleRes;
     private @DrawableRes

@@ -26,6 +26,9 @@ import cz.intesys.trainalert.repository.DataHelper;
 
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.CATEGORY_KEY;
 
+/**
+ * TODO: Separate screens in portrait mode.
+ */
 public class CategoryActivity extends AppCompatPreferenceActivity {
 
     /**

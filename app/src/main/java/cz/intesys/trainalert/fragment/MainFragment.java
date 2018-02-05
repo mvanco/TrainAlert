@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import org.osmdroid.api.IGeoPoint;
@@ -193,7 +192,7 @@ public class MainFragment extends Fragment {
             }
             float v = animator.getAnimatedFraction();
             Log.d("anim", "animation portion is " + v);
-            GeoPoint newPosition = GeoPointInterpolator.interpolate(v, startPosition, finalPosition); //TODO: make this using
+            GeoPoint newPosition = GeoPointInterpolator.interpolate(v, startPosition, finalPosition); //TODO: Make this using
             marker.setPosition(newPosition);
             map.invalidate();
         });
@@ -216,7 +215,7 @@ public class MainFragment extends Fragment {
 
     /**
      * Warning: Works with activity {@link Context}, activity must be already attached!
-     * TODO: move to ViewModel
+     * TODO: Move to ViewModel.
      * @param currentLocation
      */
     private void handleNotification(GeoPoint currentLocation) {
@@ -230,10 +229,14 @@ public class MainFragment extends Fragment {
     }
 
     private void showTravelNotification(Alarm alarm) {
-        mBinding.fragmentMainNotificationText.setText(alarm.getMessage());
-        mBinding.fragmentMainNotificationContainer.setVisibility(View.VISIBLE);
-        ImageView sign = mBinding.fragmentMainNotificationContainer.findViewById(R.id.fragmentMain_sign);
-        sign.setImageResource(alarm.getGraphics());
+        mBinding.fragmentMainSignView.setVisibility(View.VISIBLE);
+        mBinding.fragmentMainSignView.setText(alarm.getMessage());
+        mBinding.fragmentMainSignView.setGraphics(alarm.getGraphics());
+
+//        mBinding.fragmentMainNotificationText.setText(alarm.getMessage());
+//        mBinding.fragmentMainNotificationContainer.setVisibility(View.VISIBLE);
+//        ImageView sign = mBinding.fragmentMainNotificationContainer.findViewById(R.id.fragmentMain_sign);
+//        sign.setImageResource(alarm.getGraphics());
 
         Utility.playSound(alarm.getRingtone(), getActivity());
         if (alarm.shouldVibrate()) {
@@ -246,7 +249,7 @@ public class MainFragment extends Fragment {
             }
         }
 
-        Runnable hideNotificationAction = () -> mBinding.fragmentMainNotificationContainer.setVisibility(View.GONE);
+        Runnable hideNotificationAction = () -> mBinding.fragmentMainSignView.setVisibility(View.GONE);
         new Handler().postDelayed(hideNotificationAction, 3000);
     }
 

@@ -33,6 +33,18 @@ public class DataHelper implements LifecycleObserver {
     public static final int POI_TYPE_SPEED_LIMITATION_70 = 9; // Omezení rychlosti 70km/h
     public static final int POI_TYPE_DEFUALT = POI_TYPE_CROSSING;
 
+    public static final int GRAPHICS_BLACK_SQUARE = 0;
+    public static final int GRAPHICS_BLUE_CIRCLE = 1;
+    public static final int GRAPHICS_BLUE_RING = 2;
+    public static final int GRAPHICS_BLUE_SQUARE = 3;
+    public static final int GRAPHICS_GREY_SQUARE = 4;
+    public static final int GRAPHICS_RED_CIRCLE = 5;
+    public static final int GRAPHICS_RED_RING = 6;
+    public static final int GRAPHICS_RED_SQUARE = 7;
+    public static final int GRAPHICS_YELLOW_GREY_SQARE = 8;
+    public static final int GRAPHICS_DEFAULT = GRAPHICS_BLACK_SQUARE;
+
+
     private static DataHelper sInstance;
 
     private Repository mRepository;
@@ -46,6 +58,12 @@ public class DataHelper implements LifecycleObserver {
     @IntDef({POI_TYPE_CROSSING, POI_TYPE_TRAIN_STATION, POI_TYPE_STOP, POI_TYPE_LIGHTS, POI_TYPE_BEFORE_LIGHTS, POI_TYPE_SPEED_LIMITATION_20,
             POI_TYPE_SPEED_LIMITATION_30, POI_TYPE_SPEED_LIMITATION_40, POI_TYPE_SPEED_LIMITATION_50, POI_TYPE_SPEED_LIMITATION_70})
     public @interface CategoryId {
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({GRAPHICS_BLACK_SQUARE, GRAPHICS_BLUE_CIRCLE, GRAPHICS_BLUE_RING, GRAPHICS_BLUE_SQUARE, GRAPHICS_GREY_SQUARE, GRAPHICS_RED_CIRCLE,
+            GRAPHICS_RED_RING, GRAPHICS_RED_SQUARE, GRAPHICS_YELLOW_GREY_SQARE})
+    public @interface GraphicsId {
     }
 
     private DataHelper() {

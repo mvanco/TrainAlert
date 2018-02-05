@@ -110,7 +110,7 @@ public class PoiMapFragment extends Fragment {
         mBinding = FragmentPoiMapBinding.inflate(inflater, container, false);
         mBinding.setViewModel(mViewModel);
 
-        // Click events. TODO: make part of UI using data binding
+        // Click events. TODO: Make part of UI using data binding.
         mBinding.fragmentPoiMapFab.setOnClickListener((view) -> onFabClick());
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoConfirmButton.setOnClickListener(view -> {
             if (mViewModel.getMode() == MODE_ADD_POI) {

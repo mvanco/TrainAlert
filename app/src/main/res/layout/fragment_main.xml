@@ -14,10 +14,11 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <FrameLayout
-            android:id="@+id/fragmentMain_notificationContainer"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+
+        <cz.intesys.trainalert.view.SignView
+            android:id="@+id/fragmentMain_signView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -26,25 +27,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            tools:visibility="visible">
+            tools:visibility="visible" />
 
-            <ImageView
-                android:id="@+id/fragmentMain_sign"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/alarm_red_ring"
-                android:contentDescription="@string/fragment_main_image_view_desc" />
-
-            <TextView
-                android:id="@+id/fragmentMain_notificationText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/alarm_textView_margin"
-                android:gravity="center"
-                android:textSize="@dimen/alarm_text_size"
-                tools:text="Prejazd za 500m" />
-
-        </FrameLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fragmentMain_fab"

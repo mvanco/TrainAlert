@@ -9,7 +9,7 @@ public class Location implements IGeoPoint {
 
     private Double latitude;
     private Double longitude;
-    private int metaIndex; // TODO: remove this when not simulated
+    private int metaIndex; // TODO: Remove this when not simulated.
 
     public Location(LocationAPI locationAPI) {
         this(locationAPI.getLatitude(), locationAPI.getLongitude());

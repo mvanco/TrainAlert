@@ -4,15 +4,14 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.Settings;
-import android.support.annotation.DrawableRes;
 
 import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
 
-import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.di.CategoryModule;
+import cz.intesys.trainalert.repository.DataHelper;
 
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.DEFAULT_VALUE;
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.GRAPHICS_PREF_KEY;
@@ -93,31 +92,9 @@ public class Alarm implements Parcelable {
         return poi;
     }
 
-    public @DrawableRes
-    int getGraphics() {
+    public @DataHelper.GraphicsId int getGraphics() {
         String graphics = sharedPrefs.getString(GRAPHICS_PREF_KEY, DEFAULT_VALUE);
-        switch (graphics) {
-            case "0":
-                return R.drawable.alarm_black_square;
-            case "1":
-                return R.drawable.alarm_blue_circle;
-            case "2":
-                return R.drawable.alarm_blue_ring;
-            case "3":
-                return R.drawable.alarm_blue_square;
-            case "4":
-                return R.drawable.alarm_grey_square;
-            case "5":
-                return R.drawable.alarm_red_circle;
-            case "6":
-                return R.drawable.alarm_red_ring;
-            case "7":
-                return R.drawable.alarm_red_square;
-            case "8":
-                return R.drawable.alarm_yellow_grey_square;
-            default:
-                return R.drawable.alarm_black_square;
-        }
+        return Integer.valueOf(graphics);
     }
 
     public Uri getRingtone() {

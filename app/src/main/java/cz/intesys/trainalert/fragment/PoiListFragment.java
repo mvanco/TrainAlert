@@ -73,7 +73,7 @@ public class PoiListFragment extends Fragment {
             mAdapter.notifyDataSetChanged();
         });
 
-//        TODO: find why this causes bug, if it is called right after onResume(), bigger delay is ok
+//        TODO: Find why this causes bug, if it is called right after onResume(), bigger delay is ok.
 //        List<Poi> sExamplePOIs = new ArrayList<Poi>();
 //        sExamplePOIs.add(new Poi("Přechod 1", 50.47902, 14.03453, POI_TYPE_CROSSING));
 //        sExamplePOIs.add(new Poi("Omezení (50) 1", 50.47394, 14.00254, POI_TYPE_SPEED_LIMITATION_50));
@@ -90,6 +90,6 @@ public class PoiListFragment extends Fragment {
     }
 
     public void select(Poi poi) {
-        // TODO: select an item
+        // TODO: Select an item
     }
 }

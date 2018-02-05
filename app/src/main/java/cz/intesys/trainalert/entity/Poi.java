@@ -226,6 +226,6 @@ public class Poi implements IGeoPoint, Parcelable {
 
     private boolean shouldIncludeDistance(@DataHelper.CategoryId int categoryId) {
         String prefKey = CategorySharedPrefs.getPrefKey(INCLUDE_DISTANCE_PREF_KEY, categoryId);
-        return sharedPrefs.getBoolean(prefKey, false);
+        return sharedPrefs.getBoolean(prefKey, true);
     }
 }
