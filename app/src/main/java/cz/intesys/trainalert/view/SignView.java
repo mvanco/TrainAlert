@@ -39,19 +39,18 @@ public class SignView extends FrameLayout {
 
     public SignView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
-        parseAttrs(context, attrs, 0, 0);
+        init(attrs, 0, 0);
     }
 
     public SignView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
-        parseAttrs(context, attrs, defStyleAttr, 0);
+        init(attrs, defStyleAttr, 0);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public SignView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        init(attrs, defStyleAttr, defStyleRes);
     }
 
     public void setText(String text) {
@@ -71,18 +70,14 @@ public class SignView extends FrameLayout {
         requestLayout();
     }
 
-    private void init() {
-        mBinding = ViewSignBinding.inflate(LayoutInflater.from(getContext()), this, true);
-    }
-
     /**
-     * @param context      mandatory
      * @param attrs        mandatory
      * @param defStyleAttr optional, 0 if missing
      * @param defStyleRes  optional, 0 if missing
      */
-    private void parseAttrs(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        TypedArray a = context.getTheme().obtainStyledAttributes(attrs, R.styleable.SignView, defStyleAttr, defStyleRes);
+    private void init(AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        initLayout();
+        TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.SignView, defStyleAttr, defStyleRes);
 
         try {
             mGraphics = a.getInteger(R.styleable.SignView_graphics, 0);
@@ -98,9 +93,22 @@ public class SignView extends FrameLayout {
         }
     }
 
+    private void initLayout() {
+        mBinding = ViewSignBinding.inflate(LayoutInflater.from(getContext()), this, true);
+    }
+
     private @ColorInt int getTextColor() {
         switch (mGraphics) {
             case GRAPHICS_BLACK_SQUARE:
+            case GRAPHICS_BLUE_RING:
+            case GRAPHICS_GREY_SQUARE:
+            case GRAPHICS_RED_RING:
+            case GRAPHICS_YELLOW_GREY_SQARE:
+                return ContextCompat.getColor(getContext(), android.R.color.black);
+            case GRAPHICS_BLUE_CIRCLE:
+            case GRAPHICS_BLUE_SQUARE:
+            case GRAPHICS_RED_CIRCLE:
+            case GRAPHICS_RED_SQUARE:
                 return ContextCompat.getColor(getContext(), android.R.color.white);
             default:
                 return ContextCompat.getColor(getContext(), android.R.color.black);

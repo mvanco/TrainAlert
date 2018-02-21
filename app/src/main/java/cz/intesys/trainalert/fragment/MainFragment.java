@@ -98,24 +98,7 @@ public class MainFragment extends Fragment {
         mViewModel.setAnimating(shouldAnimating);
     }
 
-    private void onFabClick() {
-        setMapPosition(mViewModel.getLocation().toGeoPoint());
-        setFabAsFixed();
-    }
-
-    /**
-     * Note: Loading of current location is started  automatically in this.onResume() due to added lifecycle observer to PostgreSqlRepository singleton.
-     * Warning: Works with activity {@link Context}, activity must be already attached!
-     */
-    private void initAnimation() {
-        initMap(getActivity()); // Initialize map using osmdroid library and set current position on the map.
-        initTrainMarker(mBinding.fragmentMainMapView);
-        mBinding.fragmentMainMapView.getOverlayManager().add(mTrainMarker); // Add train marker.
-        mViewModel.getLocationLiveData().observe(this, currentLocation -> handleLocationChange(mTrainMarker, currentLocation));
-        mViewModel.getPoisLiveData().observe(this, pois -> handlePOIsChange(pois));
-    }
-
-    private void initMap(Context context) {
+    public void initMap(Context context) {
         Configuration.getInstance().load(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Load configuration.
         mBinding.fragmentMainMapView.setMultiTouchControls(true);
         mBinding.fragmentMainMapView.setTilesScaledToDpi(true);
@@ -132,6 +115,23 @@ public class MainFragment extends Fragment {
         });
         mBinding.fragmentMainMapView.getController().setZoom(MAP_DEFAULT_ZOOM);
         Configuration.getInstance().save(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Save configuration.
+    }
+
+    private void onFabClick() {
+        setMapPosition(mViewModel.getLocation().toGeoPoint());
+        setFabAsFixed();
+    }
+
+    /**
+     * Note: Loading of current location is started  automatically in this.onResume() due to added lifecycle observer to PostgreSqlRepository singleton.
+     * Warning: Works with activity {@link Context}, activity must be already attached!
+     */
+    private void initAnimation() {
+        initMap(getActivity()); // Initialize map using osmdroid library and set current position on the map.
+        initTrainMarker(mBinding.fragmentMainMapView);
+        mBinding.fragmentMainMapView.getOverlayManager().add(mTrainMarker); // Add train marker.
+        mViewModel.getLocationLiveData().observe(this, currentLocation -> handleLocationChange(mTrainMarker, currentLocation));
+        mViewModel.getPoisLiveData().observe(this, pois -> handlePOIsChange(pois));
     }
 
     private boolean onMapScroll(ScrollEvent event) {
@@ -158,7 +158,7 @@ public class MainFragment extends Fragment {
     private void initTrainMarker(MapView mapView) {
         if (mTrainMarker == null) {
             mTrainMarker = new Marker(mapView);
-            mTrainMarker.setTitle("Train LocationAPI");
+            mTrainMarker.setTitle("Train LocationApi");
             mTrainMarker.setPosition(mViewModel.getLocation().toGeoPoint());
             mTrainMarker.setIcon(getResources().getDrawable(R.drawable.marker_train_left));
         }

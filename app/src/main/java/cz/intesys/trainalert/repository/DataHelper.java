@@ -178,6 +178,21 @@ public class DataHelper implements LifecycleObserver {
         });
     }
 
+    public synchronized void deletePoi(long id, TaCallback<Poi> taCallback) {
+        mRepository.deletePoi(id, new TaCallback<Poi>() {
+            @Override public void onResponse(Poi response) {
+                taCallback.onResponse(response);
+                reloadPois(); //optimalize - only remove one poi
+            }
+
+            @Override public void onFailure(Throwable t) {
+                taCallback.onFailure(t);
+            }
+        });
+    }
+
+
+
 
     public boolean areLoadedPois() {
         return mPoisLiveData.getValue() != null;

@@ -5,9 +5,10 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.intesys.trainalert.api.LocationAPI;
+import cz.intesys.trainalert.api.LocationApi;
 import cz.intesys.trainalert.api.PoiApi;
 import cz.intesys.trainalert.api.PoisApi;
+import cz.intesys.trainalert.api.ResponseApi;
 import cz.intesys.trainalert.api.TaServerApi;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
@@ -38,19 +39,24 @@ public class PostgreSqlRepository implements Repository {
 
     @Override
     public void getCurrentLocation(TaCallback<Location> taCallback) {
-        Call<LocationAPI> call = mApiService.getLocation();
-        call.enqueue(new Callback<LocationAPI>() {
+        Call<ResponseApi<LocationApi>> call = mApiService.getLocation();
+        call.enqueue(new Callback<ResponseApi<LocationApi>>() {
             @Override
-            public void onResponse(Call<LocationAPI> call, Response<LocationAPI> response) {
+            public void onResponse(Call<ResponseApi<LocationApi>> call, Response<ResponseApi<LocationApi>> response) {
                 if (response.body() == null) {
                     return;
                 }
-                Log.e("testorder", "onResponse() id:" + response.body().getId());
-                taCallback.onResponse(new Location(response.body()));
+
+                if (response.body().getErrorCode() == ResponseApi.ECODE_OK) {
+                    Log.e("testorder", "onResponse() id:" + response.body().getData().getId());
+                    taCallback.onResponse(new Location(response.body().getData()));
+                } else {
+                    taCallback.onFailure(new Throwable());
+                }
             }
 
             @Override
-            public void onFailure(Call<LocationAPI> call, Throwable t) {
+            public void onFailure(Call<ResponseApi<LocationApi>> call, Throwable t) {
                 taCallback.onFailure(t);
             }
         });
@@ -58,23 +64,27 @@ public class PostgreSqlRepository implements Repository {
 
     @Override
     public void getPois(TaCallback<List<Poi>> taCallback) {
-        Call<PoisApi> call = mApiService.getPois();
-        call.enqueue(new Callback<PoisApi>() {
+        Call<ResponseApi<PoisApi>> call = mApiService.getPois();
+        call.enqueue(new Callback<ResponseApi<PoisApi>>() {
             @Override
-            public void onResponse(Call<PoisApi> call, Response<PoisApi> response) {
-                if (response.body() == null || response.body().getPois() == null) {
+            public void onResponse(Call<ResponseApi<PoisApi>> call, Response<ResponseApi<PoisApi>> response) {
+                if (response.body() == null || response.body().getData() == null || response.body().getData().getPois() == null) {
                     return;
                 }
-                List<Poi> pois = new ArrayList<>();
-                for (PoiApi poiApi : response.body().getPois()) {
-                    pois.add(new Poi(poiApi));
-                }
 
-                taCallback.onResponse(pois);
+                if (response.body().getErrorCode() == ResponseApi.ECODE_OK) {
+                    List<Poi> pois = new ArrayList<>();
+                    for (PoiApi poiApi : response.body().getData().getPois()) {
+                        pois.add(new Poi(poiApi));
+                    }
+                    taCallback.onResponse(pois);
+                } else {
+                    taCallback.onFailure(new Throwable());
+                }
             }
 
             @Override
-            public void onFailure(Call<PoisApi> call, Throwable t) {
+            public void onFailure(Call<ResponseApi<PoisApi>> call, Throwable t) {
                 taCallback.onFailure(t);
             }
         });
@@ -82,20 +92,24 @@ public class PostgreSqlRepository implements Repository {
 
     @Override
     public void addPoi(Poi poi, TaCallback<Poi> taCallback) {
-        Call<PoiApi> call = mApiService.addPoi(new PoiApi(poi));
-        call.enqueue(new Callback<PoiApi>() {
+        Call<ResponseApi<PoiApi>> call = mApiService.addPoi(new PoiApi(poi));
+        call.enqueue(new Callback<ResponseApi<PoiApi>>() {
             @Override
-            public void onResponse(Call<PoiApi> call, Response<PoiApi> response) {
+            public void onResponse(Call<ResponseApi<PoiApi>> call, Response<ResponseApi<PoiApi>> response) {
                 if (response.body() == null) {
                     taCallback.onFailure(new Throwable("body is null"));
                     return;
                 }
 
-                taCallback.onResponse(new Poi(response.body()));
+                if (response.body().getErrorCode() == ResponseApi.ECODE_OK) {
+                    taCallback.onResponse(new Poi(response.body().getData()));
+                } else {
+                    taCallback.onFailure(new Throwable());
+                }
             }
 
             @Override
-            public void onFailure(Call<PoiApi> call, Throwable t) {
+            public void onFailure(Call<ResponseApi<PoiApi>> call, Throwable t) {
                 taCallback.onFailure(t);
             }
         });
@@ -103,20 +117,43 @@ public class PostgreSqlRepository implements Repository {
 
     @Override
     public void editPoi(long id, Poi poi, TaCallback<Poi> taCallback) {
-        Call<PoiApi> call = mApiService.editPoi(id, new PoiApi(poi));
-        call.enqueue(new Callback<PoiApi>() {
+        Call<ResponseApi<PoiApi>> call = mApiService.editPoi(id, new PoiApi(poi));
+        call.enqueue(new Callback<ResponseApi<PoiApi>>() {
             @Override
-            public void onResponse(Call<PoiApi> call, Response<PoiApi> response) {
+            public void onResponse(Call<ResponseApi<PoiApi>> call, Response<ResponseApi<PoiApi>> response) {
                 if (response.body() == null) {
                     taCallback.onFailure(new Throwable("body is null"));
                     return;
                 }
 
-                taCallback.onResponse(new Poi(response.body()));
+                if (response.body().getErrorCode() == ResponseApi.ECODE_OK) {
+                    taCallback.onResponse(new Poi(response.body().getData()));
+                } else {
+                    taCallback.onFailure(new Throwable());
+                }
             }
 
+            @Override public void onFailure(Call<ResponseApi<PoiApi>> call, Throwable t) {
+                taCallback.onFailure(t);
+            }
+        });
+    }
+
+    public void deletePoi(long id, TaCallback<Poi> taCallback) {
+        Call<ResponseApi<PoiApi>> call = mApiService.deletePoi(id);
+        call.enqueue(new Callback<ResponseApi<PoiApi>>() {
+
             @Override
-            public void onFailure(Call<PoiApi> call, Throwable t) {
+            public void onResponse(Call<ResponseApi<PoiApi>> call, Response<ResponseApi<PoiApi>> response) {
+                if (response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
+                    taCallback.onResponse(new Poi(response.body().getData()));
+                } else {
+                    String throwableMessage = "nastala chyba s kodom " + response.body().getErrorCode();
+                    taCallback.onFailure(new Throwable(throwableMessage));
+                }
+            }
+
+            @Override public void onFailure(Call<ResponseApi<PoiApi>> call, Throwable t) {
                 taCallback.onFailure(t);
             }
         });

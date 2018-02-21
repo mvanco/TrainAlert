@@ -1,10 +1,14 @@
 package cz.intesys.trainalert.activity;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +27,8 @@ import static android.support.v4.widget.DrawerLayout.STATE_SETTLING;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
+
     private ActivityMainBinding binding;
     private ActionBarDrawerToggle mToggle;
 
@@ -35,6 +41,28 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.hasFixedSize();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new NavAdapter((id) -> onNavigationItemSelected(id)));
+
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
+                ) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
+            );
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    recreate(); // TODO: Maybe find more elegant solution
+                }
+                return;
+        }
     }
 
     @Override

@@ -3,7 +3,7 @@ package cz.intesys.trainalert.entity;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.GeoPoint;
 
-import cz.intesys.trainalert.api.LocationAPI;
+import cz.intesys.trainalert.api.LocationApi;
 
 public class Location implements IGeoPoint {
 
@@ -11,8 +11,8 @@ public class Location implements IGeoPoint {
     private Double longitude;
     private int metaIndex; // TODO: Remove this when not simulated.
 
-    public Location(LocationAPI locationAPI) {
-        this(locationAPI.getLatitude(), locationAPI.getLongitude());
+    public Location(LocationApi locationApi) {
+        this(locationApi.getLatitude(), locationApi.getLongitude());
     }
 
     public Location(Double latitude, Double longitude) {

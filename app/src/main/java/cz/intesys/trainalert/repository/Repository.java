@@ -14,4 +14,6 @@ public interface Repository {
     void addPoi(Poi poi, TaCallback<Poi> taCallback);
 
     void editPoi(long id, Poi poi, TaCallback<Poi> taCallback);
+
+    void deletePoi(long id, TaCallback<Poi> taCallback);
 }

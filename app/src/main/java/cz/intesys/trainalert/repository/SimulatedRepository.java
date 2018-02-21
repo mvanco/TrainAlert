@@ -88,6 +88,10 @@ public class SimulatedRepository implements Repository {
         taCallback.onFailure(null);
     }
 
+    @Override public void deletePoi(long id, TaCallback<Poi> taCallback) {
+        // TODO: simulate this
+    }
+
     private List<Poi> getExamplePois() {
         List<Poi> sExamplePOIs = new ArrayList<Poi>();
         sExamplePOIs.add(new Poi(1, "Přechod 1", 50.47902, 14.03453, POI_TYPE_CROSSING));

@@ -5,7 +5,7 @@ import com.google.gson.annotations.Expose;
 /**
  * Exposed field names must correspond to server response JSON
  */
-public class LocationAPI {
+public class LocationApi {
     @Expose
     private long id;
 

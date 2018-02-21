@@ -72,4 +72,8 @@ public class BaseViewModel extends ViewModel implements LifecycleObserver {
     public void editPoi(long id, Poi poi, TaCallback<Poi> taCallback) {
         mDataHelper.editPoi(id, poi, taCallback);
     }
+
+    public void deletePoi(long id, TaCallback<Poi> taCallback) {
+        mDataHelper.deletePoi(id, taCallback);
+    }
 }

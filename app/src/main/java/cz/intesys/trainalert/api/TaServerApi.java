@@ -9,14 +9,17 @@ import retrofit2.http.Path;
 
 public interface TaServerApi {
     @GET ("/TrainAlert/GetLocation")
-    Call<LocationAPI> getLocation();
+    Call<ResponseApi<LocationApi>> getLocation();
 
     @GET ("/TrainAlert/GetPois")
-    Call<PoisApi> getPois();
+    Call<ResponseApi<PoisApi>> getPois();
 
     @POST ("/TrainAlert/AddPoi")
-    Call<PoiApi> addPoi(@Body PoiApi poiApi);
+    Call<ResponseApi<PoiApi>> addPoi(@Body PoiApi poiApi);
 
     @PUT ("/TrainAlert/EditPoi/{id}")
-    Call<PoiApi> editPoi(@Path ("id") long id, @Body PoiApi poiApi);
+    Call<ResponseApi<PoiApi>> editPoi(@Path("id") long id, @Body PoiApi poiApi);
+
+    @GET("/TrainAlert/DeletePoi/{id}")
+    Call<ResponseApi<PoiApi>> deletePoi(@Path("id") long id);
 }

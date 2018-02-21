@@ -29,4 +29,6 @@
     <dimen name="poiListItem_cardView_padding">0dp</dimen>
 
     <dimen name="fragmentPoiList_recyclerView_paddingTopBottom">1dp</dimen>
+
+    <dimen name="fragmentPoiMap">300dp</dimen>
 </resources>
