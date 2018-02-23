@@ -21,9 +21,11 @@ import android.widget.Toast;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
+import org.osmdroid.config.IConfigurationProvider;
 import org.osmdroid.events.MapListener;
 import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
+import org.osmdroid.tileprovider.tilesource.XYTileSource;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
@@ -43,6 +45,7 @@ import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 
 import static cz.intesys.trainalert.TaConfig.GPS_TIME_INTERVAL;
 import static cz.intesys.trainalert.TaConfig.MAP_DEFAULT_ZOOM;
+import static cz.intesys.trainalert.TaConfig.REST_BASE_URL;
 import static cz.intesys.trainalert.utility.Utility.convertToDegrees;
 import static cz.intesys.trainalert.utility.Utility.getMarkerRotation;
 
@@ -100,8 +103,25 @@ public class MainFragment extends Fragment {
 
     public void initMap(Context context) {
         Configuration.getInstance().load(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Load configuration.
+
+        XYTileSource tileSource = new XYTileSource(
+                "map",
+                8,
+                16,
+                256,
+                ".png",
+                new String[]{REST_BASE_URL + "/osm/tiles/"});
+
+        IConfigurationProvider configuration = Configuration.getInstance();
+        configuration.setDebugTileProviders(true);
+        configuration.setDebugMode(true);
+        configuration.setDebugMapTileDownloader(true);
+
+        mBinding.fragmentMainMapView.setUseDataConnection(false);
+        mBinding.fragmentMainMapView.setTileSource(tileSource);
         mBinding.fragmentMainMapView.setMultiTouchControls(true);
         mBinding.fragmentMainMapView.setTilesScaledToDpi(true);
+
         mBinding.fragmentMainMapView.setMapListener(new MapListener() {
             @Override
             public boolean onScroll(ScrollEvent event) {
@@ -113,7 +133,9 @@ public class MainFragment extends Fragment {
                 return false;
             }
         });
+
         mBinding.fragmentMainMapView.getController().setZoom(MAP_DEFAULT_ZOOM);
+
         Configuration.getInstance().save(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Save configuration.
     }
 

@@ -79,6 +79,7 @@ public class CategoryDetailFragment extends PreferenceFragment {
         graphicsPref.setEntryValues(R.array.pref_graphics_values);
         graphicsPref.setDefaultValue(pref.getString(CategorySharedPrefs.GRAPHICS_PREF_KEY, CategorySharedPrefs.DEFAULT_VALUE));
         screen.addPreference(graphicsPref);
+        CategoryActivity.bindPreferenceSummaryToValue(graphicsPref);
 
         RingtonePreference ringtonePref = new RingtonePreference(getActivity());
         ringtonePref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.RINGTONE_PREF_KEY, categoryId));
@@ -86,6 +87,7 @@ public class CategoryDetailFragment extends PreferenceFragment {
         ringtonePref.setRingtoneType(RingtoneManager.TYPE_NOTIFICATION);
         ringtonePref.setDefaultValue(pref.getString(CategorySharedPrefs.RINGTONE_PREF_KEY, Settings.System.DEFAULT_NOTIFICATION_URI.toString()));
         screen.addPreference(ringtonePref);
+        CategoryActivity.bindPreferenceSummaryToValue(ringtonePref);
 
         SwitchPreference switchPref = new SwitchPreference(getActivity());
         switchPref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.VIBRATE_PREF_KEY, categoryId));
@@ -120,7 +122,5 @@ public class CategoryDetailFragment extends PreferenceFragment {
         textAfterPref.setDefaultValue(pref.getString(CategorySharedPrefs.TEXT_AFTER_PREF_KEY, "m"));
         screen.addPreference(textAfterPref);
         textAfterPref.setDependency(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.INCLUDE_DISTANCE_PREF_KEY, categoryId));
-
-
     }
 }

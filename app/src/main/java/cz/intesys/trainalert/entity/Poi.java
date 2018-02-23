@@ -216,7 +216,7 @@ public class Poi implements IGeoPoint, Parcelable {
 
     private String createMessage(int distance) {
         String beforeText = sharedPrefs.getString(TEXT_BEFORE_PREF_KEY, "Pozor za ");
-        if (shouldIncludeDistance(category)) {
+        if (includeDistance()) {
             String afterText = sharedPrefs.getString(TEXT_AFTER_PREF_KEY, "m");
             return beforeText + distance + afterText;
         } else {
@@ -224,8 +224,7 @@ public class Poi implements IGeoPoint, Parcelable {
         }
     }
 
-    private boolean shouldIncludeDistance(@DataHelper.CategoryId int categoryId) {
-        String prefKey = CategorySharedPrefs.getPrefKey(INCLUDE_DISTANCE_PREF_KEY, categoryId);
-        return sharedPrefs.getBoolean(prefKey, true);
+    private boolean includeDistance() {
+        return sharedPrefs.getBoolean(INCLUDE_DISTANCE_PREF_KEY, true);
     }
 }
