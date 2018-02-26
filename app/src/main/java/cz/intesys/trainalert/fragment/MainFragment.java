@@ -25,7 +25,16 @@ import org.osmdroid.config.IConfigurationProvider;
 import org.osmdroid.events.MapListener;
 import org.osmdroid.events.ScrollEvent;
 import org.osmdroid.events.ZoomEvent;
-import org.osmdroid.tileprovider.tilesource.XYTileSource;
+import org.osmdroid.tileprovider.IRegisterReceiver;
+import org.osmdroid.tileprovider.MapTile;
+import org.osmdroid.tileprovider.MapTileProviderArray;
+import org.osmdroid.tileprovider.modules.MapTileDownloader;
+import org.osmdroid.tileprovider.modules.MapTileFilesystemProvider;
+import org.osmdroid.tileprovider.modules.MapTileModuleProviderBase;
+import org.osmdroid.tileprovider.modules.NetworkAvailabliltyCheck;
+import org.osmdroid.tileprovider.modules.TileWriter;
+import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase;
+import org.osmdroid.tileprovider.util.SimpleRegisterReceiver;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.ItemizedIconOverlay;
@@ -45,7 +54,9 @@ import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 
 import static cz.intesys.trainalert.TaConfig.GPS_TIME_INTERVAL;
 import static cz.intesys.trainalert.TaConfig.MAP_DEFAULT_ZOOM;
+import static cz.intesys.trainalert.TaConfig.OSMDROID_DEBUGGING;
 import static cz.intesys.trainalert.TaConfig.REST_BASE_URL;
+import static cz.intesys.trainalert.TaConfig.USE_OFFLINE_MAPS;
 import static cz.intesys.trainalert.utility.Utility.convertToDegrees;
 import static cz.intesys.trainalert.utility.Utility.getMarkerRotation;
 
@@ -104,21 +115,36 @@ public class MainFragment extends Fragment {
     public void initMap(Context context) {
         Configuration.getInstance().load(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Load configuration.
 
-        XYTileSource tileSource = new XYTileSource(
-                "map",
-                8,
-                16,
-                256,
-                ".png",
-                new String[]{REST_BASE_URL + "/osm/tiles/"});
+        if (USE_OFFLINE_MAPS) {
+            OnlineTileSourceBase tileSourceBase = new OnlineTileSourceBase(
+                    "osm",
+                    8,
+                    16,
+                    256,
+                    ".png",
+                    new String[]{REST_BASE_URL}
+            ) {
+                @Override public String getTileURLString(MapTile aTile) {
+                    return getBaseUrl() + "/osm/tiles/" + aTile.getZoomLevel() + "/" + aTile.getX() + "/" + aTile.getY() + mImageFilenameEnding;
+                }
+            };
 
-        IConfigurationProvider configuration = Configuration.getInstance();
-        configuration.setDebugTileProviders(true);
-        configuration.setDebugMode(true);
-        configuration.setDebugMapTileDownloader(true);
+            final IRegisterReceiver registerReceiver = new SimpleRegisterReceiver(getActivity().getApplicationContext());
+            final TileWriter tileWriter = new TileWriter();
+            final MapTileFilesystemProvider fileSystemProvider = new MapTileFilesystemProvider(registerReceiver, tileSourceBase);
+            final NetworkAvailabliltyCheck networkAvailabilityCheck = new NetworkAvailabliltyCheck(context);
+            final MapTileDownloader downloaderProvider = new MapTileDownloader(tileSourceBase, tileWriter, networkAvailabilityCheck);
+            MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSourceBase, registerReceiver, new MapTileModuleProviderBase[]{fileSystemProvider, downloaderProvider});
 
-        mBinding.fragmentMainMapView.setUseDataConnection(false);
-        mBinding.fragmentMainMapView.setTileSource(tileSource);
+            IConfigurationProvider configuration = Configuration.getInstance();
+            configuration.setDebugTileProviders(OSMDROID_DEBUGGING);
+            configuration.setDebugMode(OSMDROID_DEBUGGING);
+            configuration.setDebugMapTileDownloader(OSMDROID_DEBUGGING);
+
+            mBinding.fragmentMainMapView.setUseDataConnection(false);
+            mBinding.fragmentMainMapView.setTileProvider(tileProviderArray);
+        }
+
         mBinding.fragmentMainMapView.setMultiTouchControls(true);
         mBinding.fragmentMainMapView.setTilesScaledToDpi(true);
 

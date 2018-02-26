@@ -16,4 +16,8 @@ public class TaConfig {
     public static final long UPDATE_INTERVAL = 5;
     public static final TimeUnit UPDATE_INTERVAL_UNIT = TimeUnit.MINUTES;
     public static final Location DEFAULT_LOCATION = new Location(50.48365189588503, 14.039404579177328);
+    public static final boolean OSMDROID_DEBUGGING = true;
+    public static final boolean USE_OFFLINE_MAPS = true;
+
+
 }
