@@ -9,9 +9,11 @@ import cz.intesys.trainalert.api.LocationApi;
 import cz.intesys.trainalert.api.PoiApi;
 import cz.intesys.trainalert.api.PoisApi;
 import cz.intesys.trainalert.api.ResponseApi;
+import cz.intesys.trainalert.api.StopApi;
 import cz.intesys.trainalert.api.TaServerApi;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
+import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.rest.TaClient;
 import retrofit2.Call;
@@ -154,6 +156,113 @@ public class PostgreSqlRepository implements Repository {
             }
 
             @Override public void onFailure(Call<ResponseApi<PoiApi>> call, Throwable t) {
+                taCallback.onFailure(t);
+            }
+        });
+    }
+
+    @Override public void getTrips(int id, TaCallback<List<Integer>> taCallback) {
+        Call<ResponseApi<List<Integer>>> call = mApiService.getTrips(id);
+        call.enqueue(new Callback<ResponseApi<List<Integer>>>() {
+
+            @Override
+            public void onResponse(Call<ResponseApi<List<Integer>>> call, Response<ResponseApi<List<Integer>>> response) {
+                if (response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
+                    taCallback.onResponse(response.body().getData());
+                } else {
+                    String throwableMessage = "nastala chyba s kodom " + response.body().getErrorCode();
+                    taCallback.onFailure(new Throwable(throwableMessage));
+                }
+            }
+
+            @Override public void onFailure(Call<ResponseApi<List<Integer>>> call, Throwable t) {
+                taCallback.onFailure(t);
+            }
+        });
+    }
+
+    @Override public void setTrip(int id, TaCallback<Void> taCallback) {
+        Call<ResponseApi<Void>> call = mApiService.setTrip(id);
+        call.enqueue(new Callback<ResponseApi<Void>>() {
+
+            @Override
+            public void onResponse(Call<ResponseApi<Void>> call, Response<ResponseApi<Void>> response) {
+                if (response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
+                    taCallback.onResponse(null); // Only call function is enough to inform about completition without error
+                } else {
+                    String throwableMessage = "nastala chyba s kodom " + response.body().getErrorCode();
+                    taCallback.onFailure(new Throwable(throwableMessage));
+                }
+            }
+
+            @Override public void onFailure(Call<ResponseApi<Void>> call, Throwable t) {
+                taCallback.onFailure(t);
+            }
+        });
+    }
+
+    @Override public void getPreviousStops(int id, TaCallback<List<Stop>> taCallback) {
+        Call<ResponseApi<List<StopApi>>> call = mApiService.getPreviousStops(id);
+        call.enqueue(new Callback<ResponseApi<List<StopApi>>>() {
+
+            @Override
+            public void onResponse(Call<ResponseApi<List<StopApi>>> call, Response<ResponseApi<List<StopApi>>> response) {
+                if (response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
+                    List<Stop> stops = new ArrayList<>();
+                    for (StopApi stopApi : response.body().getData()) {
+                        stops.add(new Stop(stopApi));
+                    }
+                    taCallback.onResponse(stops); // Only call function is enough to inform about completition without error
+                } else {
+                    String throwableMessage = "nastala chyba s kodom " + response.body().getErrorCode();
+                    taCallback.onFailure(new Throwable(throwableMessage));
+                }
+            }
+
+            @Override public void onFailure(Call<ResponseApi<List<StopApi>>> call, Throwable t) {
+                taCallback.onFailure(t);
+            }
+        });
+    }
+
+    @Override public void getNextStops(int id, TaCallback<List<Stop>> taCallback) {
+        Call<ResponseApi<List<StopApi>>> call = mApiService.getNextStops(id);
+        call.enqueue(new Callback<ResponseApi<List<StopApi>>>() {
+
+            @Override
+            public void onResponse(Call<ResponseApi<List<StopApi>>> call, Response<ResponseApi<List<StopApi>>> response) {
+                if (response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
+                    List<Stop> stops = new ArrayList<>();
+                    for (StopApi stopApi : response.body().getData()) {
+                        stops.add(new Stop(stopApi));
+                    }
+                    taCallback.onResponse(stops); // Only call function is enough to inform about completition without error
+                } else {
+                    String throwableMessage = "nastala chyba s kodom " + response.body().getErrorCode();
+                    taCallback.onFailure(new Throwable(throwableMessage));
+                }
+            }
+
+            @Override public void onFailure(Call<ResponseApi<List<StopApi>>> call, Throwable t) {
+                taCallback.onFailure(t);
+            }
+        });
+    }
+
+    @Override public void getFinalStop(TaCallback<Stop> taCallback) {
+        Call<ResponseApi<StopApi>> call = mApiService.getFinalStop();
+        call.enqueue(new Callback<ResponseApi<StopApi>>() {
+            @Override
+            public void onResponse(Call<ResponseApi<StopApi>> call, Response<ResponseApi<StopApi>> response) {
+                if (response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
+                    taCallback.onResponse(new Stop(response.body().getData())); // Only call function is enough to inform about completition without error
+                } else {
+                    String throwableMessage = "nastala chyba s kodom " + response.body().getErrorCode();
+                    taCallback.onFailure(new Throwable(throwableMessage));
+                }
+            }
+
+            @Override public void onFailure(Call<ResponseApi<StopApi>> call, Throwable t) {
                 taCallback.onFailure(t);
             }
         });

@@ -23,6 +23,4 @@ public class PoisApi {
     public void setPois(List<PoiApi> pois) {
         this.poiList = pois;
     }
-
-
 }

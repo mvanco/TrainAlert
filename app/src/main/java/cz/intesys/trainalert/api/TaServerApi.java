@@ -1,5 +1,7 @@
 package cz.intesys.trainalert.api;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -22,4 +24,19 @@ public interface TaServerApi {
 
     @GET("/TrainAlert/DeletePoi/{id}")
     Call<ResponseApi<PoiApi>> deletePoi(@Path("id") long id);
+
+    @GET("/TrainAlert/GetTrips/{id}")
+    Call<ResponseApi<List<Integer>>> getTrips(@Path("id") int id);
+
+    @GET("/TrainAlert/SetTrip/{id}")
+    Call<ResponseApi<Void>> setTrip(@Path("id") int id);
+
+    @GET("/TrainAlert/GetPreviousStops/{id}")
+    Call<ResponseApi<List<StopApi>>> getPreviousStops(@Path("id") int id);
+
+    @GET("/TrainAlert/GetNextStops/{id}")
+    Call<ResponseApi<List<StopApi>>> getNextStops(@Path("id") int id);
+
+    @GET("/TrainAlert/GetFinalStop")
+    Call<ResponseApi<StopApi>> getFinalStop();
 }

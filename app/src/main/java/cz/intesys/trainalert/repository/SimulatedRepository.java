@@ -8,6 +8,7 @@ import java.util.Random;
 
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
+import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.entity.TaCallback;
 
 import static cz.intesys.trainalert.TaConfig.SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE;
@@ -90,6 +91,26 @@ public class SimulatedRepository implements Repository {
 
     @Override public void deletePoi(long id, TaCallback<Poi> taCallback) {
         // TODO: simulate this
+    }
+
+    @Override public void getTrips(int id, TaCallback<List<Integer>> taCallback) {
+
+    }
+
+    @Override public void setTrip(int id, TaCallback<Void> taCallback) {
+
+    }
+
+    @Override public void getPreviousStops(int id, TaCallback<List<Stop>> taCallback) {
+
+    }
+
+    @Override public void getNextStops(int id, TaCallback<List<Stop>> taCallback) {
+
+    }
+
+    @Override public void getFinalStop(TaCallback<Stop> taCallback) {
+
     }
 
     private List<Poi> getExamplePois() {

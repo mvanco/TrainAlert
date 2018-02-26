@@ -81,7 +81,7 @@ public class TaClient {
      */
     private static Converter.Factory createConverterFactory() {
         GsonBuilder builder = new GsonBuilder();
-        builder.setDateFormat("EEE MMM d HH:mm:ss 'UTC'zzzzz yyyy");
+        builder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         Gson gson = builder.create();
         return GsonConverterFactory.create(gson);
     }

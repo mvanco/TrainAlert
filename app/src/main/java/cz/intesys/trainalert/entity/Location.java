@@ -3,21 +3,29 @@ package cz.intesys.trainalert.entity;
 import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.util.GeoPoint;
 
+import java.util.Date;
+
 import cz.intesys.trainalert.api.LocationApi;
 
 public class Location implements IGeoPoint {
 
     private Double latitude;
     private Double longitude;
+    private Date time;
     private int metaIndex; // TODO: Remove this when not simulated.
 
     public Location(LocationApi locationApi) {
-        this(locationApi.getLatitude(), locationApi.getLongitude());
+        this(locationApi.getLatitude(), locationApi.getLongitude(), locationApi.getTime());
     }
 
     public Location(Double latitude, Double longitude) {
+        this(latitude, longitude, new Date());
+    }
+
+    public Location(Double latitude, Double longitude, Date time) {
         this.latitude = latitude;
         this.longitude = longitude;
+        this.time = time;
     }
 
     @Override
