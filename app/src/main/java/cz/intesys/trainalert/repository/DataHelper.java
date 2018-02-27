@@ -2,6 +2,7 @@ package cz.intesys.trainalert.repository;
 
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.SharedPreferences;
 import android.support.annotation.IntDef;
 
 import java.lang.annotation.Retention;
@@ -10,10 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.TaApplication;
 import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.entity.Category;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
+import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.utility.Utility;
 
@@ -43,11 +46,11 @@ public class DataHelper implements LifecycleObserver {
     public static final int GRAPHICS_RED_SQUARE = 7;
     public static final int GRAPHICS_YELLOW_GREY_SQARE = 8;
     public static final int GRAPHICS_DEFAULT = GRAPHICS_BLACK_SQUARE;
-
-
+    private static final String FIRST_RUN_KEY = "first_run";
+    private static final String TRAIN_ID_KEY = "train_id";
     private static DataHelper sInstance;
-
     private Repository mRepository;
+    private SharedPreferences mSharedPrefs;
     private Location mLocation;
     private MutableLiveData<Location> mLocationLiveData;
     private List<Poi> mPois;
@@ -68,6 +71,7 @@ public class DataHelper implements LifecycleObserver {
 
     private DataHelper() {
         mRepository = REPOSITORY;
+        mSharedPrefs = TaApplication.getInstance().getSharedPreferences();
         mLocation = TaConfig.DEFAULT_LOCATION;
         mLocationLiveData = new MutableLiveData<Location>();
         mPois = new ArrayList<>();
@@ -200,6 +204,43 @@ public class DataHelper implements LifecycleObserver {
 
     public boolean isLoadedLocation() {
         return mLocationLiveData.getValue() != null;
+    }
+
+    public boolean isFirstRun() {
+        boolean firstRun = mSharedPrefs.getBoolean(FIRST_RUN_KEY, true);
+        if (firstRun) {
+            mSharedPrefs.edit().putBoolean(FIRST_RUN_KEY, false).commit();
+        }
+
+        return firstRun;
+    }
+
+    public void getTrips(TaCallback<List<Integer>> taCallback) {
+        REPOSITORY.getTrips(getTrainId(), taCallback);
+    }
+
+    public void setTrip(int id, TaCallback<Void> taCallback) {
+        REPOSITORY.setTrip(id, taCallback);
+    }
+
+    public void getPreviousStops(int id, TaCallback<List<Stop>> taCallback) {
+        REPOSITORY.getPreviousStops(id, taCallback);
+    }
+
+    public void getNextStops(int id, TaCallback<List<Stop>> taCallback) {
+        REPOSITORY.getNextStops(id, taCallback);
+    }
+
+    public void getFinalStop(TaCallback<Stop> taCallback) {
+        REPOSITORY.getFinalStop(taCallback);
+    }
+
+    public int getTrainId() {
+        return mSharedPrefs.getInt(TRAIN_ID_KEY, 0);
+    }
+
+    public void setTrainId(int id) {
+        mSharedPrefs.edit().putInt(TRAIN_ID_KEY, id).commit();
     }
 
     private void reloadPois() {

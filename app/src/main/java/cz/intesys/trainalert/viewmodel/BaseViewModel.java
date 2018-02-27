@@ -11,11 +11,8 @@ import java.util.List;
 
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
-import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.repository.DataHelper;
-
-import static cz.intesys.trainalert.TaConfig.REPOSITORY;
 
 /**
  * Works with repository
@@ -78,25 +75,5 @@ public class BaseViewModel extends ViewModel implements LifecycleObserver {
 
     public void deletePoi(long id, TaCallback<Poi> taCallback) {
         mDataHelper.deletePoi(id, taCallback);
-    }
-
-    public void getTrips(int id, TaCallback<List<Integer>> taCallback) {
-        REPOSITORY.getTrips(id, taCallback);
-    }
-
-    public void setTrip(int id, TaCallback<Void> taCallback) {
-        REPOSITORY.setTrip(id, taCallback);
-    }
-
-    public void getPreviousStops(int id, TaCallback<List<Stop>> taCallback) {
-        REPOSITORY.getPreviousStops(id, taCallback);
-    }
-
-    public void getNextStops(int id, TaCallback<List<Stop>> taCallback) {
-        REPOSITORY.getNextStops(id, taCallback);
-    }
-
-    public void getFinalStop(TaCallback<Stop> taCallback) {
-        REPOSITORY.getFinalStop(taCallback);
     }
 }

@@ -272,6 +272,7 @@ public class PoiMapFragment extends Fragment {
         mViewModel.getLocationLiveData().observe(this, observer);
 
         Configuration.getInstance().save(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Save configuration.
+        Configuration.getInstance().load(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Load configuration.
     }
 
     private void handleMode() {

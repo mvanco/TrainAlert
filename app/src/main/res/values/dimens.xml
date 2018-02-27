@@ -31,4 +31,5 @@
     <dimen name="fragmentPoiList_recyclerView_paddingTopBottom">1dp</dimen>
 
     <dimen name="fragmentPoiMap">300dp</dimen>
+    <dimen name="dialog_train_id_left_margin">20dp</dimen>
 </resources>

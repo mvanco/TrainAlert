@@ -112,7 +112,7 @@ public class MainFragment extends Fragment {
         mViewModel.setAnimating(shouldAnimating);
     }
 
-    public void initMap(Context context) {
+    private void initMap(Context context) {
         Configuration.getInstance().load(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Load configuration.
 
         if (USE_OFFLINE_MAPS) {
@@ -147,7 +147,6 @@ public class MainFragment extends Fragment {
 
         mBinding.fragmentMainMapView.setMultiTouchControls(true);
         mBinding.fragmentMainMapView.setTilesScaledToDpi(true);
-
         mBinding.fragmentMainMapView.setMapListener(new MapListener() {
             @Override
             public boolean onScroll(ScrollEvent event) {

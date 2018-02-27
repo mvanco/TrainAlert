@@ -15,6 +15,8 @@
     <string name="fragment_main_poi_type_message_turnout">Výhybka %1$d m</string>
     <string name="fragment_main_poi_type_message_bridge">Most %1$d m</string>
 
+    <string name="fragment_train_id_message">Zadejte číslo vlaku</string>
+
     <!-- Content Descriptions -->
     <string name="fragment_poi_list_icon_desc">Icon</string>
     <string name="fragment_poi_list_title_desc">Title</string>
@@ -26,6 +28,8 @@
     <string name="title_activity_poi">Body zájmu</string>
     <string name="title_activity_category">Kategorie</string>
     <string name="title_fragment_category_picker">Kategorie</string>
+    <string name="title_fragment_train_id">Číslo vlaku</string>
+    <string name="title_fragment_trip_id">Číslo jízdy</string>
 
     <string name="pref_title_ringtone">Zvukové upozornění</string>
     <string name="pref_ringtone_silent">silent</string>
@@ -39,8 +43,8 @@
     <string name="new_poi_added">Bod zájmu byl přidán</string>
     <string name="new_poi_edited">Bod zájmu byl editován</string>
 
-    <string name="fragment_category_picker_positive_button">Ulož</string>
-    <string name="fragment_category_picker_negative_button">Zruš</string>
+    <string name="dialog_fragment_positive_button">Ulož</string>
+    <string name="dialog_fragment_negative_button">Zruš</string>
 
     <!-- Kategorie -->
 
