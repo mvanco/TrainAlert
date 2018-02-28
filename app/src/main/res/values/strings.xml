@@ -15,7 +15,11 @@
     <string name="fragment_main_poi_type_message_turnout">Výhybka %1$d m</string>
     <string name="fragment_main_poi_type_message_bridge">Most %1$d m</string>
 
+    <!-- Dialog fragments -->
     <string name="fragment_train_id_message">Zadejte číslo vlaku</string>
+
+    <string name="fragment_trip_id_business_trip">Služební jízda</string>
+    <string name="fragment_trip_id_manual_selection">Ruční zadání</string>
 
     <!-- Content Descriptions -->
     <string name="fragment_poi_list_icon_desc">Icon</string>
@@ -45,10 +49,22 @@
 
     <string name="dialog_fragment_positive_button">Ulož</string>
     <string name="dialog_fragment_negative_button">Zruš</string>
+    <string name="button_text_save">Ulož</string>
 
-    <!-- Kategorie -->
+    <!-- Categories -->
+    <string name="category_crossing">Přejezd</string>
+    <string name="category_trainstation">Železniční stanice</string>
+    <string name="category_stop">Zastávka</string>
+    <string name="category_lights">Vjezdové návěstidlo</string>
+    <string name="category_beforelights">Předvěst</string>
+    <string name="category_speed_limitation_20">Omezení rychlosti 20 km/h</string>
+    <string name="category_speed_limitation_30">Omezení rychlosti 30 km/h</string>
+    <string name="category_speed_limitation_40">Omezení rychlosti 40 km/h</string>
+    <string name="category_speed_limitation_50">Omezení rychlosti 50 km/h</string>
+    <string name="category_speed_limitation_70">Omezení rychlosti 70 km/h</string>
 
 
+    <!-- Preferences -->
     <string name="pref_title_colour">Barva ikonky</string>
     <string-array name="pref_colour_titles">
         <item>Červená</item>
@@ -107,18 +123,8 @@
         <item>300</item>
     </string-array>
     <string name="pref_distances_summary">Nastav vzdálenosti které vyvolávají upozornění</string>
-    <string name="button_text_save">Ulož</string>
 
-
-    <string name="category_crossing">Přejezd</string>
-    <string name="category_trainstation">Železniční stanice</string>
-    <string name="category_stop">Zastávka</string>
-    <string name="category_lights">Vjezdové návěstidlo</string>
-    <string name="category_beforelights">Předvěst</string>
-    <string name="category_speed_limitation_20">Omezení rychlosti 20 km/h</string>
-    <string name="category_speed_limitation_30">Omezení rychlosti 30 km/h</string>
-    <string name="category_speed_limitation_40">Omezení rychlosti 40 km/h</string>
-    <string name="category_speed_limitation_50">Omezení rychlosti 50 km/h</string>
-    <string name="category_speed_limitation_70">Omezení rychlosti 70 km/h</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

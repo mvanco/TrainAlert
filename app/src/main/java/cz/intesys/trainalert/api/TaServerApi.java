@@ -25,17 +25,17 @@ public interface TaServerApi {
     @GET("/TrainAlert/DeletePoi/{id}")
     Call<ResponseApi<PoiApi>> deletePoi(@Path("id") long id);
 
-    @GET("/TrainAlert/GetTrips/{id}")
-    Call<ResponseApi<List<Integer>>> getTrips(@Path("id") int id);
+    @GET("/TrainAlert/GetTrips/{trainId}")
+    Call<ResponseApi<List<Integer>>> getTrips(@Path("trainId") int id);
 
-    @GET("/TrainAlert/SetTrip/{id}")
-    Call<ResponseApi<Void>> setTrip(@Path("id") int id);
+    @GET("/TrainAlert/SetTrip/{tripId}")
+    Call<ResponseApi<Void>> setTrip(@Path("tripId") int id);
 
-    @GET("/TrainAlert/GetPreviousStops/{id}")
-    Call<ResponseApi<List<StopApi>>> getPreviousStops(@Path("id") int id);
+    @GET("/TrainAlert/GetPreviousStops/{count}")
+    Call<ResponseApi<List<StopApi>>> getPreviousStops(@Path("count") int id);
 
-    @GET("/TrainAlert/GetNextStops/{id}")
-    Call<ResponseApi<List<StopApi>>> getNextStops(@Path("id") int id);
+    @GET("/TrainAlert/GetNextStops/{count}")
+    Call<ResponseApi<List<StopApi>>> getNextStops(@Path("count") int id);
 
     @GET("/TrainAlert/GetFinalStop")
     Call<ResponseApi<StopApi>> getFinalStop();

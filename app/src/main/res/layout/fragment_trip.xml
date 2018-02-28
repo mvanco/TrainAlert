@@ -1,0 +1,17 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="cz.intesys.trainalert.fragment.TripFragment">
+
+    <cz.intesys.trainalert.view.StopView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:arrival="2018-02-28T19:05:00"
+        app:color="#c6c6c6"
+        app:delay="3900"
+        app:listPosition="start|end"
+        app:name="Most" />
+
+</FrameLayout>

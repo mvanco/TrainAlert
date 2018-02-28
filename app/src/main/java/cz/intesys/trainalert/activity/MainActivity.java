@@ -4,10 +4,12 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -25,31 +27,36 @@ import cz.intesys.trainalert.databinding.ActivityMainBinding;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.fragment.MainFragment;
 import cz.intesys.trainalert.fragment.TrainIdDialogFragment;
+import cz.intesys.trainalert.fragment.TripFragment;
 import cz.intesys.trainalert.fragment.TripIdDialogFragment;
+import cz.intesys.trainalert.fragment.TripIdManuallyDialogFragment;
 import cz.intesys.trainalert.repository.DataHelper;
 
 import static android.support.v4.widget.DrawerLayout.STATE_IDLE;
 import static android.support.v4.widget.DrawerLayout.STATE_SETTLING;
 import static cz.intesys.trainalert.TaConfig.USE_OFFLINE_MAPS;
 
-public class MainActivity extends AppCompatActivity implements TrainIdDialogFragment.OnFragmentInteractionListener, TripIdDialogFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements TrainIdDialogFragment.OnFragmentInteractionListener, TripIdDialogFragment.OnFragmentInteractionListener, TripFragment.OnFragmentInteractionListener {
 
     public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
     private static final String MAIN_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.mainFragmentTag";
     private static final String TRAIN_ID_DIALOG_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.trainIdTag";
     private static final String TRIP_ID_DIALOG_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.tripIdTag";
+    private static final String TRIP_ID_MANUALLY_DIALOG_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.tripIdManuallyTag";
+    private static final String TRIP_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.sideFragmentTag";
 
-    private ActivityMainBinding binding;
+
+    private ActivityMainBinding mBinding;
     private ActionBarDrawerToggle mToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         getSupportFragmentManager().beginTransaction().add(R.id.activityMain_fragmentContainer, MainFragment.newInstance(), MAIN_FRAGMENT_TAG).commit();
         getSupportFragmentManager().executePendingTransactions();
         setupActionBar();
-        RecyclerView recyclerView = binding.activityMainNavigationView.findViewById(R.id.activityMain_recyclerView);
+        RecyclerView recyclerView = mBinding.activityMainNavigationView.findViewById(R.id.activityMain_recyclerView);
         recyclerView.hasFixedSize();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new NavAdapter((id) -> onNavigationItemSelected(id)));
@@ -105,7 +112,23 @@ public class MainActivity extends AppCompatActivity implements TrainIdDialogFrag
         showTripIdDialogFragment();
     }
 
-    @Override public void onTripSelected(int tripId) {
+    @Override
+    public void onTripSelected(int tripId) { // Returned from TripIdDialogFragment or TripIdManuallyDialogFragment
+        mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.VISIBLE);
+        Fragment fragment = TripFragment.newInstance("", "");
+        getSupportFragmentManager().beginTransaction().add(R.id.activityMain_sideContainer, fragment, TRIP_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().executePendingTransactions();
+    }
+
+    @Override public void onBusinessTripSelected() {
+        // Not needed to start side panel.
+    }
+
+    @Override public void onTripManuallySelected() {
+        TripIdManuallyDialogFragment.newInstance().show(getSupportFragmentManager(), TRIP_ID_MANUALLY_DIALOG_FRAGMENT_TAG);
+    }
+
+    @Override public void onFragmentInteraction(Uri uri) {
 
     }
 
@@ -126,24 +149,24 @@ public class MainActivity extends AppCompatActivity implements TrainIdDialogFrag
 
     private void onNavigationItemSelected(@StringRes int id) {
         if (id == R.string.nav_pois) { // POIs
-            binding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
+            mBinding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
             startActivity(PoiActivity.newIntent(this));
         } else if (id == R.string.nav_categories) {
-            binding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
+            mBinding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
             startActivity(CategoryActivity.newIntent(this));
         }
     }
 
     private void setupActionBar() {
-        setSupportActionBar(binding.activityMainToolbar);
+        setSupportActionBar(mBinding.activityMainToolbar);
 
         mToggle = new ActionBarDrawerToggle(
-                this, binding.activityMainDrawerLayout, binding.activityMainToolbar, R.string.activity_main_navigation_drawer_open, R.string.activity_main_navigation_drawer_close);
-        binding.activityMainDrawerLayout.addDrawerListener(mToggle);
-        binding.activityMainDrawerLayout.setScrimColor(Color.TRANSPARENT);
+                this, mBinding.activityMainDrawerLayout, mBinding.activityMainToolbar, R.string.activity_main_navigation_drawer_open, R.string.activity_main_navigation_drawer_close);
+        mBinding.activityMainDrawerLayout.addDrawerListener(mToggle);
+        mBinding.activityMainDrawerLayout.setScrimColor(Color.TRANSPARENT);
         mToggle.syncState();
         MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
-        binding.activityMainDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+        mBinding.activityMainDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
 
@@ -169,4 +192,6 @@ public class MainActivity extends AppCompatActivity implements TrainIdDialogFrag
             }
         });
     }
+
+
 }

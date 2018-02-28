@@ -1,0 +1,14 @@
+<resources>
+    <declare-styleable name="StopView">
+        <attr name="listPosition" format="integer">
+            <flag name="start" value="1" />
+            <flag name="end" value="2" />
+            <flag name="middle" value="3" />
+        </attr>
+        <attr name="label" format="string" />
+        <attr name="name" format="string" />
+        <attr name="arrival" format="string" />
+        <attr name="delay" format="integer" />
+        <attr name="color" format="color" />
+    </declare-styleable>
+</resources>

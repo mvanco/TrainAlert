@@ -32,4 +32,11 @@
 
     <dimen name="fragmentPoiMap">300dp</dimen>
     <dimen name="dialog_train_id_left_margin">20dp</dimen>
+
+
+    <item name="activityMain_mainContentRatio" format="float" type="dimen">0.6</item>
+    <item name="activityMain_sideContentRatio" format="float" type="dimen">0.4</item>
+
+    <item name="activityMain_portrait_mainContentRatio" format="float" type="dimen">0.6</item>
+    <item name="activityMain_portrait_sideContentRatio" format="float" type="dimen">0.4</item>
 </resources>
