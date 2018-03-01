@@ -21,6 +21,11 @@
     <string name="fragment_trip_id_business_trip">Služební jízda</string>
     <string name="fragment_trip_id_manual_selection">Ruční zadání</string>
 
+    <!-- TripFragment -->
+    <string name="fragmentTrip_trainIdLabel">Číslo vlaku:</string>
+    <string name="fragmentTrip_tripIdLabel">Číslo jízdy:</string>
+    <string name="fragmentTrip_title">Aktuální jízda</string>
+
     <!-- Content Descriptions -->
     <string name="fragment_poi_list_icon_desc">Icon</string>
     <string name="fragment_poi_list_title_desc">Title</string>
@@ -123,8 +128,5 @@
         <item>300</item>
     </string-array>
     <string name="pref_distances_summary">Nastav vzdálenosti které vyvolávají upozornění</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -46,8 +46,11 @@ public class DataHelper implements LifecycleObserver {
     public static final int GRAPHICS_RED_SQUARE = 7;
     public static final int GRAPHICS_YELLOW_GREY_SQARE = 8;
     public static final int GRAPHICS_DEFAULT = GRAPHICS_BLACK_SQUARE;
+
     private static final String FIRST_RUN_KEY = "first_run";
     private static final String TRAIN_ID_KEY = "train_id";
+    private static final String TRIP_ID_KEY = "trip_id";
+
     private static DataHelper sInstance;
     private Repository mRepository;
     private SharedPreferences mSharedPrefs;
@@ -195,9 +198,6 @@ public class DataHelper implements LifecycleObserver {
         });
     }
 
-
-
-
     public boolean areLoadedPois() {
         return mPoisLiveData.getValue() != null;
     }
@@ -221,14 +221,19 @@ public class DataHelper implements LifecycleObserver {
 
     public void setTrip(int id, TaCallback<Void> taCallback) {
         REPOSITORY.setTrip(id, taCallback);
+        mSharedPrefs.edit().putInt(TRIP_ID_KEY, id).commit();
     }
 
-    public void getPreviousStops(int id, TaCallback<List<Stop>> taCallback) {
-        REPOSITORY.getPreviousStops(id, taCallback);
+    public int getTripId() {
+        return mSharedPrefs.getInt(TRIP_ID_KEY, 0);
     }
 
-    public void getNextStops(int id, TaCallback<List<Stop>> taCallback) {
-        REPOSITORY.getNextStops(id, taCallback);
+    public void getPreviousStops(int count, TaCallback<List<Stop>> taCallback) {
+        REPOSITORY.getPreviousStops(count, taCallback);
+    }
+
+    public void getNextStops(int count, TaCallback<List<Stop>> taCallback) {
+        REPOSITORY.getNextStops(count, taCallback);
     }
 
     public void getFinalStop(TaCallback<Stop> taCallback) {

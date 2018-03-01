@@ -7,4 +7,9 @@
     <color name="light_grey">#a6a6a6</color>
     <color name="green">#689f38</color>
 
+    <color name="previous_stop_color">@color/green</color>
+    <color name="next_closest_stop_color">#ef6c00</color>
+    <color name="next_stop_color">@color/red</color>
+    <color name="final_stop_color">@color/blue</color>
+
 </resources>

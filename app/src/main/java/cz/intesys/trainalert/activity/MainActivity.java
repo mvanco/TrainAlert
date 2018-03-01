@@ -114,14 +114,22 @@ public class MainActivity extends AppCompatActivity implements TrainIdDialogFrag
 
     @Override
     public void onTripSelected(int tripId) { // Returned from TripIdDialogFragment or TripIdManuallyDialogFragment
-        mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.VISIBLE);
-        Fragment fragment = TripFragment.newInstance("", "");
-        getSupportFragmentManager().beginTransaction().add(R.id.activityMain_sideContainer, fragment, TRIP_FRAGMENT_TAG).commit();
-        getSupportFragmentManager().executePendingTransactions();
+        DataHelper.getInstance().setTrip(tripId, new TaCallback<Void>() {
+            @Override public void onResponse(Void response) {
+                mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.VISIBLE);
+                Fragment fragment = TripFragment.newInstance(1, 3);
+                getSupportFragmentManager().beginTransaction().replace(R.id.activityMain_sideContainer, fragment, TRIP_FRAGMENT_TAG).commit();
+                getSupportFragmentManager().executePendingTransactions();
+            }
+
+            @Override public void onFailure(Throwable t) {
+
+            }
+        });
     }
 
     @Override public void onBusinessTripSelected() {
-        // Not needed to start side panel.
+        mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.GONE);
     }
 
     @Override public void onTripManuallySelected() {

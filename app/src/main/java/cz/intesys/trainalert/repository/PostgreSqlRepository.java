@@ -201,8 +201,8 @@ public class PostgreSqlRepository implements Repository {
         });
     }
 
-    @Override public void getPreviousStops(int id, TaCallback<List<Stop>> taCallback) {
-        Call<ResponseApi<List<StopApi>>> call = mApiService.getPreviousStops(id);
+    @Override public void getPreviousStops(int count, TaCallback<List<Stop>> taCallback) {
+        Call<ResponseApi<List<StopApi>>> call = mApiService.getPreviousStops(count);
         call.enqueue(new Callback<ResponseApi<List<StopApi>>>() {
 
             @Override
@@ -225,8 +225,8 @@ public class PostgreSqlRepository implements Repository {
         });
     }
 
-    @Override public void getNextStops(int id, TaCallback<List<Stop>> taCallback) {
-        Call<ResponseApi<List<StopApi>>> call = mApiService.getNextStops(id);
+    @Override public void getNextStops(int count, TaCallback<List<Stop>> taCallback) {
+        Call<ResponseApi<List<StopApi>>> call = mApiService.getNextStops(count);
         call.enqueue(new Callback<ResponseApi<List<StopApi>>>() {
 
             @Override

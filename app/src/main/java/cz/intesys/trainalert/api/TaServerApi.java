@@ -32,10 +32,10 @@ public interface TaServerApi {
     Call<ResponseApi<Void>> setTrip(@Path("tripId") int id);
 
     @GET("/TrainAlert/GetPreviousStops/{count}")
-    Call<ResponseApi<List<StopApi>>> getPreviousStops(@Path("count") int id);
+    Call<ResponseApi<List<StopApi>>> getPreviousStops(@Path("count") int count);
 
     @GET("/TrainAlert/GetNextStops/{count}")
-    Call<ResponseApi<List<StopApi>>> getNextStops(@Path("count") int id);
+    Call<ResponseApi<List<StopApi>>> getNextStops(@Path("count") int count);
 
     @GET("/TrainAlert/GetFinalStop")
     Call<ResponseApi<StopApi>> getFinalStop();

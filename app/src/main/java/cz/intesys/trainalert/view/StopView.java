@@ -14,11 +14,16 @@ import java.util.Date;
 
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.databinding.ViewStopBinding;
+import cz.intesys.trainalert.entity.Stop;
 
 import static cz.intesys.trainalert.TaConfig.ARRIVAL_DATE_FORMAT;
 import static cz.intesys.trainalert.TaConfig.DATE_FORMAT;
 
 public class StopView extends FrameLayout {
+
+    public static final int LIST_POSITION_START = 1;
+    public static final int LIST_POSITION_END = 2;
+    public static final int LIST_POSITION_MIDDLE = 3;
 
     private ViewStopBinding mBinding;
 
@@ -78,16 +83,20 @@ public class StopView extends FrameLayout {
         return mArrival;
     }
 
-    public void setArrival(Date arrival) {
-        mArrival = arrival;
-    }
-
     public void setArrival(String arrival) {
+        if (arrival == null) {
+            return;
+        }
+
         try {
             mArrival = mSimpleDateFormat.parse(arrival);
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setArrival(Date arrival) {
+        mArrival = arrival;
     }
 
     public int getDelay() {
@@ -106,6 +115,30 @@ public class StopView extends FrameLayout {
     public void setColor(int color) {
         mColor = color;
         invalidateStopView();
+    }
+
+    public void setStop(Stop stop) {
+        mName = stop.getName();
+        mArrival = stop.getArrival();
+        mDelay = stop.getDelay();
+    }
+
+    public void setAsTrainMarker(boolean value) {
+        if (value) {
+            mBinding.stopViewTrainImage.setVisibility(View.VISIBLE);
+            mBinding.stopViewCard.setVisibility(View.INVISIBLE);
+            mBinding.stopViewName.setVisibility(View.INVISIBLE);
+            mBinding.stopViewArrival.setVisibility(View.INVISIBLE);
+            mBinding.stopViewDelay.setVisibility(View.INVISIBLE);
+            mBinding.stopViewTimePoint.setImageResource(android.R.drawable.presence_online);
+        } else {
+            mBinding.stopViewTrainImage.setVisibility(View.INVISIBLE);
+            mBinding.stopViewCard.setVisibility(View.VISIBLE);
+            mBinding.stopViewName.setVisibility(View.VISIBLE);
+            mBinding.stopViewArrival.setVisibility(View.VISIBLE);
+            mBinding.stopViewDelay.setVisibility(View.VISIBLE);
+            mBinding.stopViewTimePoint.setImageResource(android.R.drawable.presence_invisible);
+        }
     }
 
     private void init(AttributeSet attrs, int defStyle) {
@@ -128,14 +161,21 @@ public class StopView extends FrameLayout {
 
     private void invalidateStopView() {
         if ((mListPosition & 0x1) != 0) { // start flag
-            mBinding.imageView.setVisibility(View.VISIBLE);
+            mBinding.stopViewBottomLine.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.stopViewBottomLine.setVisibility(View.INVISIBLE);
         }
         if ((mListPosition & 0x2) != 0) { // end flag
-            mBinding.imageView2.setVisibility(View.VISIBLE);
+            mBinding.stopViewTopLine.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.stopViewTopLine.setVisibility(View.INVISIBLE);
         }
 
         mBinding.stopViewName.setText(mName);
-        mBinding.stopViewArrival.setText(mArrivalDateFormat.format(mArrival));
+
+        if (mArrival != null) {
+            mBinding.stopViewArrival.setText(mArrivalDateFormat.format(mArrival));
+        }
 
         int hours = mDelay / 3600;
         int minutes = (mDelay - hours * 3600) / 60;

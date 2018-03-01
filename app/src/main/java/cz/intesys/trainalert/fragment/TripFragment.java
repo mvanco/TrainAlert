@@ -3,66 +3,49 @@ package cz.intesys.trainalert.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import cz.intesys.trainalert.R;
+import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TripFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link TripFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import cz.intesys.trainalert.adapter.TripAdapter;
+import cz.intesys.trainalert.databinding.FragmentTripBinding;
+import cz.intesys.trainalert.entity.Stop;
+import cz.intesys.trainalert.entity.TaCallback;
+import cz.intesys.trainalert.repository.DataHelper;
+import cz.intesys.trainalert.viewmodel.TripFragmentViewModel;
+
 public class TripFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PREVIOUS_STOP_COUNT = "previousStopCount";
+    private static final String ARG_NEXT_STOP_COUNT = "nextStopCount";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private int previousStopCount;
+    private int nextStopCount;
 
     private OnFragmentInteractionListener mListener;
+    private FragmentTripBinding mBinding;
+    private TripFragmentViewModel mViewModel;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private TripAdapter mAdapter;
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+    public interface OnFragmentInteractionListener extends TripAdapter.OnItemClickListener {
         void onFragmentInteraction(Uri uri);
     }
 
     public TripFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TripFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static TripFragment newInstance(String param1, String param2) {
+    public static TripFragment newInstance(int previousStopCount, int nextStopCount) {
         TripFragment fragment = new TripFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putInt(ARG_PREVIOUS_STOP_COUNT, previousStopCount);
+        args.putInt(ARG_NEXT_STOP_COUNT, nextStopCount);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,16 +54,50 @@ public class TripFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            previousStopCount = getArguments().getInt(ARG_PREVIOUS_STOP_COUNT);
+            nextStopCount = getArguments().getInt(ARG_NEXT_STOP_COUNT);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_trip, container, false);
+        mBinding = FragmentTripBinding.inflate(inflater, container, false);
+        return mBinding.getRoot();
+    }
+
+    @Override public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mBinding.fragmentTripRecycler.setLayoutManager(mLayoutManager);
+        mAdapter = new TripAdapter(getContext(), mListener);
+        mBinding.fragmentTripRecycler.setAdapter(mAdapter);
+        DataHelper.getInstance().getPreviousStops(previousStopCount, new TaCallback<List<Stop>>() {
+            @Override public void onResponse(List<Stop> response) {
+                mAdapter.setPreviousStops(response);
+            }
+
+            @Override public void onFailure(Throwable t) {
+            }
+        });
+        DataHelper.getInstance().getNextStops(nextStopCount, new TaCallback<List<Stop>>() {
+            @Override public void onResponse(List<Stop> response) {
+                mAdapter.setNextStops(response);
+            }
+
+            @Override public void onFailure(Throwable t) {
+            }
+        });
+        DataHelper.getInstance().getFinalStop(new TaCallback<Stop>() {
+            @Override public void onResponse(Stop response) {
+                mAdapter.setFinalStop(response);
+            }
+
+            @Override public void onFailure(Throwable t) {
+            }
+        });
+        mBinding.trainId.setText(String.valueOf(DataHelper.getInstance().getTrainId()));
+        mBinding.tripId.setText(String.valueOf(DataHelper.getInstance().getTripId()));
     }
 
     @Override

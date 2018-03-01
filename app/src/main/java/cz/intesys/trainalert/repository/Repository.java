@@ -22,9 +22,9 @@ public interface Repository {
 
     void setTrip(int id, TaCallback<Void> taCallback);
 
-    void getPreviousStops(int id, TaCallback<List<Stop>> taCallback);
+    void getPreviousStops(int count, TaCallback<List<Stop>> taCallback);
 
-    void getNextStops(int id, TaCallback<List<Stop>> taCallback);
+    void getNextStops(int count, TaCallback<List<Stop>> taCallback);
 
     void getFinalStop(TaCallback<Stop> taCallback);
 }

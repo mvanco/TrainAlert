@@ -32,6 +32,7 @@
 
     <dimen name="fragmentPoiMap">300dp</dimen>
     <dimen name="dialog_train_id_left_margin">20dp</dimen>
+    <dimen name="fragmentTrip_headerHeight">130dp</dimen>
 
 
     <item name="activityMain_mainContentRatio" format="float" type="dimen">0.6</item>

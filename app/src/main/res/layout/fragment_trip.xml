@@ -1,17 +1,88 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="cz.intesys.trainalert.fragment.TripFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <cz.intesys.trainalert.view.StopView
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:arrival="2018-02-28T19:05:00"
-        app:color="#c6c6c6"
-        app:delay="3900"
-        app:listPosition="start|end"
-        app:name="Most" />
+        tools:context="cz.intesys.trainalert.fragment.TripFragment">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/fragmentTrip_header"
+                android:layout_width="match_parent"
+                android:layout_height="107dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/train_id_label"
+                    android:layout_width="118dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="@string/fragmentTrip_trainIdLabel"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/trip_label" />
+
+                <TextView
+                    android:id="@+id/trip_id_label"
+                    android:layout_width="125dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="@string/fragmentTrip_tripIdLabel"
+                    app:layout_constraintStart_toStartOf="@+id/train_id_label"
+                    app:layout_constraintTop_toBottomOf="@+id/train_id_label" />
+
+                <TextView
+                    android:id="@+id/train_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="Name"
+                    app:layout_constraintStart_toStartOf="@+id/trip_id"
+                    app:layout_constraintTop_toTopOf="@+id/train_id_label" />
+
+                <TextView
+                    android:id="@+id/trip_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="Name"
+                    app:layout_constraintStart_toEndOf="@+id/trip_id_label"
+                    app:layout_constraintTop_toTopOf="@+id/trip_id_label" />
+
+                <TextView
+                    android:id="@+id/trip_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/fragmentTrip_title"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/fragmentTrip_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</layout>
