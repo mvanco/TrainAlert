@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:gravity="center">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/alarm_roundRadius" />
+            <stroke
+                android:width="@dimen/alarm_stroke_width"
+                android:color="#a6a6a6" />
+            <solid android:color="#ffffff" />
+        </shape>
+    </item>
+    <item
+        android:bottom="@dimen/alarm_whitePadding_width"
+        android:gravity="center"
+        android:left="@dimen/alarm_whitePadding_width"
+        android:right="@dimen/alarm_whitePadding_width"
+        android:top="@dimen/alarm_whitePadding_width">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/alarm_roundRadius" />
+            <solid android:color="@color/stop_red" />
+        </shape>
+    </item>
+
+</layer-list>

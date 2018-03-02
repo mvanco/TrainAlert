@@ -9,14 +9,22 @@ public class Stop {
     private String name;
     private Date arrival;
     private int delay;
-    private int pressed;
+    private boolean pressed;
 
     public Stop(StopApi stopApi) {
         this.id = stopApi.getId();
         this.name = stopApi.getName();
         this.arrival = stopApi.getArrival();
         this.delay = stopApi.getDelay();
-        this.pressed = stopApi.getPressed();
+        this.pressed = stopApi.getPressed() != 0;
+    }
+
+    public Stop(int id, String name, Date arrival, int delay, boolean pressed) {
+        this.id = id;
+        this.name = name;
+        this.arrival = arrival;
+        this.delay = delay;
+        this.pressed = pressed;
     }
 
     public int getId() {
@@ -51,11 +59,11 @@ public class Stop {
         this.delay = delay;
     }
 
-    public int getPressed() {
+    public boolean isPressed() {
         return pressed;
     }
 
-    public void setPressed(int pressed) {
+    public void setPressed(boolean pressed) {
         this.pressed = pressed;
     }
 }

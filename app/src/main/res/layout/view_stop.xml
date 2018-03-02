@@ -4,7 +4,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="100dp"
+        android:padding="@dimen/stopView_root_padding">
 
         <ImageView
             android:id="@+id/stopView_trainImage"
@@ -98,6 +99,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:text="TextView"
+            android:textSize="@dimen/stopFragment_name_textSize"
             app:layout_constraintBottom_toBottomOf="@+id/stopView_card"
             app:layout_constraintEnd_toStartOf="@+id/stopView_arrival"
             app:layout_constraintStart_toStartOf="@+id/stopView_card" />

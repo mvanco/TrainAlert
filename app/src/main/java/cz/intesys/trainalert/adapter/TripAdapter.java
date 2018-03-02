@@ -12,6 +12,8 @@ import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.view.StopView;
 
+import static cz.intesys.trainalert.view.StopView.TYPE_PREVIOUS_STOP;
+
 public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
 
     private List<Stop> mPreviousStops;
@@ -59,7 +61,8 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
         }
         holder.stopView.setListPosition(listPosition);
 
-        colorizeStopView(holder.stopView, position);
+        //colorizeStopView(holder.stopView, position);
+        holder.stopView.setType(getStopType(position));
     }
 
     @Override public int getItemCount() {
@@ -105,17 +108,31 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
         }
     }
 
+    private @StopView.StopType int getStopType(int position) {
+        if (position < mPreviousStops.size()) { // Previous stops.
+            return TYPE_PREVIOUS_STOP;
+        } else if (position == mPreviousStops.size()) {
+            return StopView.TYPE_TRAIN_MARKER;
+        } else if (position == mPreviousStops.size() + 1) { // Closest next stop.
+            return StopView.TYPE_CLOSEST_NEXT_STOP;
+        } else if (position < (mPreviousStops.size() + mNextStops.size()) + 1) { // Next stops.
+            return StopView.TYPE_NEXT_STOP;
+        } else { // Final stop.
+            return StopView.TYPE_FINAL_STOP;
+        }
+    }
+
     private void colorizeStopView(StopView stopView, int position) {
         if (position < mPreviousStops.size()) { // Previous stops.
-            stopView.setColor(ContextCompat.getColor(mContext, R.color.previous_stop_color));
+            stopView.setColor(ContextCompat.getColor(mContext, R.color.stop_green));
         } else if (position == mPreviousStops.size()) {
             stopView.setColor(ContextCompat.getColor(mContext, android.R.color.white));
         } else if (position == mPreviousStops.size() + 1) { // Closest next stop.
-            stopView.setColor(ContextCompat.getColor(mContext, R.color.next_closest_stop_color));
+            stopView.setColor(ContextCompat.getColor(mContext, R.color.stop_orange));
         } else if (position < (mPreviousStops.size() + mNextStops.size()) + 1) { // Next stops.
-            stopView.setColor(ContextCompat.getColor(mContext, R.color.next_stop_color));
+            stopView.setColor(ContextCompat.getColor(mContext, R.color.stop_red));
         } else { // Final stop.
-            stopView.setColor(ContextCompat.getColor(mContext, R.color.final_stop_color));
+            stopView.setColor(ContextCompat.getColor(mContext, R.color.stop_blue));
         }
     }
 

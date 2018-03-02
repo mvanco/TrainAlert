@@ -18,7 +18,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static cz.intesys.trainalert.TaConfig.DATE_FORMAT;
+import static cz.intesys.trainalert.TaConfig.BASIC_DATE_FORMAT_STRING;
 
 public class TaClient {
     private static volatile Retrofit sRetrofit;
@@ -83,7 +83,7 @@ public class TaClient {
      */
     private static Converter.Factory createConverterFactory() {
         GsonBuilder builder = new GsonBuilder();
-        builder.setDateFormat(DATE_FORMAT);
+        builder.setDateFormat(BASIC_DATE_FORMAT_STRING);
         Gson gson = builder.create();
         return GsonConverterFactory.create(gson);
     }

@@ -2,10 +2,13 @@ package cz.intesys.trainalert.repository;
 
 import android.os.Handler;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.Stop;
@@ -94,23 +97,58 @@ public class SimulatedRepository implements Repository {
     }
 
     @Override public void getTrips(int id, TaCallback<List<Integer>> taCallback) {
-
+        new Handler().postDelayed(() -> {
+            List<Integer> trips = Arrays.asList(21, 25, 34);
+            taCallback.onResponse(trips);
+        }, getRandomServerDelay());
     }
 
     @Override public void setTrip(int id, TaCallback<Void> taCallback) {
-
+        new Handler().postDelayed(() -> {
+            taCallback.onResponse(null);
+        }, getRandomServerDelay());
     }
 
     @Override public void getPreviousStops(int id, TaCallback<List<Stop>> taCallback) {
-
+        new Handler().postDelayed(() -> {
+            List<Stop> stops = new ArrayList<>();
+            try {
+                stops.add(new Stop(0, "Predosla 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 3900, true));
+                stops.add(new Stop(0, "Predosla 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T12:11:00"), 0, true));
+                stops.add(new Stop(0, "Predosla 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T12:30:00"), 300, true));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            taCallback.onResponse(stops);
+        }, getRandomServerDelay());
     }
 
     @Override public void getNextStops(int id, TaCallback<List<Stop>> taCallback) {
-
+        new Handler().postDelayed(() -> {
+            List<Stop> stops = new ArrayList<>();
+            try {
+                stops.add(new Stop(0, "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, false));
+                stops.add(new Stop(0, "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+                stops.add(new Stop(0, "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, true));
+                stops.add(new Stop(0, "Nasledujici 4", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+                stops.add(new Stop(0, "Nasledujici 5", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 600, false));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            taCallback.onResponse(stops);
+        }, getRandomServerDelay());
     }
 
     @Override public void getFinalStop(TaCallback<Stop> taCallback) {
-
+        new Handler().postDelayed(() -> {
+            Stop stop = null;
+            try {
+                stop = new Stop(0, "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, true);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            taCallback.onResponse(stop);
+        }, getRandomServerDelay());
     }
 
     private List<Poi> getExamplePois() {

@@ -3,21 +3,21 @@ package cz.intesys.trainalert.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.support.annotation.IntDef;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.databinding.ViewStopBinding;
 import cz.intesys.trainalert.entity.Stop;
-
-import static cz.intesys.trainalert.TaConfig.ARRIVAL_DATE_FORMAT;
-import static cz.intesys.trainalert.TaConfig.DATE_FORMAT;
 
 public class StopView extends FrameLayout {
 
@@ -25,17 +25,24 @@ public class StopView extends FrameLayout {
     public static final int LIST_POSITION_END = 2;
     public static final int LIST_POSITION_MIDDLE = 3;
 
+    public static final int TYPE_PREVIOUS_STOP = 0;
+    public static final int TYPE_CLOSEST_NEXT_STOP = 1;
+    public static final int TYPE_NEXT_STOP = 2;
+    public static final int TYPE_FINAL_STOP = 3;
+    public static final int TYPE_TRAIN_MARKER = 4;
     private ViewStopBinding mBinding;
-
     private int mListPosition;
     private String mLabel;
     private String mName;
     private Date mArrival;
     private int mDelay;
     private int mColor;
+    private @StopType int mType;
 
-    private SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
-    private SimpleDateFormat mArrivalDateFormat = new SimpleDateFormat(ARRIVAL_DATE_FORMAT);
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({TYPE_PREVIOUS_STOP, TYPE_CLOSEST_NEXT_STOP, TYPE_NEXT_STOP, TYPE_FINAL_STOP, TYPE_TRAIN_MARKER})
+    public @interface StopType {
+    }
 
     public StopView(Context context) {
         super(context);
@@ -83,20 +90,20 @@ public class StopView extends FrameLayout {
         return mArrival;
     }
 
+    public void setArrival(Date arrival) {
+        mArrival = arrival;
+    }
+
     public void setArrival(String arrival) {
         if (arrival == null) {
             return;
         }
 
         try {
-            mArrival = mSimpleDateFormat.parse(arrival);
+            mArrival = TaConfig.BASIC_DATE_FORMAT.parse(arrival);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setArrival(Date arrival) {
-        mArrival = arrival;
     }
 
     public int getDelay() {
@@ -114,6 +121,15 @@ public class StopView extends FrameLayout {
 
     public void setColor(int color) {
         mColor = color;
+        invalidateStopView();
+    }
+
+    public int getType() {
+        return mType;
+    }
+
+    public void setType(@StopType int type) {
+        mType = type;
         invalidateStopView();
     }
 
@@ -174,13 +190,28 @@ public class StopView extends FrameLayout {
         mBinding.stopViewName.setText(mName);
 
         if (mArrival != null) {
-            mBinding.stopViewArrival.setText(mArrivalDateFormat.format(mArrival));
+            mBinding.stopViewArrival.setText(TaConfig.ARRIVAL_DATE_FORMAT.format(mArrival));
         }
 
         int hours = mDelay / 3600;
         int minutes = (mDelay - hours * 3600) / 60;
         mBinding.stopViewDelay.setText(String.format("%d h %d m", hours, minutes));
         mBinding.stopViewCard.setBackgroundColor(mColor);
+
+        switch (mType) {
+            case TYPE_PREVIOUS_STOP:
+                mBinding.stopViewCard.setBackgroundResource(R.drawable.stop_background_green);
+                break;
+            case TYPE_CLOSEST_NEXT_STOP:
+                mBinding.stopViewCard.setBackgroundResource(R.drawable.stop_background_orange);
+                break;
+            case TYPE_NEXT_STOP:
+                mBinding.stopViewCard.setBackgroundResource(R.drawable.stop_background_red);
+                break;
+            case TYPE_FINAL_STOP:
+                mBinding.stopViewCard.setBackgroundResource(R.drawable.stop_background_blue);
+                break;
+        }
 
         invalidate();
         requestLayout();
