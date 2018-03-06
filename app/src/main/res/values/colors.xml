@@ -7,9 +7,14 @@
     <color name="light_grey">#a6a6a6</color>
     <color name="green">#689f38</color>
 
-    <color name="stop_green">#afd683</color>
+    <color name="stop_green">#c8e6c9</color>
     <color name="stop_orange">#FFE0B2</color>
     <color name="stop_red">#FFCDD2</color>
     <color name="stop_blue">#CFD8DC</color>
+
+
+    <color name="trip_grey">#a6a6a6</color>
+    <color name="trip_point_green">#8BC34A</color>
+
 
 </resources>

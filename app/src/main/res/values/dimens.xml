@@ -7,6 +7,11 @@
     <dimen name="alarm_textView_margin">48dp</dimen>
     <dimen name="alarm_roundRadius">4dp</dimen>
 
+    <dimen name="drawable_timePoint_borderWidth">2.5dp</dimen>
+    <dimen name="drawable_timePoint_width">24dp</dimen>
+    <dimen name="drawable_timePoint_height">@dimen/drawable_timePoint_width</dimen>
+
+
     <dimen name="fabGps_margin">20dp</dimen>
 
     <dimen name="navHeader_height">8dp</dimen>
@@ -33,8 +38,10 @@
     <dimen name="fragmentPoiMap">300dp</dimen>
     <dimen name="dialog_train_id_left_margin">20dp</dimen>
     <dimen name="fragmentTrip_headerHeight">130dp</dimen>
-    <dimen name="stopFragment_name_textSize">14dp</dimen>
-    <dimen name="stopView_root_padding">5dp</dimen>
+    <dimen name="stopFragment_name_textSize">18dp</dimen>
+    <dimen name="stopView_height">85dp</dimen>
+    <dimen name="stopView_height_train">60dp</dimen>
+    <dimen name="stopView_lineHeight">2dp</dimen>
 
 
     <item name="activityMain_mainContentRatio" format="float" type="dimen">0.6</item>

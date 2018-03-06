@@ -44,6 +44,7 @@ import org.osmdroid.views.overlay.OverlayItem;
 import java.util.List;
 
 import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.animation.GeoPointInterpolator;
 import cz.intesys.trainalert.databinding.FragmentMainBinding;
 import cz.intesys.trainalert.entity.Alarm;
@@ -77,7 +78,7 @@ public class MainFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(MainFragmentViewModel.class);
-        getLifecycle().addObserver(mViewModel);
+        new Handler().postDelayed(() -> getLifecycle().addObserver(mViewModel), TaConfig.LOCATION_INITIAL_DELAY);
     }
 
     @Override
@@ -207,7 +208,8 @@ public class MainFragment extends Fragment {
             mTrainMarker = new Marker(mapView);
             mTrainMarker.setTitle("Train LocationApi");
             mTrainMarker.setPosition(mViewModel.getLocation().toGeoPoint());
-            mTrainMarker.setIcon(getResources().getDrawable(R.drawable.marker_train_left));
+            mTrainMarker.setIcon(getResources().getDrawable(R.drawable.ic_current_location));
+            mTrainMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
         }
     }
 
@@ -247,7 +249,16 @@ public class MainFragment extends Fragment {
         valueAnimator.setRepeatCount(0);
         valueAnimator.setDuration(GPS_TIME_INTERVAL);
         valueAnimator.start();
+    }
 
+    /**
+     * Rotate train marker according to direction of movement.
+     *
+     * @param marker        to rotate
+     * @param startPosition start position
+     * @param finalPosition end position
+     */
+    private void rotateTrainMarker(final Marker marker, final GeoPoint startPosition, final GeoPoint finalPosition) {
         float markerRotation = convertToDegrees(getMarkerRotation(startPosition, finalPosition));
         Log.d("markerRotation", String.format("startPosition %f %f, endPosition %f %f, markerRotation %f", startPosition.getLatitude(), startPosition.getLongitude(), finalPosition.getLatitude(), finalPosition.getLongitude(), markerRotation));
 
@@ -263,6 +274,7 @@ public class MainFragment extends Fragment {
     /**
      * Warning: Works with activity {@link Context}, activity must be already attached!
      * TODO: Move to ViewModel.
+     *
      * @param currentLocation
      */
     private void handleNotification(GeoPoint currentLocation) {
@@ -279,11 +291,6 @@ public class MainFragment extends Fragment {
         mBinding.fragmentMainSignView.setVisibility(View.VISIBLE);
         mBinding.fragmentMainSignView.setText(alarm.getMessage());
         mBinding.fragmentMainSignView.setGraphics(alarm.getGraphics());
-
-//        mBinding.fragmentMainNotificationText.setText(alarm.getMessage());
-//        mBinding.fragmentMainNotificationContainer.setVisibility(View.VISIBLE);
-//        ImageView sign = mBinding.fragmentMainNotificationContainer.findViewById(R.id.fragmentMain_sign);
-//        sign.setImageResource(alarm.getGraphics());
 
         Utility.playSound(alarm.getRingtone(), getActivity());
         if (alarm.shouldVibrate()) {

@@ -26,7 +26,6 @@ import cz.intesys.trainalert.adapter.NavAdapter;
 import cz.intesys.trainalert.databinding.ActivityMainBinding;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.fragment.MainFragment;
-import cz.intesys.trainalert.fragment.TrainIdDialogFragment;
 import cz.intesys.trainalert.fragment.TripFragment;
 import cz.intesys.trainalert.fragment.TripIdDialogFragment;
 import cz.intesys.trainalert.fragment.TripIdManuallyDialogFragment;
@@ -34,13 +33,14 @@ import cz.intesys.trainalert.repository.DataHelper;
 
 import static android.support.v4.widget.DrawerLayout.STATE_IDLE;
 import static android.support.v4.widget.DrawerLayout.STATE_SETTLING;
+import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_NEXT_STOP_COUNT;
+import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_PREVIOUS_STOP_COUNT;
 import static cz.intesys.trainalert.TaConfig.USE_OFFLINE_MAPS;
 
-public class MainActivity extends AppCompatActivity implements TrainIdDialogFragment.OnFragmentInteractionListener, TripIdDialogFragment.OnFragmentInteractionListener, TripFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements TripIdDialogFragment.OnFragmentInteractionListener, TripFragment.OnFragmentInteractionListener {
 
     public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
     private static final String MAIN_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.mainFragmentTag";
-    private static final String TRAIN_ID_DIALOG_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.trainIdTag";
     private static final String TRIP_ID_DIALOG_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.tripIdTag";
     private static final String TRIP_ID_MANUALLY_DIALOG_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.tripIdManuallyTag";
     private static final String TRIP_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.sideFragmentTag";
@@ -93,11 +93,16 @@ public class MainActivity extends AppCompatActivity implements TrainIdDialogFrag
 
     @Override protected void onStart() {
         super.onStart();
-        if (DataHelper.getInstance().isFirstRun() || DataHelper.getInstance().getTrainId() == 0) {
-            TrainIdDialogFragment.newInstance().show(getSupportFragmentManager(), TRAIN_ID_DIALOG_FRAGMENT_TAG);
-        } else { // We can immediately start selection of trip (should be in every start of application).
-            showTripIdDialogFragment();
+        if (DataHelper.getInstance().isFirstRun()) {
+            DataHelper.getInstance().getTrainId(new TaCallback<String>() { // Load train id to SharedPreferences.
+                @Override public void onResponse(String response) {
+                }
+
+                @Override public void onFailure(Throwable t) {
+                }
+            });
         }
+        showTripIdDialogFragment();
     }
 
     @Override
@@ -107,17 +112,12 @@ public class MainActivity extends AppCompatActivity implements TrainIdDialogFrag
         fragment.setAnimating(true);
     }
 
-    @Override public void onTrainIdReturned(int trainId) {
-        DataHelper.getInstance().setTrainId(trainId);
-        showTripIdDialogFragment();
-    }
-
     @Override
-    public void onTripSelected(int tripId) { // Returned from TripIdDialogFragment or TripIdManuallyDialogFragment
+    public void onTripSelected(String tripId) { // Returned from TripIdDialogFragment or TripIdManuallyDialogFragment
         DataHelper.getInstance().setTrip(tripId, new TaCallback<Void>() {
             @Override public void onResponse(Void response) {
                 mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.VISIBLE);
-                Fragment fragment = TripFragment.newInstance(1, 3);
+                Fragment fragment = TripFragment.newInstance(TRIP_FRAGMENT_PREVIOUS_STOP_COUNT, TRIP_FRAGMENT_NEXT_STOP_COUNT);
                 getSupportFragmentManager().beginTransaction().replace(R.id.activityMain_sideContainer, fragment, TRIP_FRAGMENT_TAG).commit();
                 getSupportFragmentManager().executePendingTransactions();
             }
@@ -144,8 +144,8 @@ public class MainActivity extends AppCompatActivity implements TrainIdDialogFrag
      * There must be already set train id
      */
     private void showTripIdDialogFragment() {
-        DataHelper.getInstance().getTrips(new TaCallback<List<Integer>>() {
-            @Override public void onResponse(List<Integer> response) {
+        DataHelper.getInstance().getTrips(new TaCallback<List<String>>() {
+            @Override public void onResponse(List<String> response) {
                 TripIdDialogFragment.newInstance(response).show(getSupportFragmentManager(), TRIP_ID_DIALOG_FRAGMENT_TAG);
             }
 

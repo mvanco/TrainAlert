@@ -24,10 +24,10 @@ public class TripIdDialogFragment extends DialogFragment {
         void onTripManuallySelected();
     }
 
-    public static TripIdDialogFragment newInstance(List<Integer> trips) {
+    public static TripIdDialogFragment newInstance(List<String> trips) {
 
         Bundle args = new Bundle();
-        args.putIntegerArrayList(TRIPS_KEY, new ArrayList<>(trips));
+        args.putStringArrayList(TRIPS_KEY, new ArrayList<>(trips));
 
         TripIdDialogFragment fragment = new TripIdDialogFragment();
         fragment.setArguments(args);
@@ -39,8 +39,8 @@ public class TripIdDialogFragment extends DialogFragment {
         builder.setTitle(R.string.title_fragment_trip_id);
 
         List<String> items = new ArrayList<>();
-        for (Integer item : getArguments().getIntegerArrayList(TRIPS_KEY)) {
-            items.add(String.valueOf(item));
+        for (String item : getArguments().getStringArrayList(TRIPS_KEY)) {
+            items.add(item);
         }
         items.add(getContext().getResources().getString(R.string.fragment_trip_id_business_trip));
         items.add(getContext().getResources().getString(R.string.fragment_trip_id_manual_selection));
@@ -50,7 +50,7 @@ public class TripIdDialogFragment extends DialogFragment {
             } else if (which == items.size() - 1) { // Manual selection.
                 mListener.onTripManuallySelected();
             } else {
-                mListener.onTripSelected(getArguments().getIntegerArrayList(TRIPS_KEY).get(which));
+                mListener.onTripSelected(getArguments().getStringArrayList(TRIPS_KEY).get(which));
             }
         });
 

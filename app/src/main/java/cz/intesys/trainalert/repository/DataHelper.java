@@ -58,7 +58,7 @@ public class DataHelper implements LifecycleObserver {
     private MutableLiveData<Location> mLocationLiveData;
     private List<Poi> mPois;
     private MutableLiveData<List<Poi>> mPoisLiveData;
-    private Utility.LocationPoller mLocationPoller;
+    private Utility.IntervalPoller mLocationPoller;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({POI_TYPE_CROSSING, POI_TYPE_TRAIN_STATION, POI_TYPE_STOP, POI_TYPE_LIGHTS, POI_TYPE_BEFORE_LIGHTS, POI_TYPE_SPEED_LIMITATION_20,
@@ -80,7 +80,7 @@ public class DataHelper implements LifecycleObserver {
         mPois = new ArrayList<>();
         mPoisLiveData = new MutableLiveData<>();
 
-        mLocationPoller = new Utility.LocationPoller(() -> {
+        mLocationPoller = new Utility.IntervalPoller(TaConfig.GPS_TIME_INTERVAL, () -> {
             if (!mLocation.equals(mLocationLiveData.getValue())) {
                 mLocationLiveData.setValue(mLocation);
             }
@@ -215,17 +215,24 @@ public class DataHelper implements LifecycleObserver {
         return firstRun;
     }
 
-    public void getTrips(TaCallback<List<Integer>> taCallback) {
-        REPOSITORY.getTrips(getTrainId(), taCallback);
+    public void getTrips(TaCallback<List<String>> taCallback) {
+        getTrainId(new TaCallback<String>() {
+            @Override public void onResponse(String response) {
+                REPOSITORY.getTrips(response, taCallback);
+            }
+
+            @Override public void onFailure(Throwable t) {
+            }
+        });
     }
 
-    public void setTrip(int id, TaCallback<Void> taCallback) {
+    public void setTrip(String id, TaCallback<Void> taCallback) {
         REPOSITORY.setTrip(id, taCallback);
-        mSharedPrefs.edit().putInt(TRIP_ID_KEY, id).commit();
+        mSharedPrefs.edit().putString(TRIP_ID_KEY, id).commit();
     }
 
-    public int getTripId() {
-        return mSharedPrefs.getInt(TRIP_ID_KEY, 0);
+    public String getTripId() {
+        return mSharedPrefs.getString(TRIP_ID_KEY, "");
     }
 
     public void getPreviousStops(int count, TaCallback<List<Stop>> taCallback) {
@@ -240,12 +247,27 @@ public class DataHelper implements LifecycleObserver {
         REPOSITORY.getFinalStop(taCallback);
     }
 
-    public int getTrainId() {
-        return mSharedPrefs.getInt(TRAIN_ID_KEY, 0);
+    public void getTrainId(TaCallback<String> taCallback) {
+        String trainId = mSharedPrefs.getString(TRAIN_ID_KEY, "");
+        if (trainId == null || trainId.isEmpty()) {
+
+            REPOSITORY.getTrainId(new TaCallback<String>() {
+                @Override public void onResponse(String response) {
+                    taCallback.onResponse(response);
+                }
+
+                @Override public void onFailure(Throwable t) {
+                    taCallback.onFailure(t);
+                }
+            });
+            setTrainId(trainId);
+        }
+
+        taCallback.onResponse(trainId);
     }
 
-    public void setTrainId(int id) {
-        mSharedPrefs.edit().putInt(TRAIN_ID_KEY, id).commit();
+    private void setTrainId(String id) {
+        mSharedPrefs.edit().putString(TRAIN_ID_KEY, id).commit();
     }
 
     private void reloadPois() {

@@ -13,7 +13,11 @@ import java.lang.annotation.RetentionPolicy;
 public class ResponseApi<T> {
 
     public static final int ECODE_OK = 0;
-    public static final int ECODE_GENERIC_ERROR = -1;
+    public static final int ECODE_GENERIC_ERROR = 1;
+    public static final int ECODE_RESOURCE_ALREADY_EXIST = 2;
+    public static final int ECODE_RESOURCE_DOES_NOT_EXIST = 3;
+    public static final int ECODE_TRIP_REGISTATION = 4;
+    public static final int ECODE_NO_TRIP_REGISTERED = 5;
 
     @Expose
     private @ErrorCode
@@ -23,7 +27,7 @@ public class ResponseApi<T> {
     private T data;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({ECODE_OK, ECODE_GENERIC_ERROR})
+    @IntDef({ECODE_OK, ECODE_GENERIC_ERROR, ECODE_RESOURCE_ALREADY_EXIST, ECODE_RESOURCE_DOES_NOT_EXIST, ECODE_TRIP_REGISTATION, ECODE_NO_TRIP_REGISTERED})
     public @interface ErrorCode {
     }
 

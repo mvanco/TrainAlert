@@ -101,16 +101,16 @@ public class Utility {
         return observable.sample(TaConfig.UPDATE_INTERVAL, TaConfig.UPDATE_INTERVAL_UNIT).mergeWith(observable.take(1));
     }
 
-    public static class LocationPoller {
+    public static class IntervalPoller {
         private Handler mHandler;
         private Runnable mPeriodicUpdateRunnable;
         private boolean mRunning = false;
 
-        public LocationPoller(Runnable locationChangedRunnable) {
+        public IntervalPoller(long interval, Runnable locationChangedRunnable) {
             mHandler = new Handler();
             mPeriodicUpdateRunnable = () -> {
                 locationChangedRunnable.run();
-                mHandler.postDelayed(mPeriodicUpdateRunnable, TaConfig.GPS_TIME_INTERVAL);
+                mHandler.postDelayed(mPeriodicUpdateRunnable, interval);
             };
         }
 

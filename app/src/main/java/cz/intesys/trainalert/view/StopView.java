@@ -7,6 +7,7 @@ import android.support.annotation.IntDef;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import java.lang.annotation.Retention;
@@ -38,6 +39,7 @@ public class StopView extends FrameLayout {
     private int mDelay;
     private int mColor;
     private @StopType int mType;
+    private boolean mButtonPressed;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TYPE_PREVIOUS_STOP, TYPE_CLOSEST_NEXT_STOP, TYPE_NEXT_STOP, TYPE_FINAL_STOP, TYPE_TRAIN_MARKER})
@@ -141,20 +143,36 @@ public class StopView extends FrameLayout {
 
     public void setAsTrainMarker(boolean value) {
         if (value) {
-            mBinding.stopViewTrainImage.setVisibility(View.VISIBLE);
+            mBinding.stopViewCurrentLocation.setVisibility(View.VISIBLE);
             mBinding.stopViewCard.setVisibility(View.INVISIBLE);
             mBinding.stopViewName.setVisibility(View.INVISIBLE);
             mBinding.stopViewArrival.setVisibility(View.INVISIBLE);
             mBinding.stopViewDelay.setVisibility(View.INVISIBLE);
-            mBinding.stopViewTimePoint.setImageResource(android.R.drawable.presence_online);
+            mBinding.stopViewHand.setVisibility(INVISIBLE);
+            mBinding.stopViewTimePoint.setImageResource(R.drawable.time_point_now);
+
+            mButtonPressed = false;
+
+            ViewGroup.LayoutParams lp = mBinding.stopViewRoot.getLayoutParams();
+            lp.height = getContext().getResources().getDimensionPixelSize(R.dimen.stopView_height_train);
+            mBinding.stopViewRoot.setLayoutParams(lp);
         } else {
-            mBinding.stopViewTrainImage.setVisibility(View.INVISIBLE);
+            mBinding.stopViewCurrentLocation.setVisibility(View.INVISIBLE);
             mBinding.stopViewCard.setVisibility(View.VISIBLE);
             mBinding.stopViewName.setVisibility(View.VISIBLE);
             mBinding.stopViewArrival.setVisibility(View.VISIBLE);
             mBinding.stopViewDelay.setVisibility(View.VISIBLE);
-            mBinding.stopViewTimePoint.setImageResource(android.R.drawable.presence_invisible);
+            mBinding.stopViewTimePoint.setImageResource(R.drawable.time_point);
+
+            ViewGroup.LayoutParams lp = mBinding.stopViewRoot.getLayoutParams();
+            lp.height = getContext().getResources().getDimensionPixelSize(R.dimen.stopView_height);
+            mBinding.stopViewRoot.setLayoutParams(lp);
         }
+    }
+
+    public void setButtonPressed(boolean buttonPressed) {
+        mButtonPressed = buttonPressed;
+        invalidateStopView();
     }
 
     private void init(AttributeSet attrs, int defStyle) {
@@ -211,6 +229,12 @@ public class StopView extends FrameLayout {
             case TYPE_FINAL_STOP:
                 mBinding.stopViewCard.setBackgroundResource(R.drawable.stop_background_blue);
                 break;
+        }
+
+        if (mButtonPressed) {
+            mBinding.stopViewHand.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.stopViewHand.setVisibility(View.GONE);
         }
 
         invalidate();

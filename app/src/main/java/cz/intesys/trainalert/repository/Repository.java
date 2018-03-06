@@ -18,13 +18,15 @@ public interface Repository {
 
     void deletePoi(long id, TaCallback<Poi> taCallback);
 
-    void getTrips(int id, TaCallback<List<Integer>> taCallback);
+    void getTrips(String id, TaCallback<List<String>> taCallback);
 
-    void setTrip(int id, TaCallback<Void> taCallback);
+    void setTrip(String id, TaCallback<Void> taCallback);
 
     void getPreviousStops(int count, TaCallback<List<Stop>> taCallback);
 
     void getNextStops(int count, TaCallback<List<Stop>> taCallback);
 
     void getFinalStop(TaCallback<Stop> taCallback);
+
+    void getTrainId(TaCallback<String> taCallback);
 }

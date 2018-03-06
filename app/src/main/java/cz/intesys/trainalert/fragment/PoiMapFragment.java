@@ -174,6 +174,8 @@ public class PoiMapFragment extends Fragment {
         mViewModel.setWorkingPoi(poi);
         mViewModel.setMode(MODE_EDIT_POI);
         mViewModel.setPoiId(poi.getId());
+
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoMarker.setBackgroundResource(R.drawable.ic_edit_location);
     }
 
     /**
@@ -183,6 +185,8 @@ public class PoiMapFragment extends Fragment {
         mBinding.fragmentPoiMapMapView.getController().setCenter(mViewModel.getLocation());
         mViewModel.setWorkingPoi(new Poi(mViewModel.getLocation()));
         mViewModel.setMode(MODE_ADD_POI);
+
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoMarker.setImageResource(R.drawable.ic_add_location);
     }
 
     public void showNewPoiAddedNotification() {

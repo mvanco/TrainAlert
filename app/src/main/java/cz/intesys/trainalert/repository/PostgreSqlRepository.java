@@ -1,7 +1,5 @@
 package cz.intesys.trainalert.repository;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +48,7 @@ public class PostgreSqlRepository implements Repository {
                 }
 
                 if (response.body().getErrorCode() == ResponseApi.ECODE_OK) {
-                    Log.e("testorder", "onResponse() id:" + response.body().getData().getId());
+//                    Log.e("testorder", "onResponse() id:" + response.body().getData().getId());
                     taCallback.onResponse(new Location(response.body().getData()));
                 } else {
                     taCallback.onFailure(new Throwable());
@@ -161,12 +159,12 @@ public class PostgreSqlRepository implements Repository {
         });
     }
 
-    @Override public void getTrips(int id, TaCallback<List<Integer>> taCallback) {
-        Call<ResponseApi<List<Integer>>> call = mApiService.getTrips(id);
-        call.enqueue(new Callback<ResponseApi<List<Integer>>>() {
+    @Override public void getTrips(String id, TaCallback<List<String>> taCallback) {
+        Call<ResponseApi<List<String>>> call = mApiService.getTrips();
+        call.enqueue(new Callback<ResponseApi<List<String>>>() {
 
             @Override
-            public void onResponse(Call<ResponseApi<List<Integer>>> call, Response<ResponseApi<List<Integer>>> response) {
+            public void onResponse(Call<ResponseApi<List<String>>> call, Response<ResponseApi<List<String>>> response) {
                 if (response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
                     taCallback.onResponse(response.body().getData());
                 } else {
@@ -175,13 +173,13 @@ public class PostgreSqlRepository implements Repository {
                 }
             }
 
-            @Override public void onFailure(Call<ResponseApi<List<Integer>>> call, Throwable t) {
+            @Override public void onFailure(Call<ResponseApi<List<String>>> call, Throwable t) {
                 taCallback.onFailure(t);
             }
         });
     }
 
-    @Override public void setTrip(int id, TaCallback<Void> taCallback) {
+    @Override public void setTrip(String id, TaCallback<Void> taCallback) {
         Call<ResponseApi<Void>> call = mApiService.setTrip(id);
         call.enqueue(new Callback<ResponseApi<Void>>() {
 
@@ -255,7 +253,11 @@ public class PostgreSqlRepository implements Repository {
             @Override
             public void onResponse(Call<ResponseApi<StopApi>> call, Response<ResponseApi<StopApi>> response) {
                 if (response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
-                    taCallback.onResponse(new Stop(response.body().getData())); // Only call function is enough to inform about completition without error
+                    if (response.body().getData() == null) {
+                        taCallback.onResponse(null);
+                    } else {
+                        taCallback.onResponse(new Stop(response.body().getData())); // Only call function is enough to inform about completition without error
+                    }
                 } else {
                     String throwableMessage = "nastala chyba s kodom " + response.body().getErrorCode();
                     taCallback.onFailure(new Throwable(throwableMessage));
@@ -263,6 +265,30 @@ public class PostgreSqlRepository implements Repository {
             }
 
             @Override public void onFailure(Call<ResponseApi<StopApi>> call, Throwable t) {
+                taCallback.onFailure(t);
+            }
+        });
+    }
+
+    @Override public void getTrainId(TaCallback<String> taCallback) {
+        Call<ResponseApi<String>> call = mApiService.getTrainId();
+        call.enqueue(new Callback<ResponseApi<String>>() {
+            @Override
+            public void onResponse(Call<ResponseApi<String>> call, Response<ResponseApi<String>> response) {
+                if (response.body() != null && response.body().getErrorCode() == ResponseApi.ECODE_OK) {
+                    if (response.body().getData() == null) {
+                        String throwableMessage = "nastala chyba s kodom " + response.body().getErrorCode();
+                        taCallback.onFailure(new Throwable(throwableMessage));
+                    } else {
+                        taCallback.onResponse(response.body().getData());
+                    }
+                } else {
+                    String throwableMessage = "nastala chyba s kodom " + response.body().getErrorCode();
+                    taCallback.onFailure(new Throwable(throwableMessage));
+                }
+            }
+
+            @Override public void onFailure(Call<ResponseApi<String>> call, Throwable t) {
                 taCallback.onFailure(t);
             }
         });

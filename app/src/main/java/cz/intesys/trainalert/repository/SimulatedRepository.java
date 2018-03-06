@@ -15,9 +15,13 @@ import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.entity.TaCallback;
 
 import static cz.intesys.trainalert.TaConfig.SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_BEFORE_LIGHTS;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_CROSSING;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_LIGHTS;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_20;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_40;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_50;
-import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_70;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_STOP;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_TRAIN_STATION;
 
 public class SimulatedRepository implements Repository {
@@ -96,14 +100,14 @@ public class SimulatedRepository implements Repository {
         // TODO: simulate this
     }
 
-    @Override public void getTrips(int id, TaCallback<List<Integer>> taCallback) {
+    @Override public void getTrips(String id, TaCallback<List<String>> taCallback) {
         new Handler().postDelayed(() -> {
-            List<Integer> trips = Arrays.asList(21, 25, 34);
+            List<String> trips = Arrays.asList("21", "25", "34");
             taCallback.onResponse(trips);
         }, getRandomServerDelay());
     }
 
-    @Override public void setTrip(int id, TaCallback<Void> taCallback) {
+    @Override public void setTrip(String id, TaCallback<Void> taCallback) {
         new Handler().postDelayed(() -> {
             taCallback.onResponse(null);
         }, getRandomServerDelay());
@@ -114,8 +118,6 @@ public class SimulatedRepository implements Repository {
             List<Stop> stops = new ArrayList<>();
             try {
                 stops.add(new Stop(0, "Predosla 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 3900, true));
-                stops.add(new Stop(0, "Predosla 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T12:11:00"), 0, true));
-                stops.add(new Stop(0, "Predosla 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T12:30:00"), 300, true));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -127,11 +129,8 @@ public class SimulatedRepository implements Repository {
         new Handler().postDelayed(() -> {
             List<Stop> stops = new ArrayList<>();
             try {
-                stops.add(new Stop(0, "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, false));
+                stops.add(new Stop(0, "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true));
                 stops.add(new Stop(0, "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
-                stops.add(new Stop(0, "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, true));
-                stops.add(new Stop(0, "Nasledujici 4", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
-                stops.add(new Stop(0, "Nasledujici 5", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 600, false));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -151,16 +150,84 @@ public class SimulatedRepository implements Repository {
         }, getRandomServerDelay());
     }
 
+    @Override public void getTrainId(TaCallback<String> taCallback) {
+    }
+
     private List<Poi> getExamplePois() {
         List<Poi> sExamplePOIs = new ArrayList<Poi>();
+
         sExamplePOIs.add(new Poi(1, "Přechod 1", 50.47902, 14.03453, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi(2, "Omezení (50) 1", 50.47394, 14.00254, POI_TYPE_SPEED_LIMITATION_50));
-        sExamplePOIs.add(new Poi(3, "Přechod 2", 50.47916, 13.99642, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi(4, "Stanice 1", 50.48079, 13.99086, POI_TYPE_TRAIN_STATION));
-        sExamplePOIs.add(new Poi(5, "Přechod 3", 50.46866, 13.97693, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi(6, "Omezení (70) 1", 50.46641, 13.96887, POI_TYPE_SPEED_LIMITATION_70));
-        sExamplePOIs.add(new Poi(7, "Přechod 4", 50.46964, 13.95576, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi(8, "Omezení (70) 2", 50.45779, 13.92928, POI_TYPE_SPEED_LIMITATION_70));
+        sExamplePOIs.add(new Poi(5, "Vjezdové návěstidlo TS (do Čížkovic)", 50.47472222, 14.03083333, POI_TYPE_LIGHTS));
+        sExamplePOIs.add(new Poi(6, "Rychlost 70 (od Čížkovic)", 50.47472222, 14.03083333, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(7, "Rychlost 50 (do Čížkovic)", 50.4779892062057, 14.0267136517693, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(8, "Předvěst PřTS (do Čížkovic)", 50.47584546479, 14.0218425077551, POI_TYPE_BEFORE_LIGHTS));
+        sExamplePOIs.add(new Poi(9, "Předvěst L, rychlost 60 (od Čížkovic)", 50.4740178099051, 14.0207923440372, POI_TYPE_BEFORE_LIGHTS));
+        sExamplePOIs.add(new Poi(10, "Přejezd P9231, rychlost 70 (do Čížkovic)", 50.4720564082698, 14.0168744255515, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(11, "Vjezdové návěstidlo L (od Čížkovic)", 50.4718713176752, 14.0107511632583, POI_TYPE_LIGHTS));
+        sExamplePOIs.add(new Poi(12, "žst.Třebenice", 50.4739766804309, 14.0011502434226, POI_TYPE_TRAIN_STATION));
+        sExamplePOIs.add(new Poi(13, "Přejezd P9232, rychlost 50 (od Třebenic)", 50.4740139540184, 13.9995043137494, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(14, "Rychlost 20 (do Třebenic)", 50.4745653426215, 13.9977291331572, DataHelper.POI_TYPE_SPEED_LIMITATION_20));
+        sExamplePOIs.add(new Poi(18, "Rychlost 50 (do Třebenic)", 50.481587594321, 13.9856805240407, POI_TYPE_SPEED_LIMITATION_50));
+        sExamplePOIs.add(new Poi(20, "Rychlost 30 (od Třebenic)", 50.4780920210965, 13.9799934835995, DataHelper.POI_TYPE_SPEED_LIMITATION_30));
+        sExamplePOIs.add(new Poi(21, "Přejezd P9235, rychlost 50 (do i od Třebenic)", 50.4768068188871, 13.9803408454446, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(22, "Rychlost 30 (do Třebenic)", 50.4750023360137, 13.9804579790901, DataHelper.POI_TYPE_SPEED_LIMITATION_30));
+        sExamplePOIs.add(new Poi(24, "Přejezd P9237, rychlost 30 (od Třebenic)", 50.4668170361303, 13.9677308026482, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(25, "Přejezd P9238, rychlost 50 (od Třebenic)", 50.4670792756229, 13.9657051984002, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(26, "Přejezd P9239", 50.4677168714598, 13.9613611557904, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(27, "Rychlost 30 (od Třebenic)", 50.4700974960634, 13.9542361988741, DataHelper.POI_TYPE_SPEED_LIMITATION_30));
+        sExamplePOIs.add(new Poi(28, "Rychlost 50 (do Třebenic)", 50.4703378656436, 13.9530890969669, POI_TYPE_SPEED_LIMITATION_50));
+        sExamplePOIs.add(new Poi(29, "Přejezd P9240", 50.470357146573, 13.9520268159754, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(31, "Přejezd P9241", 50.468812076499, 13.9474586038029, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(32, "Přejezd P9242", 50.4680613753101, 13.9453178854549, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(33, "Předvěst L (od Třebenic)", 50.4574371616629, 13.9268753949334, POI_TYPE_BEFORE_LIGHTS));
+        sExamplePOIs.add(new Poi(34, "Rychlost 40 (od Třebenic)", 50.456876572977, 13.9222264009364, POI_TYPE_SPEED_LIMITATION_40));
+        sExamplePOIs.add(new Poi(35, "Přejezd P9243", 50.4571787259611, 13.920332067153, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(36, "Vjezdové návěstidlo L (od Třebenic)", 50.4579025995148, 13.9178601433249, POI_TYPE_LIGHTS));
+        sExamplePOIs.add(new Poi(37, "Přejezd P9244", 50.4586470334093, 13.9122094547047, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(38, "žst.Třebívlice", 50.4577200249917, 13.9082208521226, POI_TYPE_TRAIN_STATION));
+        sExamplePOIs.add(new Poi(39, "Přejezd P9245", 50.4574165897185, 13.9069323820226, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(40, "Rychlost 50 (od Třebívlic)", 50.4557888062537, 13.9043372659122, POI_TYPE_SPEED_LIMITATION_50));
+        sExamplePOIs.add(new Poi(41, "Vjezdové návěstidlo S (do Třebívlic)", 50.4535951958608, 13.9030043658088, POI_TYPE_LIGHTS));
+        sExamplePOIs.add(new Poi(42, "Předvěst S (do Třebívlic)", 50.4505784940015, 13.8981291827033, POI_TYPE_BEFORE_LIGHTS));
+        sExamplePOIs.add(new Poi(43, "Přejezd P9247,rychlost 50 (do Třebívlic)", 50.4532351563018, 13.8929975173053, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(44, "zastávka Semeč", 50.4523376171865, 13.8878012264476, POI_TYPE_STOP));
+        sExamplePOIs.add(new Poi(45, "Rychlost 50 (od Třebívlic)", 50.4517795398678, 13.884594188017, POI_TYPE_SPEED_LIMITATION_50));
+        sExamplePOIs.add(new Poi(46, "Přejezd P9248,rychlost 50 (do Třebívlic)", 50.4447181359457, 13.8747690986184, POI_TYPE_SPEED_LIMITATION_50));
+        sExamplePOIs.add(new Poi(47, "Rychlost 40 (do Třebívlic)", 50.4466871017385, 13.8737855799058, POI_TYPE_SPEED_LIMITATION_40));
+        sExamplePOIs.add(new Poi(48, "Rychlost 50 (do i od Třebívlic)", 50.4482071747433, 13.8660264856675, POI_TYPE_SPEED_LIMITATION_50));
+        sExamplePOIs.add(new Poi(49, "Přejezd P9249, zastávka Hnojnice", 50.4481737388065, 13.8659537820255, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(50, "Přejezd P9250", 50.4466536647276, 13.8618137135225, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(51, "Přejezd P9251,rychlost 50 (do i od Třebívlic)", 50.4444236199758, 13.8552905811983, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(52, "Přejezd P9252, rychlost 50 (do i od Třebívlic)", 50.4426024674203, 13.8453503776999, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(53, "Přejezd P9253", 50.4456711204751, 13.8390251608456, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(54, "žst.Libčeves", 50.4486701314398, 13.8309308220358, POI_TYPE_SPEED_LIMITATION_50));
+        sExamplePOIs.add(new Poi(55, "Rychlost 50 (od Libčeves)", 50.4487048530095, 13.829163719626, POI_TYPE_SPEED_LIMITATION_50));
+        sExamplePOIs.add(new Poi(56, "Přejezd P9254", 50.4475204473008, 13.8254336188821, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(57, "Přejezd P9255", 50.4436365202668, 13.8131830552045, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(58, "Rychlost 50 (od Libčeves)", 50.4411105105638, 13.8046242209042, POI_TYPE_SPEED_LIMITATION_50));
+        sExamplePOIs.add(new Poi(59, "Zastávka Sinutec", 50.4404982801755, 13.7976083194508, POI_TYPE_STOP));
+        sExamplePOIs.add(new Poi(60, "Přejezd P9258, zastávka Bělušice", 50.4520290038147, 13.7675534416648, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(61, "Přejezd P9259", 50.4557078013481, 13.7533802705652, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(62, "Přejezd P9260, zastávka Skršín", 50.4630478255069, 13.7461220236386, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(63, "Rychlost 20 (od Libčeves)", 50.4678454179661, 13.7213947071749, DataHelper.POI_TYPE_SPEED_LIMITATION_20));
+        sExamplePOIs.add(new Poi(64, "Přejezd P9261,rychlost 50 (od i do Libčeves)", 50.4681230772272, 13.7192943797392, POI_TYPE_SPEED_LIMITATION_50));
+        sExamplePOIs.add(new Poi(65, "Rychlost 20 (do Libčeves)", 50.4687040996646, 13.7179695578182, POI_TYPE_SPEED_LIMITATION_20));
+        sExamplePOIs.add(new Poi(66, "Přejezd P9262", 50.4778966726127, 13.6980124080882, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(67, "zastávka Sedlec u Obrnic", 50.4875911520133, 13.7039417940027, POI_TYPE_STOP));
+        sExamplePOIs.add(new Poi(68, "Předvěst PřCL (od Libčeves)", 50.48861111, 13.70777778, POI_TYPE_BEFORE_LIGHTS));
+        sExamplePOIs.add(new Poi(69, "Vjezdové návěstidlo CL (od Libčeves)E", 50.49527778, 13.73611111, POI_TYPE_LIGHTS));
+        sExamplePOIs.add(new Poi(150, "Přejezd P9257", 50.4405188594768, 13.7971640194163, POI_TYPE_CROSSING));
+        sExamplePOIs.add(new Poi(151, "Přejezd P9256", 50.4411027934233, 13.8045636345358, POI_TYPE_CROSSING));
+
+
+//        sExamplePOIs.add(new Poi(1, "Přechod 1", 50.47902, 14.03453, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(2, "Omezení (50) 1", 50.47394, 14.00254, POI_TYPE_SPEED_LIMITATION_50));
+//        sExamplePOIs.add(new Poi(3, "Přechod 2", 50.47916, 13.99642, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(4, "Stanice 1", 50.48079, 13.99086, POI_TYPE_TRAIN_STATION));
+//        sExamplePOIs.add(new Poi(5, "Přechod 3", 50.46866, 13.97693, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(6, "Omezení (70) 1", 50.46641, 13.96887, POI_TYPE_SPEED_LIMITATION_70));
+//        sExamplePOIs.add(new Poi(7, "Přechod 4", 50.46964, 13.95576, POI_TYPE_CROSSING));
+//        sExamplePOIs.add(new Poi(8, "Omezení (70) 2", 50.45779, 13.92928, POI_TYPE_SPEED_LIMITATION_70));
 
         for (int i = 0; i < sExamplePOIs.size(); i++) {
             sExamplePOIs.get(i).setId(i);
@@ -418,8 +485,6 @@ public class SimulatedRepository implements Repository {
         for (int i = 0; i < exampleRoute.size(); i++) {
             exampleRoute.get(i).setMetaIndex(i);
         }
-
         return exampleRoute;
     }
-
 }

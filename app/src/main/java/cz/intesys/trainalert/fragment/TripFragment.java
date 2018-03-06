@@ -1,5 +1,6 @@
 package cz.intesys.trainalert.fragment;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,11 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.List;
-
 import cz.intesys.trainalert.adapter.TripAdapter;
 import cz.intesys.trainalert.databinding.FragmentTripBinding;
-import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.repository.DataHelper;
 import cz.intesys.trainalert.viewmodel.TripFragmentViewModel;
@@ -57,6 +55,23 @@ public class TripFragment extends Fragment {
             previousStopCount = getArguments().getInt(ARG_PREVIOUS_STOP_COUNT);
             nextStopCount = getArguments().getInt(ARG_NEXT_STOP_COUNT);
         }
+        mViewModel = ViewModelProviders.of(
+                this,
+                new TripFragmentViewModel.ViewModelFactory(previousStopCount, nextStopCount)
+        ).get(TripFragmentViewModel.class);
+        getLifecycle().addObserver(mViewModel);
+        mViewModel.getPreviousStopsLiveData().observe(this, (previousStops) -> {
+            mAdapter.setPreviousStops(previousStops);
+            mAdapter.notifyDataSetChanged();
+        });
+        mViewModel.getNextStopsLiveData().observe(this, (previousStops) -> {
+            mAdapter.setNextStops(previousStops);
+            mAdapter.notifyDataSetChanged();
+        });
+        mViewModel.getFinalStopLiveData().observe(this, (finalStop) -> {
+            mAdapter.setFinalStop(finalStop);
+            mAdapter.notifyDataSetChanged();
+        });
     }
 
     @Override
@@ -72,31 +87,15 @@ public class TripFragment extends Fragment {
         mBinding.fragmentTripRecycler.setLayoutManager(mLayoutManager);
         mAdapter = new TripAdapter(getContext(), mListener);
         mBinding.fragmentTripRecycler.setAdapter(mAdapter);
-        DataHelper.getInstance().getPreviousStops(previousStopCount, new TaCallback<List<Stop>>() {
-            @Override public void onResponse(List<Stop> response) {
-                mAdapter.setPreviousStops(response);
+
+        DataHelper.getInstance().getTrainId(new TaCallback<String>() {
+            @Override public void onResponse(String response) {
+                mBinding.trainId.setText(response);
             }
 
             @Override public void onFailure(Throwable t) {
             }
         });
-        DataHelper.getInstance().getNextStops(nextStopCount, new TaCallback<List<Stop>>() {
-            @Override public void onResponse(List<Stop> response) {
-                mAdapter.setNextStops(response);
-            }
-
-            @Override public void onFailure(Throwable t) {
-            }
-        });
-        DataHelper.getInstance().getFinalStop(new TaCallback<Stop>() {
-            @Override public void onResponse(Stop response) {
-                mAdapter.setFinalStop(response);
-            }
-
-            @Override public void onFailure(Throwable t) {
-            }
-        });
-        mBinding.trainId.setText(String.valueOf(DataHelper.getInstance().getTrainId()));
         mBinding.tripId.setText(String.valueOf(DataHelper.getInstance().getTripId()));
     }
 

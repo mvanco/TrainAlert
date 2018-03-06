@@ -18,7 +18,7 @@ public class StopApi {
     private int delay;
 
     @Expose
-    private int pressed;
+    private boolean pressed;
 
     public int getId() {
         return id;
@@ -52,11 +52,11 @@ public class StopApi {
         this.delay = delay;
     }
 
-    public int getPressed() {
+    public boolean isPressed() {
         return pressed;
     }
 
-    public void setPressed(int pressed) {
+    public void setPressed(boolean pressed) {
         this.pressed = pressed;
     }
 }

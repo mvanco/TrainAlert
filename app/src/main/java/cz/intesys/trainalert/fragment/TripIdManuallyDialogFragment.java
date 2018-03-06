@@ -18,7 +18,7 @@ public class TripIdManuallyDialogFragment extends DialogFragment {
 
 
     public interface OnFragmentInteractionListener {
-        void onTripSelected(int trainId);
+        void onTripSelected(String trainId);
     }
 
     public static TripIdManuallyDialogFragment newInstance() {
@@ -42,8 +42,7 @@ public class TripIdManuallyDialogFragment extends DialogFragment {
                 R.string.dialog_fragment_positive_button,
                 (dialog, which) -> {
                     EditText editText = customView.findViewById(R.id.trainId);
-                    int trainId = Integer.parseInt(editText.getText().toString());
-                    mListener.onTripSelected(trainId);
+                    mListener.onTripSelected(editText.getText().toString());
 
                 }
         );

@@ -9,6 +9,7 @@
         android:layout_height="match_parent"
         tools:context="cz.intesys.trainalert.fragment.MainFragment">
 
+
         <org.osmdroid.views.MapView
             android:id="@+id/fragmentMain_mapView"
             android:layout_width="match_parent"

@@ -20,20 +20,19 @@
 
                 <TextView
                     android:id="@+id/train_id_label"
-                    android:layout_width="118dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     android:ems="10"
                     android:inputType="textPersonName"
                     android:text="@string/fragmentTrip_trainIdLabel"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/trip_label" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/trip_id_label"
-                    android:layout_width="125dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:ems="10"
@@ -64,16 +63,6 @@
                     app:layout_constraintStart_toEndOf="@+id/trip_id_label"
                     app:layout_constraintTop_toTopOf="@+id/trip_id_label" />
 
-                <TextView
-                    android:id="@+id/trip_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/fragmentTrip_title"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
             </android.support.constraint.ConstraintLayout>
 
             <android.support.v7.widget.RecyclerView

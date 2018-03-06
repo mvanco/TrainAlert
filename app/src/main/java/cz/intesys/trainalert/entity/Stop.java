@@ -16,7 +16,7 @@ public class Stop {
         this.name = stopApi.getName();
         this.arrival = stopApi.getArrival();
         this.delay = stopApi.getDelay();
-        this.pressed = stopApi.getPressed() != 0;
+        this.pressed = stopApi.isPressed();
     }
 
     public Stop(int id, String name, Date arrival, int delay, boolean pressed) {

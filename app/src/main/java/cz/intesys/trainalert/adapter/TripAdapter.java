@@ -49,6 +49,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
             holder.stopView.setName(stop.getName());
             holder.stopView.setArrival(stop.getArrival());
             holder.stopView.setDelay(stop.getDelay());
+            holder.stopView.setButtonPressed(stop.isPressed());
         }
 
         int listPosition = 0;

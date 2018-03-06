@@ -9,37 +9,34 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
-public interface TaServerApi {
-    @GET("/Location/GetLocation")
+public interface TaOldServerApi {
+    @GET("/TrainAlert/GetLocation")
     Call<ResponseApi<LocationApi>> getLocation();
 
-    @GET("/Poi/GetPois")
+    @GET("/TrainAlert/GetPois")
     Call<ResponseApi<PoisApi>> getPois();
 
-    @POST("/Poi/AddPoi")
+    @POST("/TrainAlert/AddPoi")
     Call<ResponseApi<PoiApi>> addPoi(@Body PoiApi poiApi);
 
-    @PUT("/Poi/EditPoi/{id}")
+    @PUT("/TrainAlert/EditPoi/{id}")
     Call<ResponseApi<PoiApi>> editPoi(@Path("id") long id, @Body PoiApi poiApi);
 
-    @GET("/Poi/DeletePoi/{id}")
+    @GET("/TrainAlert/DeletePoi/{id}")
     Call<ResponseApi<PoiApi>> deletePoi(@Path("id") long id);
 
-    @GET("/Trip/GetTrips")
-    Call<ResponseApi<List<String>>> getTrips();
+    @GET("/TrainAlert/GetTrips/{trainId}")
+    Call<ResponseApi<List<Integer>>> getTrips(@Path("trainId") int id);
 
-    @POST("/Trip/SetTrip/{tripId}")
-    Call<ResponseApi<Void>> setTrip(@Path("tripId") String id);
+    @GET("/TrainAlert/SetTrip/{tripId}")
+    Call<ResponseApi<Void>> setTrip(@Path("tripId") int id);
 
-    @GET("/Trip/GetPreviousStops/{count}")
+    @GET("/TrainAlert/GetPreviousStops/{count}")
     Call<ResponseApi<List<StopApi>>> getPreviousStops(@Path("count") int count);
 
-    @GET("/Trip/GetNextStops/{count}")
+    @GET("/TrainAlert/GetNextStops/{count}")
     Call<ResponseApi<List<StopApi>>> getNextStops(@Path("count") int count);
 
-    @GET("/Trip/GetFinalStop")
+    @GET("/TrainAlert/GetFinalStop")
     Call<ResponseApi<StopApi>> getFinalStop();
-
-    @GET("/GetTrainId")
-    Call<ResponseApi<String>> getTrainId();
 }
