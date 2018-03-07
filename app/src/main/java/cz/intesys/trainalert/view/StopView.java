@@ -92,10 +92,6 @@ public class StopView extends FrameLayout {
         return mArrival;
     }
 
-    public void setArrival(Date arrival) {
-        mArrival = arrival;
-    }
-
     public void setArrival(String arrival) {
         if (arrival == null) {
             return;
@@ -106,6 +102,10 @@ public class StopView extends FrameLayout {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setArrival(Date arrival) {
+        mArrival = arrival;
     }
 
     public int getDelay() {
@@ -213,7 +213,7 @@ public class StopView extends FrameLayout {
 
         int hours = mDelay / 3600;
         int minutes = (mDelay - hours * 3600) / 60;
-        mBinding.stopViewDelay.setText(String.format("%d h %d m", hours, minutes));
+        mBinding.stopViewDelay.setText(String.format("%dm", hours * 60 + minutes));
         mBinding.stopViewCard.setBackgroundColor(mColor);
 
         switch (mType) {

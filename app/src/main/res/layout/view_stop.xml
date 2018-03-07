@@ -12,31 +12,34 @@
             android:id="@+id/stopView_topLine"
             android:layout_width="@dimen/stopView_lineHeight"
             android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             android:background="@color/trip_grey"
             android:visibility="invisible"
             app:layout_constraintBottom_toTopOf="@+id/stopView_timePoint"
-            app:layout_constraintEnd_toEndOf="@+id/stopView_timePoint"
-            app:layout_constraintStart_toStartOf="@+id/stopView_timePoint"
+            app:layout_constraintEnd_toStartOf="@+id/stopView_card"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/stopView_bottomLine"
             android:layout_width="@dimen/stopView_lineHeight"
             android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             android:background="@color/trip_grey"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/stopView_timePoint"
-            app:layout_constraintStart_toStartOf="@+id/stopView_timePoint"
+            app:layout_constraintEnd_toStartOf="@+id/stopView_card"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/stopView_timePoint" />
 
         <ImageView
             android:id="@+id/stopView_timePoint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginStart="8dp"
             app:layout_constraintBottom_toTopOf="@+id/stopView_bottomLine"
+            app:layout_constraintEnd_toStartOf="@+id/stopView_card"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/stopView_topLine"
             app:srcCompat="@drawable/time_point" />
@@ -47,11 +50,13 @@
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="40dp"
             android:layout_marginTop="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/stopView_timePoint"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:background="@drawable/stop_background_green" />
 
@@ -59,37 +64,33 @@
             android:id="@+id/stopView_delay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            android:layout_marginEnd="24dp"
-            android:layout_marginRight="24dp"
+            android:layout_marginStart="8dp"
             android:text="TextView"
             app:layout_constraintBottom_toBottomOf="@+id/stopView_arrival"
-            app:layout_constraintEnd_toEndOf="@+id/stopView_card" />
+            app:layout_constraintStart_toEndOf="@+id/view"
+            tools:text="5m" />
 
         <TextView
             android:id="@+id/stopView_arrival"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginEnd="8dp"
             android:text="TextView"
             app:layout_constraintBottom_toBottomOf="@+id/stopView_name"
-            app:layout_constraintEnd_toStartOf="@+id/stopView_delay" />
+            app:layout_constraintEnd_toStartOf="@+id/view"
+            tools:text="18:46" />
 
         <TextView
             android:id="@+id/stopView_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginLeft="24dp"
-            android:layout_marginRight="8dp"
             android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
             android:text="TextView"
             android:textSize="@dimen/stopFragment_name_textSize"
             app:layout_constraintBottom_toBottomOf="@+id/stopView_card"
-            app:layout_constraintEnd_toStartOf="@+id/stopView_arrival"
             app:layout_constraintStart_toStartOf="@+id/stopView_card"
             app:layout_constraintTop_toTopOf="@+id/stopView_card" />
 
@@ -97,12 +98,15 @@
             android:id="@+id/stopView_hand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
             android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/stopView_card"
             app:layout_constraintTop_toTopOf="@+id/stopView_card"
+            app:layout_constraintVertical_bias="0.39999998"
             app:srcCompat="@drawable/ic_hand"
             tools:visibility="visible" />
 
@@ -111,6 +115,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
+            android:layout_marginLeft="37dp"
             android:layout_marginStart="37dp"
             android:layout_marginTop="8dp"
             android:visibility="gone"
@@ -119,6 +124,14 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_show_location_vector"
             tools:visibility="visible" />
+
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="10dp"
+            android:layout_height="match_parent"
+            android:layout_marginRight="100dp"
+            app:layout_constraintRight_toRightOf="@id/stopView_card" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

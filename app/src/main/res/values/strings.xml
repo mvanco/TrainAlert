@@ -25,6 +25,9 @@
     <string name="fragmentTrip_trainIdLabel">Číslo vlaku:</string>
     <string name="fragmentTrip_tripIdLabel">Číslo jízdy:</string>
     <string name="fragmentTrip_title">Aktuální jízda</string>
+    <string name="fragment_trip_name_label">Zastávka</string>
+    <string name="fragment_trip_delay_label">Zpoždění</string>
+    <string name="fragment_trip_arrival_label">Příchod</string>
 
     <!-- Content Descriptions -->
     <string name="fragment_poi_list_icon_desc">Icon</string>
@@ -67,7 +70,6 @@
     <string name="category_speed_limitation_40">Omezení rychlosti 40 km/h</string>
     <string name="category_speed_limitation_50">Omezení rychlosti 50 km/h</string>
     <string name="category_speed_limitation_70">Omezení rychlosti 70 km/h</string>
-
 
     <!-- Preferences -->
     <string name="pref_title_colour">Barva ikonky</string>

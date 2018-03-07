@@ -8,8 +8,13 @@
     <dimen name="alarm_roundRadius">4dp</dimen>
 
     <dimen name="drawable_timePoint_borderWidth">2.5dp</dimen>
-    <dimen name="drawable_timePoint_width">24dp</dimen>
+    <dimen name="drawable_timePoint_borderWidth_bold">5dp</dimen>
+
+    <dimen name="drawable_timePoint_width">14dp</dimen>
     <dimen name="drawable_timePoint_height">@dimen/drawable_timePoint_width</dimen>
+
+    <dimen name="drawable_timePointNow_width">24dp</dimen>
+    <dimen name="drawable_timePointNow_height">@dimen/drawable_timePointNow_width</dimen>
 
 
     <dimen name="fabGps_margin">20dp</dimen>
@@ -43,6 +48,13 @@
     <dimen name="stopView_height_train">60dp</dimen>
     <dimen name="stopView_lineHeight">2dp</dimen>
 
+    <dimen name="fragmentTrip_hand_width">32dp</dimen>
+    <dimen name="fragmentTrip_hand_height">@dimen/fragmentTrip_hand_height</dimen>
+
+    <dimen name="fragmentTrip_cellPaddingBottom">3dp</dimen>
+    <dimen name="fragmentTrip_cellPaddingRight">3dp</dimen>
+    <dimen name="fragmentTrip_nextStopPressed_padding">14dp</dimen>
+    <dimen name="fragmentTrip_nextStopPressed_textSize">18sp</dimen>
 
     <item name="activityMain_mainContentRatio" format="float" type="dimen">0.6</item>
     <item name="activityMain_sideContentRatio" format="float" type="dimen">0.4</item>

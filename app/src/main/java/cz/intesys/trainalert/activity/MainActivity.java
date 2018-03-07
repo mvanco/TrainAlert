@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
     private ActivityMainBinding mBinding;
     private ActionBarDrawerToggle mToggle;
+    private TripIdDialogFragment mTripDialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +112,19 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         super.onResume();
         MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
         fragment.setAnimating(true);
+
+        DialogFragment tripIdDialogFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(TRIP_ID_DIALOG_FRAGMENT_TAG);
+
+        if (tripIdDialogFragment != null && tripIdDialogFragment.getDialog() != null && tripIdDialogFragment.getDialog().isShowing()) {
+            tripIdDialogFragment.dismiss();
+        }
+
+        DialogFragment tripIdManuallyDialogFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(TRIP_ID_MANUALLY_DIALOG_FRAGMENT_TAG);
+
+        if (tripIdManuallyDialogFragment != null && tripIdManuallyDialogFragment.getDialog() != null && tripIdManuallyDialogFragment.getDialog().isShowing()) {
+            tripIdManuallyDialogFragment.dismiss();
+        }
+
     }
 
     @Override
@@ -133,6 +148,11 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     }
 
     @Override public void onTripManuallySelected() {
+        DialogFragment tripIdDialogFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(TRIP_ID_DIALOG_FRAGMENT_TAG);
+
+        if (tripIdDialogFragment != null && tripIdDialogFragment.getDialog() != null && tripIdDialogFragment.getDialog().isShowing()) {
+            tripIdDialogFragment.dismiss();
+        }
         TripIdManuallyDialogFragment.newInstance().show(getSupportFragmentManager(), TRIP_ID_MANUALLY_DIALOG_FRAGMENT_TAG);
     }
 
@@ -143,10 +163,24 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     /**
      * There must be already set train id
      */
-    private void showTripIdDialogFragment() {
+    synchronized private void showTripIdDialogFragment() {
         DataHelper.getInstance().getTrips(new TaCallback<List<String>>() {
             @Override public void onResponse(List<String> response) {
-                TripIdDialogFragment.newInstance(response).show(getSupportFragmentManager(), TRIP_ID_DIALOG_FRAGMENT_TAG);
+
+                DialogFragment tripIdDialogFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(TRIP_ID_DIALOG_FRAGMENT_TAG);
+
+                if (tripIdDialogFragment != null && tripIdDialogFragment.getDialog() != null && tripIdDialogFragment.getDialog().isShowing()) {
+                    return;
+                }
+
+                DialogFragment tripIdManuallyDialogFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(TRIP_ID_MANUALLY_DIALOG_FRAGMENT_TAG);
+
+                if (tripIdManuallyDialogFragment != null && tripIdManuallyDialogFragment.getDialog() != null && tripIdManuallyDialogFragment.getDialog().isShowing()) {
+                    return;
+                }
+
+                mTripDialogFragment = TripIdDialogFragment.newInstance(response);
+                mTripDialogFragment.show(getSupportFragmentManager(), TRIP_ID_DIALOG_FRAGMENT_TAG);
             }
 
             @Override public void onFailure(Throwable t) {
@@ -200,6 +234,4 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             }
         });
     }
-
-
 }

@@ -19,56 +19,130 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/train_id_label"
+                    android:id="@+id/textView4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/fragment_trip_arrival_label"
+                    app:layout_constraintBottom_toBottomOf="@+id/fragmentTrip_nameLabel"
+                    app:layout_constraintEnd_toStartOf="@+id/view2" />
+
+                <TextView
+                    android:id="@+id/fragmentTrip_delayLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/fragment_trip_delay_label"
+                    app:layout_constraintBottom_toBottomOf="@+id/fragmentTrip_nameLabel"
+                    app:layout_constraintStart_toEndOf="@+id/view2" />
+
+                <View
+                    android:id="@+id/fragmentTrip_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@color/trip_grey"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/fragmentTrip_nameLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginStart="64dp"
+                    android:text="@string/fragment_trip_name_label"
+                    app:layout_constraintBottom_toTopOf="@+id/fragmentTrip_divider"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/fragmentTrip_nextStopPressed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
                     android:layout_marginTop="8dp"
-                    android:ems="10"
-                    android:inputType="textPersonName"
-                    android:text="@string/fragmentTrip_trainIdLabel"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:background="@drawable/stop_background_grey"
+                    android:padding="@dimen/fragmentTrip_nextStopPressed_padding"
+                    android:text="STOP"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/fragmentTrip_nextStopPressed_textSize"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/trip_id_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:ems="10"
-                    android:inputType="textPersonName"
-                    android:text="@string/fragmentTrip_tripIdLabel"
-                    app:layout_constraintStart_toStartOf="@+id/train_id_label"
-                    app:layout_constraintTop_toBottomOf="@+id/train_id_label" />
-
-                <TextView
-                    android:id="@+id/train_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ems="10"
-                    android:inputType="textPersonName"
-                    android:text="Name"
-                    app:layout_constraintStart_toStartOf="@+id/trip_id"
-                    app:layout_constraintTop_toTopOf="@+id/train_id_label" />
-
-                <TextView
-                    android:id="@+id/trip_id"
+                <TableLayout
+                    android:id="@+id/tableLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp"
-                    android:ems="10"
-                    android:inputType="textPersonName"
-                    android:text="Name"
-                    app:layout_constraintStart_toEndOf="@+id/trip_id_label"
-                    app:layout_constraintTop_toTopOf="@+id/trip_id_label" />
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:divider="@drawable/time_point_now">
+
+                        <TextView
+                            android:id="@+id/train_id_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName"
+                            android:paddingBottom="@dimen/fragmentTrip_cellPaddingBottom"
+                            android:paddingRight="@dimen/fragmentTrip_cellPaddingRight"
+                            android:text="@string/fragmentTrip_trainIdLabel" />
+
+                        <TextView
+                            android:id="@+id/train_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName"
+                            tools:text="AZD003" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/trip_id_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName"
+                            android:paddingBottom="@dimen/fragmentTrip_cellPaddingBottom"
+                            android:text="@string/fragmentTrip_tripIdLabel" />
+
+                        <TextView
+                            android:id="@+id/trip_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="textPersonName"
+                            tools:text="24" />
+
+                    </TableRow>
+
+                </TableLayout>
+
+                <View
+                    android:id="@+id/view2"
+                    android:layout_width="10dp"
+                    android:layout_height="100dp"
+                    android:layout_marginRight="108dp"
+                    app:layout_constraintRight_toRightOf="parent" />
             </android.support.constraint.ConstraintLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/fragmentTrip_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent">
+
+            </android.support.v7.widget.RecyclerView>
 
         </LinearLayout>
 

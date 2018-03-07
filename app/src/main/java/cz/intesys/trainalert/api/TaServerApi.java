@@ -40,6 +40,6 @@ public interface TaServerApi {
     @GET("/Trip/GetFinalStop")
     Call<ResponseApi<StopApi>> getFinalStop();
 
-    @GET("/GetTrainId")
+    @GET("/Vehicle/GetTrainId")
     Call<ResponseApi<String>> getTrainId();
 }

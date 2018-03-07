@@ -1,19 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+
     <item
-        android:width="@dimen/drawable_timePoint_width"
-        android:height="@dimen/drawable_timePoint_width"
+        android:width="@dimen/drawable_timePointNow_width"
+        android:height="@dimen/drawable_timePointNow_height"
         android:gravity="center">
         <shape android:shape="oval">
             <solid android:color="@color/trip_grey" />
         </shape>
     </item>
+
     <item
         android:bottom="@dimen/drawable_timePoint_borderWidth"
         android:gravity="center"
         android:left="@dimen/drawable_timePoint_borderWidth"
         android:right="@dimen/drawable_timePoint_borderWidth"
         android:top="@dimen/drawable_timePoint_borderWidth">
+        <shape
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:shape="oval">
+            <solid android:color="@android:color/white" />
+        </shape>
+    </item>
+
+    <item
+        android:bottom="@dimen/drawable_timePoint_borderWidth_bold"
+        android:gravity="center"
+        android:left="@dimen/drawable_timePoint_borderWidth_bold"
+        android:right="@dimen/drawable_timePoint_borderWidth_bold"
+        android:top="@dimen/drawable_timePoint_borderWidth_bold">
         <shape android:shape="oval">
             <solid android:color="@color/trip_point_green" />
         </shape>
