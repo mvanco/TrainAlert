@@ -46,7 +46,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <include layout="@layout/nav_header" />
+                        <include layout="@layout/drawer_header" />
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/activityMain_recyclerView"

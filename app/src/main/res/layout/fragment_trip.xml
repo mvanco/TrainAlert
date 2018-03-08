@@ -18,24 +18,6 @@
                 android:layout_height="107dp"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="@string/fragment_trip_arrival_label"
-                    app:layout_constraintBottom_toBottomOf="@+id/fragmentTrip_nameLabel"
-                    app:layout_constraintEnd_toStartOf="@+id/view2" />
-
-                <TextView
-                    android:id="@+id/fragmentTrip_delayLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="@string/fragment_trip_delay_label"
-                    app:layout_constraintBottom_toBottomOf="@+id/fragmentTrip_nameLabel"
-                    app:layout_constraintStart_toEndOf="@+id/view2" />
-
                 <View
                     android:id="@+id/fragmentTrip_divider"
                     android:layout_width="match_parent"
@@ -48,6 +30,37 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
+                <ImageView
+                    android:id="@+id/fragmentTrip_greenBackground"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="@+id/fragmentTrip_divider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@color/trip_go_ahead_green"
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/fragmentTrip_arrivalLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="@string/fragment_trip_arrival_label"
+                    app:layout_constraintBottom_toBottomOf="@+id/fragmentTrip_nameLabel"
+                    app:layout_constraintEnd_toStartOf="@+id/fragmentTrip_guideline" />
+
+                <TextView
+                    android:id="@+id/fragmentTrip_delayLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/fragment_trip_delay_label"
+                    app:layout_constraintBottom_toBottomOf="@+id/fragmentTrip_nameLabel"
+                    app:layout_constraintStart_toEndOf="@+id/fragmentTrip_guideline" />
+
+
                 <TextView
                     android:id="@+id/fragmentTrip_nameLabel"
                     android:layout_width="wrap_content"
@@ -59,18 +72,16 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <TextView
-                    android:id="@+id/fragmentTrip_nextStopPressed"
+                    android:id="@+id/fragmentTrip_goAhead"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/stop_background_grey"
-                    android:padding="@dimen/fragmentTrip_nextStopPressed_padding"
-                    android:text="STOP"
+                    android:text="@string/fragment_trip_go_ahead"
+                    android:textAllCaps="true"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/fragmentTrip_nextStopPressed_textSize"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:textSize="@dimen/fragmentTrip_goAhead_textSize"
+                    app:layout_constraintEnd_toStartOf="@+id/fragmentTrip_rightArrow"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TableLayout
@@ -130,11 +141,22 @@
                 </TableLayout>
 
                 <View
-                    android:id="@+id/view2"
+                    android:id="@+id/fragmentTrip_guideline"
                     android:layout_width="10dp"
                     android:layout_height="100dp"
                     android:layout_marginRight="108dp"
                     app:layout_constraintRight_toRightOf="parent" />
+
+
+                <ImageView
+                    android:id="@+id/fragmentTrip_rightArrow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/fragmentTrip_goAhead"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/fragmentTrip_goAhead"
+                    app:srcCompat="@drawable/ic_go_ahead" />
             </android.support.constraint.ConstraintLayout>
 
             <android.support.v7.widget.RecyclerView

@@ -35,12 +35,12 @@
 
             <include
                 android:id="@+id/fragmentPoiMap_poiMapInfoInclude"
-                layout="@layout/poi_map_info"
+                layout="@layout/view_poi_map_info"
                 app:viewModel="@{viewModel}" />
 
             <include
                 android:id="@+id/fragmentPoiMap_newPoiAddedInclude"
-                layout="@layout/new_poi_added"
+                layout="@layout/view_new_poi_added"
                 android:visibility="invisible"
                 app:viewModel="@{viewModel}" />
 

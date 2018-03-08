@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.intesys.trainalert.databinding.PoiListItemBinding;
+import cz.intesys.trainalert.databinding.FragmentPoiListItemBinding;
 import cz.intesys.trainalert.entity.Poi;
 
 public class PoiListAdapter extends RecyclerView.Adapter<PoiListAdapter.ViewHolder> {
@@ -25,7 +25,7 @@ public class PoiListAdapter extends RecyclerView.Adapter<PoiListAdapter.ViewHold
 
     @Override
     public PoiListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        PoiListItemBinding binding = PoiListItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        FragmentPoiListItemBinding binding = FragmentPoiListItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         ViewHolder viewHolder = new ViewHolder(binding);
         return viewHolder;
     }
@@ -49,9 +49,9 @@ public class PoiListAdapter extends RecyclerView.Adapter<PoiListAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        PoiListItemBinding mBinding;
+        FragmentPoiListItemBinding mBinding;
 
-        public ViewHolder(PoiListItemBinding binding) {
+        public ViewHolder(FragmentPoiListItemBinding binding) {
             super(binding.getRoot());
             mBinding = binding;
         }

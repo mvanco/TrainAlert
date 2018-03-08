@@ -49,8 +49,7 @@
             android:layout_marginStart="8dp"
             app:layout_constraintBottom_toTopOf="@+id/poiMapInfo_horizontalLine"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/ic_edit_location" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/poiMapInfo_confirmButton"

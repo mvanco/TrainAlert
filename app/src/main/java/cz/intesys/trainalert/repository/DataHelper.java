@@ -34,6 +34,7 @@ public class DataHelper implements LifecycleObserver {
     public static final int POI_TYPE_SPEED_LIMITATION_40 = 7; // Omezení rychlosti 40km/h
     public static final int POI_TYPE_SPEED_LIMITATION_50 = 8; // Omezení rychlosti 50km/h
     public static final int POI_TYPE_SPEED_LIMITATION_70 = 9; // Omezení rychlosti 70km/h
+    public static final int POI_TYPE_STOP_AZD = 10; // Železniční zastávka z AŽD
     public static final int POI_TYPE_DEFUALT = POI_TYPE_CROSSING;
 
     public static final int GRAPHICS_BLACK_SQUARE = 0;
@@ -62,7 +63,7 @@ public class DataHelper implements LifecycleObserver {
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({POI_TYPE_CROSSING, POI_TYPE_TRAIN_STATION, POI_TYPE_STOP, POI_TYPE_LIGHTS, POI_TYPE_BEFORE_LIGHTS, POI_TYPE_SPEED_LIMITATION_20,
-            POI_TYPE_SPEED_LIMITATION_30, POI_TYPE_SPEED_LIMITATION_40, POI_TYPE_SPEED_LIMITATION_50, POI_TYPE_SPEED_LIMITATION_70})
+            POI_TYPE_SPEED_LIMITATION_30, POI_TYPE_SPEED_LIMITATION_40, POI_TYPE_SPEED_LIMITATION_50, POI_TYPE_SPEED_LIMITATION_70, POI_TYPE_STOP_AZD})
     public @interface CategoryId {
     }
 
@@ -106,6 +107,7 @@ public class DataHelper implements LifecycleObserver {
     }
 
     /**
+     * Create additional category array from category ids from server with extra information for this application
      * Warning, index in the List must correspond category id!
      *
      * @return list of statically defined categories
@@ -122,6 +124,7 @@ public class DataHelper implements LifecycleObserver {
         categories.add(POI_TYPE_SPEED_LIMITATION_40, new Category(POI_TYPE_SPEED_LIMITATION_40, R.string.category_speed_limitation_40, R.drawable.poi_speed_limitation));
         categories.add(POI_TYPE_SPEED_LIMITATION_50, new Category(POI_TYPE_SPEED_LIMITATION_50, R.string.category_speed_limitation_50, R.drawable.poi_speed_limitation));
         categories.add(POI_TYPE_SPEED_LIMITATION_70, new Category(POI_TYPE_SPEED_LIMITATION_70, R.string.category_speed_limitation_70, R.drawable.poi_speed_limitation));
+        categories.add(POI_TYPE_STOP_AZD, new Category(POI_TYPE_STOP_AZD, R.string.category_stop_azd, R.drawable.poi_train_station));
         return categories;
     }
 

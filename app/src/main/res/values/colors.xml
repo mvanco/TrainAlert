@@ -5,7 +5,7 @@
     <color name="dark_grey">#9e9e9e</color>
     <color name="yellow">#fcb912</color>
     <color name="light_grey">#a6a6a6</color>
-    <color name="green">#689f38</color>
+    <color name="green">#4caf50</color>
 
     <color name="stop_green">#c8e6c9</color>
     <color name="stop_orange">#FFE0B2</color>
@@ -14,6 +14,7 @@
     <color name="nextStopPressed">#757575</color>
 
     <color name="trip_grey">#a6a6a6</color>
-    <color name="trip_point_green">#8BC34A</color>
+    <color name="trip_point_green">#a5d6a7</color>
     <color name="trip_orange">#FF9800</color>
+    <color name="trip_go_ahead_green">@color/green</color>
 </resources>

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.intesys.trainalert.R;
-import cz.intesys.trainalert.databinding.NavItemBinding;
+import cz.intesys.trainalert.databinding.DrawerItemBinding;
 import cz.intesys.trainalert.entity.NavItem;
 
 public class NavAdapter extends RecyclerView.Adapter<NavAdapter.ViewHolder> {
@@ -32,7 +32,7 @@ public class NavAdapter extends RecyclerView.Adapter<NavAdapter.ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        NavItemBinding binding = NavItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        DrawerItemBinding binding = DrawerItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         ViewHolder viewHolder = new ViewHolder(binding);
         return viewHolder;
     }
@@ -51,9 +51,9 @@ public class NavAdapter extends RecyclerView.Adapter<NavAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private NavItemBinding mBinding;
+        private DrawerItemBinding mBinding;
 
-        public ViewHolder(NavItemBinding binding) {
+        public ViewHolder(DrawerItemBinding binding) {
             super(binding.getRoot());
             mBinding = binding;
         }

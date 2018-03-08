@@ -54,7 +54,7 @@
     <dimen name="fragmentTrip_cellPaddingBottom">3dp</dimen>
     <dimen name="fragmentTrip_cellPaddingRight">3dp</dimen>
     <dimen name="fragmentTrip_nextStopPressed_padding">14dp</dimen>
-    <dimen name="fragmentTrip_nextStopPressed_textSize">18sp</dimen>
+    <dimen name="fragmentTrip_goAhead_textSize">24sp</dimen>
 
     <item name="activityMain_mainContentRatio" format="float" type="dimen">0.6</item>
     <item name="activityMain_sideContentRatio" format="float" type="dimen">0.4</item>
