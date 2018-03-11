@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.adapter.TripAdapter;
 import cz.intesys.trainalert.databinding.FragmentTripBinding;
 import cz.intesys.trainalert.entity.TaCallback;
@@ -66,6 +67,9 @@ public class TripFragment extends Fragment {
         });
         mViewModel.getNextStopsLiveData().observe(this, (previousStops) -> {
             mAdapter.setNextStops(previousStops);
+            if (previousStops.size() < TaConfig.TRIP_FRAGMENT_NEXT_STOP_COUNT) {
+                mAdapter.setFinalStage(true);
+            }
             mAdapter.notifyDataSetChanged();
         });
         mViewModel.getFinalStopLiveData().observe(this, (finalStop) -> {
@@ -78,6 +82,14 @@ public class TripFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = FragmentTripBinding.inflate(inflater, container, false);
+        mBinding.fragmentTripHeader.setOnClickListener(view -> {
+            if (mBinding.fragmentTripGreenBackground.getVisibility() == View.VISIBLE)          {
+                mBinding.fragmentTripGreenBackground.setVisibility(View.INVISIBLE);
+            }
+            else {
+                mBinding.fragmentTripGreenBackground.setVisibility(View.VISIBLE);
+            }
+        });
         return mBinding.getRoot();
     }
 

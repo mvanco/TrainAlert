@@ -21,9 +21,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
     private Stop mFinalStop;
     private Context mContext;
     private OnItemClickListener mListener;
-
-    public interface OnItemClickListener {
-    }
+    private boolean mFinalStage = false;
 
     public TripAdapter(Context context, OnItemClickListener listener) {
         mContext = context; // TODO: make with Dagger
@@ -33,14 +31,16 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
         mFinalStop = null;
     }
 
-    @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         StopView stopView = new StopView(parent.getContext());
         stopView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         ViewHolder viewHolder = new ViewHolder(stopView);
         return viewHolder;
     }
 
-    @Override public void onBindViewHolder(ViewHolder holder, int position) {
+    @Override
+    public void onBindViewHolder(ViewHolder holder, int position) {
         Stop stop = getStop(position);
         if (stop == null) {
             holder.stopView.setAsTrainMarker(true);
@@ -64,9 +64,11 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
 
         //colorizeStopView(holder.stopView, position);
         holder.stopView.setType(getStopType(position));
+        holder.stopView.setFinalStage(mFinalStage);
     }
 
-    @Override public int getItemCount() {
+    @Override
+    public int getItemCount() {
         int finalStopSize = (mFinalStop == null) ? 0 : 1;
         return mPreviousStops.size() + 1 + mNextStops.size() + finalStopSize;
     }
@@ -89,11 +91,15 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
         mNextStops.clear();
         mNextStops.addAll(nextStops);
         notifyDataSetChanged();
-
     }
 
     public void setFinalStop(Stop finalStop) {
         mFinalStop = finalStop;
+        notifyDataSetChanged();
+    }
+
+    public void setFinalStage(boolean mFinalStage) {
+        this.mFinalStage = mFinalStage;
         notifyDataSetChanged();
     }
 
@@ -109,15 +115,18 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
         }
     }
 
-    private @StopView.StopType int getStopType(int position) {
+    private @StopView.StopType
+    int getStopType(int position) {
         if (position < mPreviousStops.size()) { // Previous stops.
             return TYPE_PREVIOUS_STOP;
         } else if (position == mPreviousStops.size()) {
             return StopView.TYPE_TRAIN_MARKER;
         } else if (position == mPreviousStops.size() + 1) { // Closest next stop.
             return StopView.TYPE_CLOSEST_NEXT_STOP;
-        } else if (position < (mPreviousStops.size() + mNextStops.size()) + 1) { // Next stops.
+        } else if (position < (mPreviousStops.size() + mNextStops.size())) { // Next stops.
             return StopView.TYPE_NEXT_STOP;
+        } else if (position == (mPreviousStops.size() + mNextStops.size())) { // Latest next stop.
+            return StopView.TYPE_LATEST_NEXT_STOP;
         } else { // Final stop.
             return StopView.TYPE_FINAL_STOP;
         }
@@ -135,6 +144,9 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
         } else { // Final stop.
             stopView.setColor(ContextCompat.getColor(mContext, R.color.stop_blue));
         }
+    }
+
+    public interface OnItemClickListener {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

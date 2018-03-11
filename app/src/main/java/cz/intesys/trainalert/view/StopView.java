@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.support.annotation.IntDef;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,8 +30,9 @@ public class StopView extends FrameLayout {
     public static final int TYPE_PREVIOUS_STOP = 0;
     public static final int TYPE_CLOSEST_NEXT_STOP = 1;
     public static final int TYPE_NEXT_STOP = 2;
-    public static final int TYPE_FINAL_STOP = 3;
-    public static final int TYPE_TRAIN_MARKER = 4;
+    public static final int TYPE_LATEST_NEXT_STOP = 3;
+    public static final int TYPE_FINAL_STOP = 4;
+    public static final int TYPE_TRAIN_MARKER = 5;
     private ViewStopBinding mBinding;
     private int mListPosition;
     private String mLabel;
@@ -38,11 +40,13 @@ public class StopView extends FrameLayout {
     private Date mArrival;
     private int mDelay;
     private int mColor;
-    private @StopType int mType;
+    private @StopType
+    int mType;
+    private boolean mFinalStage;
     private boolean mButtonPressed;
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({TYPE_PREVIOUS_STOP, TYPE_CLOSEST_NEXT_STOP, TYPE_NEXT_STOP, TYPE_FINAL_STOP, TYPE_TRAIN_MARKER})
+    @IntDef({TYPE_PREVIOUS_STOP, TYPE_CLOSEST_NEXT_STOP, TYPE_NEXT_STOP, TYPE_LATEST_NEXT_STOP, TYPE_FINAL_STOP, TYPE_TRAIN_MARKER})
     public @interface StopType {
     }
 
@@ -59,6 +63,10 @@ public class StopView extends FrameLayout {
     public StopView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(attrs, defStyle);
+    }
+
+    public void setFinalStage(boolean mFinalStage) {
+        this.mFinalStage = mFinalStage;
     }
 
     public int getListPosition() {
@@ -205,6 +213,23 @@ public class StopView extends FrameLayout {
             mBinding.stopViewTopLine.setVisibility(View.INVISIBLE);
         }
 
+        if (mFinalStage) {
+            mBinding.stopViewBottomLine.setBackgroundResource(R.color.trip_grey);
+            mBinding.stopViewTopLine.setBackgroundResource(R.color.trip_grey);
+        } else {
+            if (mType == TYPE_LATEST_NEXT_STOP) {
+                mBinding.stopViewBottomLine.setBackgroundResource(R.drawable.dashed_line_bottom);
+            } else {
+                mBinding.stopViewBottomLine.setBackgroundResource(R.color.trip_grey);
+            }
+
+            if (mType == TYPE_FINAL_STOP) {
+                mBinding.stopViewTopLine.setBackgroundResource(R.drawable.dashed_line_top);
+            } else {
+                mBinding.stopViewTopLine.setBackgroundResource(R.color.trip_grey);
+            }
+        }
+
         mBinding.stopViewName.setText(mName);
 
         if (mArrival != null) {
@@ -213,7 +238,13 @@ public class StopView extends FrameLayout {
 
         int hours = mDelay / 3600;
         int minutes = (mDelay - hours * 3600) / 60;
-        mBinding.stopViewDelay.setText(String.format("%d", hours * 60 + minutes));
+        int onlyMinutes = mDelay / 60;
+        mBinding.stopViewDelay.setText(String.format("%d", onlyMinutes));
+        if (onlyMinutes < 5) {
+            mBinding.stopViewDelay.setTextColor(ContextCompat.getColor(getContext(), R.color.trip_grey));
+        } else {
+            mBinding.stopViewDelay.setTextColor(ContextCompat.getColor(getContext(), R.color.trip_delay_red));
+        }
         mBinding.stopViewCard.setBackgroundColor(mColor);
 
         switch (mType) {
@@ -224,6 +255,7 @@ public class StopView extends FrameLayout {
                 mBinding.stopViewCard.setBackgroundResource(R.drawable.stop_background_orange);
                 break;
             case TYPE_NEXT_STOP:
+            case TYPE_LATEST_NEXT_STOP:
                 mBinding.stopViewCard.setBackgroundResource(R.drawable.stop_background_red);
                 break;
             case TYPE_FINAL_STOP:
@@ -240,5 +272,4 @@ public class StopView extends FrameLayout {
         invalidate();
         requestLayout();
     }
-
 }
