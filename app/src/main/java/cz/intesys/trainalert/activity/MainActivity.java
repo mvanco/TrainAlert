@@ -18,6 +18,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import java.util.List;
@@ -46,10 +48,10 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     private static final String TRIP_ID_MANUALLY_DIALOG_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.tripIdManuallyTag";
     private static final String TRIP_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.sideFragmentTag";
 
-
     private ActivityMainBinding mBinding;
     private ActionBarDrawerToggle mToggle;
     private TripIdDialogFragment mTripDialogFragment;
+    private Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                 }
             });
         }
-        showTripIdDialogFragment();
     }
 
     @Override
@@ -124,7 +125,6 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         if (tripIdManuallyDialogFragment != null && tripIdManuallyDialogFragment.getDialog() != null && tripIdManuallyDialogFragment.getDialog().isShowing()) {
             tripIdManuallyDialogFragment.dismiss();
         }
-
     }
 
     @Override
@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                 Fragment fragment = TripFragment.newInstance(TRIP_FRAGMENT_PREVIOUS_STOP_COUNT, TRIP_FRAGMENT_NEXT_STOP_COUNT);
                 getSupportFragmentManager().beginTransaction().replace(R.id.activityMain_sideContainer, fragment, TRIP_FRAGMENT_TAG).commit();
                 getSupportFragmentManager().executePendingTransactions();
+                mMenu.findItem(R.id.menu_trip_selection).setIcon(R.drawable.ic_trip_selection);
             }
 
             @Override public void onFailure(Throwable t) {
@@ -158,6 +159,22 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
     @Override public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        mMenu = menu;
+        return true;
+    }
+
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_trip_selection:
+                showTripIdDialogFragment();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**

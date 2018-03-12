@@ -133,5 +133,6 @@
     </string-array>
     <string name="pref_distances_summary">Nastav vzdálenosti které vyvolávají upozornění</string>
     <string name="fragment_trip_go_ahead">Přejeď</string>
+    <string name="menu_trip_selection">Vyběr jízdy</string>
 
 </resources>
