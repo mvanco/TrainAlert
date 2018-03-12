@@ -5,6 +5,8 @@
     <string name="nav_pois">@string/title_activity_poi</string>
     <string name="nav_categories">@string/title_activity_category</string>
 
+    <string name="menu_trip_selection">Vyběr jízdy</string>
+
     <string name="activity_main_navigation_drawer_open">Open</string>
     <string name="activity_main_navigation_drawer_close">Close</string>
 
@@ -29,6 +31,7 @@
     <string name="fragment_trip_delay_label">Zpoždění\n(min.)</string>
     <string name="fragment_trip_arrival_label">Příjezd</string>
     <string name="fragment_trip_final_stop_label">Konečná zastávka</string>
+    <string name="fragment_trip_go_ahead">Průjezd volný</string>
 
     <!-- Content Descriptions -->
     <string name="fragment_poi_list_icon_desc">Icon</string>
@@ -132,7 +135,5 @@
         <item>300</item>
     </string-array>
     <string name="pref_distances_summary">Nastav vzdálenosti které vyvolávají upozornění</string>
-    <string name="fragment_trip_go_ahead">Přejeď</string>
-    <string name="menu_trip_selection">Vyběr jízdy</string>
 
 </resources>

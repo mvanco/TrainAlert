@@ -5,7 +5,7 @@ import java.util.Date;
 import cz.intesys.trainalert.api.StopApi;
 
 public class Stop {
-    private int id;
+    private String id;
     private String name;
     private Date arrival;
     private int delay;
@@ -19,7 +19,7 @@ public class Stop {
         this.pressed = stopApi.isPressed();
     }
 
-    public Stop(int id, String name, Date arrival, int delay, boolean pressed) {
+    public Stop(String id, String name, Date arrival, int delay, boolean pressed) {
         this.id = id;
         this.name = name;
         this.arrival = arrival;
@@ -27,11 +27,11 @@ public class Stop {
         this.pressed = pressed;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

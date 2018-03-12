@@ -117,7 +117,7 @@ public class SimulatedRepository implements Repository {
         new Handler().postDelayed(() -> {
             List<Stop> stops = new ArrayList<>();
             try {
-                stops.add(new Stop(0, "Predosla 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 3900, true));
+                stops.add(new Stop("0", "Predosla 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 3900, true));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -129,8 +129,8 @@ public class SimulatedRepository implements Repository {
         new Handler().postDelayed(() -> {
             List<Stop> stops = new ArrayList<>();
             try {
-                stops.add(new Stop(0, "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true));
-                stops.add(new Stop(0, "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+                stops.add(new Stop("0", "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true));
+                stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -142,7 +142,7 @@ public class SimulatedRepository implements Repository {
         new Handler().postDelayed(() -> {
             Stop stop = null;
             try {
-                stop = new Stop(0, "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, true);
+                stop = new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, true);
             } catch (ParseException e) {
                 e.printStackTrace();
             }

@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class StopApi {
     @Expose
-    private int id;
+    private String id;
 
     @Expose
     private String name;
@@ -20,11 +20,11 @@ public class StopApi {
     @Expose
     private boolean pressed;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
