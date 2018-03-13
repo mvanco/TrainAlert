@@ -1,5 +1,7 @@
 package cz.intesys.trainalert.repository;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,7 @@ import retrofit2.Response;
  * on fragment or activity. For loading POIs, reloadPois() method should be used.
  */
 public class PostgreSqlRepository implements Repository {
+    public static String LOG_POSTGRE = "postgre";
     private static PostgreSqlRepository sInstance;
     private TaServerApi mApiService;
 
@@ -53,13 +56,16 @@ public class PostgreSqlRepository implements Repository {
                 } else {
                     taCallback.onFailure(new Throwable());
                 }
+                Log.d(LOG_POSTGRE, "getCurrentLocation response");
             }
 
             @Override
             public void onFailure(Call<ResponseApi<LocationApi>> call, Throwable t) {
                 taCallback.onFailure(t);
+                Log.d(LOG_POSTGRE, "getCurrentLocation failure");
             }
         });
+        Log.d(LOG_POSTGRE, "getCurrentLocation enqueued");
     }
 
     @Override
@@ -68,6 +74,7 @@ public class PostgreSqlRepository implements Repository {
         call.enqueue(new Callback<ResponseApi<PoisApi>>() {
             @Override
             public void onResponse(Call<ResponseApi<PoisApi>> call, Response<ResponseApi<PoisApi>> response) {
+                Log.d(LOG_POSTGRE, "getPois response");
                 if (response.body() == null || response.body().getData() == null || response.body().getData().getPois() == null) {
                     return;
                 }
@@ -80,6 +87,7 @@ public class PostgreSqlRepository implements Repository {
                     taCallback.onResponse(pois);
                 } else {
                     taCallback.onFailure(new Throwable());
+                    Log.d(LOG_POSTGRE, "getPois failure");
                 }
             }
 
@@ -88,6 +96,7 @@ public class PostgreSqlRepository implements Repository {
                 taCallback.onFailure(t);
             }
         });
+        Log.d(LOG_POSTGRE, "getPois enqueued");
     }
 
     @Override
@@ -96,6 +105,7 @@ public class PostgreSqlRepository implements Repository {
         call.enqueue(new Callback<ResponseApi<PoiApi>>() {
             @Override
             public void onResponse(Call<ResponseApi<PoiApi>> call, Response<ResponseApi<PoiApi>> response) {
+                Log.d(LOG_POSTGRE, "addPoi response");
                 if (response.body() == null) {
                     taCallback.onFailure(new Throwable("body is null"));
                     return;
@@ -111,8 +121,10 @@ public class PostgreSqlRepository implements Repository {
             @Override
             public void onFailure(Call<ResponseApi<PoiApi>> call, Throwable t) {
                 taCallback.onFailure(t);
+                Log.d(LOG_POSTGRE, "addPoi failure");
             }
         });
+        Log.d(LOG_POSTGRE, "addPoi enqueued");
     }
 
     @Override
@@ -121,6 +133,7 @@ public class PostgreSqlRepository implements Repository {
         call.enqueue(new Callback<ResponseApi<PoiApi>>() {
             @Override
             public void onResponse(Call<ResponseApi<PoiApi>> call, Response<ResponseApi<PoiApi>> response) {
+                Log.d(LOG_POSTGRE, "editPoi response");
                 if (response.body() == null) {
                     taCallback.onFailure(new Throwable("body is null"));
                     return;
@@ -135,8 +148,10 @@ public class PostgreSqlRepository implements Repository {
 
             @Override public void onFailure(Call<ResponseApi<PoiApi>> call, Throwable t) {
                 taCallback.onFailure(t);
+                Log.d(LOG_POSTGRE, "editPoi failure");
             }
         });
+        Log.d(LOG_POSTGRE, "editPoi enqueued");
     }
 
     public void deletePoi(long id, TaCallback<Poi> taCallback) {
@@ -145,6 +160,7 @@ public class PostgreSqlRepository implements Repository {
 
             @Override
             public void onResponse(Call<ResponseApi<PoiApi>> call, Response<ResponseApi<PoiApi>> response) {
+                Log.d(LOG_POSTGRE, "deletePoi response");
                 if (response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
                     taCallback.onResponse(new Poi(response.body().getData()));
                 } else {
@@ -155,8 +171,10 @@ public class PostgreSqlRepository implements Repository {
 
             @Override public void onFailure(Call<ResponseApi<PoiApi>> call, Throwable t) {
                 taCallback.onFailure(t);
+                Log.d(LOG_POSTGRE, "deletePoi failure");
             }
         });
+        Log.d(LOG_POSTGRE, "deletePoi enqueued");
     }
 
     @Override public void getTrips(String id, TaCallback<List<String>> taCallback) {
@@ -165,6 +183,7 @@ public class PostgreSqlRepository implements Repository {
 
             @Override
             public void onResponse(Call<ResponseApi<List<String>>> call, Response<ResponseApi<List<String>>> response) {
+                Log.d(LOG_POSTGRE, "getTrips response");
                 if (response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
                     taCallback.onResponse(response.body().getData());
                 } else {
@@ -175,8 +194,10 @@ public class PostgreSqlRepository implements Repository {
 
             @Override public void onFailure(Call<ResponseApi<List<String>>> call, Throwable t) {
                 taCallback.onFailure(t);
+                Log.d(LOG_POSTGRE, "getTrips failure");
             }
         });
+        Log.d(LOG_POSTGRE, "getTrips enqueued");
     }
 
     @Override public void setTrip(String id, TaCallback<Void> taCallback) {
@@ -185,6 +206,7 @@ public class PostgreSqlRepository implements Repository {
 
             @Override
             public void onResponse(Call<ResponseApi<Void>> call, Response<ResponseApi<Void>> response) {
+                Log.d(LOG_POSTGRE, "setTrip response");
                 if (response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
                     taCallback.onResponse(null); // Only call function is enough to inform about completition without error
                 } else {
@@ -194,9 +216,11 @@ public class PostgreSqlRepository implements Repository {
             }
 
             @Override public void onFailure(Call<ResponseApi<Void>> call, Throwable t) {
+                Log.d(LOG_POSTGRE, "setTrip failure");
                 taCallback.onFailure(t);
             }
         });
+        Log.d(LOG_POSTGRE, "setTrip enqueued");
     }
 
     @Override public void getPreviousStops(int count, TaCallback<List<Stop>> taCallback) {
@@ -205,6 +229,7 @@ public class PostgreSqlRepository implements Repository {
 
             @Override
             public void onResponse(Call<ResponseApi<List<StopApi>>> call, Response<ResponseApi<List<StopApi>>> response) {
+                Log.d(LOG_POSTGRE, "getPreviousStops response");
                 if (response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
                     List<Stop> stops = new ArrayList<>();
                     for (StopApi stopApi : response.body().getData()) {
@@ -218,9 +243,11 @@ public class PostgreSqlRepository implements Repository {
             }
 
             @Override public void onFailure(Call<ResponseApi<List<StopApi>>> call, Throwable t) {
+                Log.d(LOG_POSTGRE, "getPreviousStops failure");
                 taCallback.onFailure(t);
             }
         });
+        Log.d(LOG_POSTGRE, "getPreviousStops enqueued");
     }
 
     @Override public void getNextStops(int count, TaCallback<List<Stop>> taCallback) {
@@ -229,6 +256,7 @@ public class PostgreSqlRepository implements Repository {
 
             @Override
             public void onResponse(Call<ResponseApi<List<StopApi>>> call, Response<ResponseApi<List<StopApi>>> response) {
+                Log.d(LOG_POSTGRE, "getNextStops response");
                 if (response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
                     List<Stop> stops = new ArrayList<>();
                     for (StopApi stopApi : response.body().getData()) {
@@ -242,9 +270,11 @@ public class PostgreSqlRepository implements Repository {
             }
 
             @Override public void onFailure(Call<ResponseApi<List<StopApi>>> call, Throwable t) {
+                Log.d(LOG_POSTGRE, "getNextStops failure");
                 taCallback.onFailure(t);
             }
         });
+        Log.d(LOG_POSTGRE, "getNextStops enqueued");
     }
 
     @Override public void getFinalStop(TaCallback<Stop> taCallback) {
@@ -252,6 +282,7 @@ public class PostgreSqlRepository implements Repository {
         call.enqueue(new Callback<ResponseApi<StopApi>>() {
             @Override
             public void onResponse(Call<ResponseApi<StopApi>> call, Response<ResponseApi<StopApi>> response) {
+                Log.d(LOG_POSTGRE, "getFinalStop response");
                 if (response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
                     if (response.body().getData() == null) {
                         taCallback.onResponse(null);
@@ -265,9 +296,11 @@ public class PostgreSqlRepository implements Repository {
             }
 
             @Override public void onFailure(Call<ResponseApi<StopApi>> call, Throwable t) {
+                Log.d(LOG_POSTGRE, "getFinalStop failure");
                 taCallback.onFailure(t);
             }
         });
+        Log.d(LOG_POSTGRE, "getFinalStop enqueued");
     }
 
     @Override public void getTrainId(TaCallback<String> taCallback) {
@@ -275,6 +308,7 @@ public class PostgreSqlRepository implements Repository {
         call.enqueue(new Callback<ResponseApi<String>>() {
             @Override
             public void onResponse(Call<ResponseApi<String>> call, Response<ResponseApi<String>> response) {
+                Log.d(LOG_POSTGRE, "getTrainId response");
                 if (response.body() != null && response.body().getErrorCode() == ResponseApi.ECODE_OK) {
                     if (response.body().getData() == null) {
                         String throwableMessage = "nastala chyba s kodom " + response.body().getErrorCode();
@@ -289,9 +323,11 @@ public class PostgreSqlRepository implements Repository {
             }
 
             @Override public void onFailure(Call<ResponseApi<String>> call, Throwable t) {
+                Log.d(LOG_POSTGRE, "getTrainId failure");
                 taCallback.onFailure(t);
             }
         });
+        Log.d(LOG_POSTGRE, "getTrainId enqueued");
     }
 }
 
