@@ -53,7 +53,7 @@ public class SimulatedRepository implements Repository {
         new Handler().postDelayed(() -> {
             taCallback.onResponse(mExampleRoute.get(mLocationIterator));
             Log.d(LOG_POSTGRE, "getCurrentLocation response");
-        }, getCustomRandomServerDelay(new int[]{20000, 30000}));
+        }, getRandomServerDelay());
 
         // Prepare next location
         if (toTheLeftDirection) {
@@ -71,7 +71,7 @@ public class SimulatedRepository implements Repository {
                 mLocationIterator++;
             }
         }
-        Log.d(LOG_POSTGRE, "getCurrentLocation enqueue");
+        Log.d(LOG_POSTGRE, "getCurrentLocation enqueued");
     }
 
     @Override
@@ -80,7 +80,7 @@ public class SimulatedRepository implements Repository {
             taCallback.onResponse(mExamplePois);
             Log.d(LOG_POSTGRE, "getPois response");
         }, getRandomServerDelay());
-        Log.d(LOG_POSTGRE, "getPois enqueue");
+        Log.d(LOG_POSTGRE, "getPois enqueued");
     }
 
     @Override
@@ -90,7 +90,7 @@ public class SimulatedRepository implements Repository {
             taCallback.onResponse(poi);
             Log.d(LOG_POSTGRE, "addPoi response");
         }, getRandomServerDelay());
-        Log.d(LOG_POSTGRE, "addPoi enqueue");
+        Log.d(LOG_POSTGRE, "addPoi enqueued");
     }
 
     @Override
@@ -107,7 +107,7 @@ public class SimulatedRepository implements Repository {
 
             taCallback.onFailure(null);
         }, getRandomServerDelay());
-        Log.d(LOG_POSTGRE, "editPoi enqueue");
+        Log.d(LOG_POSTGRE, "editPoi enqueued");
     }
 
     @Override public void deletePoi(long id, TaCallback<Poi> taCallback) {
@@ -120,7 +120,7 @@ public class SimulatedRepository implements Repository {
             taCallback.onResponse(trips);
             Log.d(LOG_POSTGRE, "getTrips response");
         }, getCustomRandomServerDelay(SIMULATED_REPOSITORY_GET_TRIPS_RESPONSE_DELAY_RANGE));
-        Log.d(LOG_POSTGRE, "getTrips enqueue");
+        Log.d(LOG_POSTGRE, "getTrips enqueued");
     }
 
     @Override public void setTrip(String id, TaCallback<Void> taCallback) {
@@ -128,7 +128,7 @@ public class SimulatedRepository implements Repository {
             taCallback.onResponse(null);
             Log.d(LOG_POSTGRE, "setTrip response");
         }, getCustomRandomServerDelay(SIMULATED_REPOSITORY_SET_TRIP_RESPONSE_DELAY_RANGE));
-        Log.d(LOG_POSTGRE, "setTrip enqueue");
+        Log.d(LOG_POSTGRE, "setTrip enqueued");
     }
 
     @Override public void getPreviousStops(int id, TaCallback<List<Stop>> taCallback) {
@@ -142,7 +142,7 @@ public class SimulatedRepository implements Repository {
             taCallback.onResponse(stops);
             Log.d(LOG_POSTGRE, "getPreviousStops response");
         }, getRandomServerDelay());
-        Log.d(LOG_POSTGRE, "getPreviousStops enqueue");
+        Log.d(LOG_POSTGRE, "getPreviousStops enqueued");
     }
 
     @Override public void getNextStops(int id, TaCallback<List<Stop>> taCallback) {
@@ -157,7 +157,7 @@ public class SimulatedRepository implements Repository {
             taCallback.onResponse(stops);
             Log.d(LOG_POSTGRE, "getNextStops response");
         }, getRandomServerDelay());
-        Log.d(LOG_POSTGRE, "getNextStops enqueue");
+        Log.d(LOG_POSTGRE, "getNextStops enqueued");
     }
 
     @Override public void getFinalStop(TaCallback<Stop> taCallback) {
@@ -171,7 +171,7 @@ public class SimulatedRepository implements Repository {
             taCallback.onResponse(stop);
             Log.d(LOG_POSTGRE, "getFinalStop response");
         }, getRandomServerDelay());
-        Log.d(LOG_POSTGRE, "getFinalStop enqueue");
+        Log.d(LOG_POSTGRE, "getFinalStop enqueued");
     }
 
     @Override public void getTrainId(TaCallback<String> taCallback) {
@@ -179,7 +179,13 @@ public class SimulatedRepository implements Repository {
             taCallback.onResponse("TRAINID");
             Log.d(LOG_POSTGRE, "getTrainId response");
         }, getRandomServerDelay());
-        Log.d(LOG_POSTGRE, "getTrainId enqueue");
+        Log.d(LOG_POSTGRE, "getTrainId enqueued");
+    }
+
+    @Override public void shouldStop(TaCallback<Boolean> taCallback) {
+        new Handler().postDelayed(() -> {
+            taCallback.onResponse(false);
+        }, getRandomServerDelay());
     }
 
     private List<Poi> getExamplePois() {
@@ -219,7 +225,7 @@ public class SimulatedRepository implements Repository {
         sExamplePOIs.add(new Poi(41, "Vjezdové návěstidlo S (do Třebívlic)", 50.4535951958608, 13.9030043658088, POI_TYPE_LIGHTS));
         sExamplePOIs.add(new Poi(42, "Předvěst S (do Třebívlic)", 50.4505784940015, 13.8981291827033, POI_TYPE_BEFORE_LIGHTS));
         sExamplePOIs.add(new Poi(43, "Přejezd P9247,rychlost 50 (do Třebívlic)", 50.4532351563018, 13.8929975173053, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi(44, "zastávka Semeč", 504523376171865.0, 138878012264476.0, POI_TYPE_STOP));
+        sExamplePOIs.add(new Poi(44, "zastávka Semeč", 50.45233761718650, 13.88780122644760, POI_TYPE_STOP));
         sExamplePOIs.add(new Poi(45, "Rychlost 50 (od Třebívlic)", 50.4517795398678, 13.884594188017, POI_TYPE_SPEED_LIMITATION_50));
         sExamplePOIs.add(new Poi(46, "Přejezd P9248,rychlost 50 (do Třebívlic)", 50.4447181359457, 13.8747690986184, POI_TYPE_SPEED_LIMITATION_50));
         sExamplePOIs.add(new Poi(47, "Rychlost 40 (do Třebívlic)", 50.4466871017385, 13.8737855799058, POI_TYPE_SPEED_LIMITATION_40));

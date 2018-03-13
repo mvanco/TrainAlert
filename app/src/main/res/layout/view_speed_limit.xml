@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:id="@+id/speed_limit_container"
+        android:layout_width="@dimen/speedLimitView_width"
+        android:layout_height="@dimen/speedLimitView_height">
+
+        <ImageView
+            android:id="@+id/speed_limit_sign"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/speed_limit_background"
+            android:contentDescription="@string/fragment_main_image_view_desc" />
+
+        <TextView
+            android:id="@+id/speed_limit_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="50"
+            android:textSize="@dimen/alarm_text_size"
+            tools:text="50" />
+
+    </FrameLayout>
+</layout>

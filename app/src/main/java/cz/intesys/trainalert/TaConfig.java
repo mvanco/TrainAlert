@@ -15,8 +15,8 @@ public class TaConfig {
     public static final int MAP_DEFAULT_ZOOM = 15; //
 
     public static final int[] SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE = {3000, 6000}; // [0, 0] or [x, y] where x, y > 0
-    public static final int[] SIMULATED_REPOSITORY_GET_TRIPS_RESPONSE_DELAY_RANGE = {10000, 30000};
-    public static final int[] SIMULATED_REPOSITORY_SET_TRIP_RESPONSE_DELAY_RANGE = {10000, 30000}; // [0, 0] or [x, y] where x, y > 0
+    public static final int[] SIMULATED_REPOSITORY_GET_TRIPS_RESPONSE_DELAY_RANGE = {5000, 7000};
+    public static final int[] SIMULATED_REPOSITORY_SET_TRIP_RESPONSE_DELAY_RANGE = {3000, 7000}; // [0, 0] or [x, y] where x, y > 0
 
     public static final Repository REPOSITORY = SimulatedRepository.getInstance(); // TODO: Make sure this is real PostgreSqlRepository.
     public static final long UPDATE_INTERVAL = 5;

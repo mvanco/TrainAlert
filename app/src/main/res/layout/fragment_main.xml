@@ -28,7 +28,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            tools:visibility="visible" />
+            tools:visibility="visible">
+
+        </cz.intesys.trainalert.view.SignView>
 
 
         <android.support.design.widget.FloatingActionButton
@@ -44,6 +46,17 @@
             app:backgroundTint="@android:color/white"
             app:layout_constraintBottom_toBottomOf="@+id/fragmentMain_mapView"
             app:layout_constraintEnd_toEndOf="@+id/fragmentMain_mapView" />
+
+        <cz.intesys.trainalert.view.SpeedLimitView
+            android:id="@+id/fragmentMain_speedLimitView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginStart="20dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:visibility="visible" />
 
     </android.support.constraint.ConstraintLayout>
 

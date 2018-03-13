@@ -29,4 +29,6 @@ public interface Repository {
     void getFinalStop(TaCallback<Stop> taCallback);
 
     void getTrainId(TaCallback<String> taCallback);
+
+    void shouldStop(TaCallback<Boolean> taCallback);
 }

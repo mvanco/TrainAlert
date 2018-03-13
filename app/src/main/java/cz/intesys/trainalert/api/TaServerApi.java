@@ -42,4 +42,7 @@ public interface TaServerApi {
 
     @GET("/Vehicle/GetTrainId")
     Call<ResponseApi<String>> getTrainId();
+
+    @GET("/Trip/ShouldStop")
+    Call<ResponseApi<Boolean>> shouldStop();
 }

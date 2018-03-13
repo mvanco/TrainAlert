@@ -60,6 +60,8 @@ public class DataHelper implements LifecycleObserver {
     private List<Poi> mPois;
     private MutableLiveData<List<Poi>> mPoisLiveData;
     private Utility.IntervalPoller mLocationPoller;
+    private boolean mShouldStop;
+    private MutableLiveData<Boolean> mShouldStopLiveData;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({POI_TYPE_CROSSING, POI_TYPE_TRAIN_STATION, POI_TYPE_STOP, POI_TYPE_LIGHTS, POI_TYPE_BEFORE_LIGHTS, POI_TYPE_SPEED_LIMITATION_20,
@@ -80,11 +82,18 @@ public class DataHelper implements LifecycleObserver {
         mLocationLiveData = new MutableLiveData<Location>();
         mPois = new ArrayList<>();
         mPoisLiveData = new MutableLiveData<>();
+        mShouldStopLiveData = new MutableLiveData<>();
 
         mLocationPoller = new Utility.IntervalPoller(TaConfig.GPS_TIME_INTERVAL, () -> {
             if (!mLocation.equals(mLocationLiveData.getValue())) {
                 mLocationLiveData.setValue(mLocation);
             }
+
+            mShouldStopLiveData.setValue(mShouldStop);
+//            if (mShouldStopLiveData.getValue() != null && mShouldStop != mShouldStopLiveData.getValue().booleanValue()) {
+//                mShouldStopLiveData.setValue(mShouldStop);
+//            }
+
             mRepository.getCurrentLocation(new TaCallback<Location>() {
                 @Override
                 public void onResponse(Location response) {
@@ -96,6 +105,15 @@ public class DataHelper implements LifecycleObserver {
 
                 }
             });
+            mRepository.shouldStop(new TaCallback<Boolean>() {
+                @Override public void onResponse(Boolean response) {
+                    mShouldStop = response;
+                }
+
+                @Override public void onFailure(Throwable t) {
+
+                }
+            });
         });
     }
 
@@ -104,6 +122,10 @@ public class DataHelper implements LifecycleObserver {
             sInstance = new DataHelper();
         }
         return sInstance;
+    }
+
+    public MutableLiveData<Boolean> getShouldStopLiveData() {
+        return mShouldStopLiveData;
     }
 
     /**
@@ -265,8 +287,6 @@ public class DataHelper implements LifecycleObserver {
             });
             setTrainId(trainId);
         }
-
-        taCallback.onResponse(trainId);
     }
 
     private void setTrainId(String id) {

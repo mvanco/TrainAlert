@@ -16,7 +16,7 @@ public class Stop {
         this.name = stopApi.getName();
         this.arrival = stopApi.getArrival();
         this.delay = stopApi.getDelay();
-        this.pressed = stopApi.isPressed();
+        this.pressed = stopApi.isPressed() && StopApi.CATEGORY_ON_DEMAND.contains(stopApi.getType());
     }
 
     public Stop(String id, String name, Date arrival, int delay, boolean pressed) {

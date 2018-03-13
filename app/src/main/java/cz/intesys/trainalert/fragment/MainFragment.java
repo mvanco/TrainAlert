@@ -50,6 +50,7 @@ import cz.intesys.trainalert.databinding.FragmentMainBinding;
 import cz.intesys.trainalert.entity.Alarm;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
+import cz.intesys.trainalert.repository.DataHelper;
 import cz.intesys.trainalert.utility.Utility;
 import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 
@@ -224,6 +225,13 @@ public class MainFragment extends Fragment {
             setMapPosition(currentLocation.toGeoPoint());
         }
         handleNotification(trainMarker.getPosition());
+
+        Poi passingPoi = mViewModel.getPassingPoi();
+        if (passingPoi != null) {
+//            if (passingPoi.getCategory() > POI_TYPE_SPEED_LIMITATION_20 && passingPoi.getCategory() < POI_TYPE_SPEED_LIMITATION_70) {
+            setSpeedLimit(passingPoi.getCategory());
+//            }
+        }
     }
 
     private void animateMarkerTo(final MapView map, final Marker marker, final GeoPoint finalPosition, final GeoPointInterpolator GeoPointInterpolator) {
@@ -353,5 +361,10 @@ public class MainFragment extends Fragment {
 
     private void setFabAsNotFixed() {
         mBinding.fragmentMainFab.setImageResource(R.drawable.fab_gps_not_fixed);
+    }
+
+    private void setSpeedLimit(@DataHelper.CategoryId int id) {
+        mBinding.fragmentMainSpeedLimitView.setCategory(id);
+        mBinding.fragmentMainSpeedLimitView.setVisibility(View.VISIBLE);
     }
 }

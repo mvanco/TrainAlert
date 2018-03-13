@@ -87,6 +87,16 @@ public class MainFragmentViewModel extends BaseViewModel {
         return currentAlarms;
     }
 
+    public Poi getPassingPoi() {
+        for (Poi poi : getPois()) {
+            if (getLocation().toGeoPoint().distanceTo(poi) < 50) {
+                return poi;
+            }
+        }
+
+        return null;
+    }
+
     private boolean isDisabled(Alarm alarm) {
         for (Alarm disabledAlarm : mDisabledAlarms) {
             if (disabledAlarm.equals(alarm)) {

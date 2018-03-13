@@ -76,20 +76,13 @@ public class TripFragment extends Fragment {
             mAdapter.setFinalStop(finalStop);
             mAdapter.notifyDataSetChanged();
         });
+        mViewModel.getShouldStopLiveData().observe(this, shouldStop -> setShouldStop(shouldStop));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = FragmentTripBinding.inflate(inflater, container, false);
-        mBinding.fragmentTripHeader.setOnClickListener(view -> {
-            if (mBinding.fragmentTripGreenBackground.getVisibility() == View.VISIBLE)          {
-                mBinding.fragmentTripGreenBackground.setVisibility(View.INVISIBLE);
-            }
-            else {
-                mBinding.fragmentTripGreenBackground.setVisibility(View.VISIBLE);
-            }
-        });
         return mBinding.getRoot();
     }
 
@@ -132,6 +125,18 @@ public class TripFragment extends Fragment {
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    private void setShouldStop(boolean shouldStop) {
+        if (shouldStop) {
+            mBinding.fragmentTripGreenBackground.setVisibility(View.INVISIBLE);
+            mBinding.fragmentTripGoAhead.setVisibility(View.INVISIBLE);
+            mBinding.fragmentTripRightArrow.setVisibility(View.INVISIBLE);
+        } else {
+            mBinding.fragmentTripGreenBackground.setVisibility(View.VISIBLE);
+            mBinding.fragmentTripGoAhead.setVisibility(View.VISIBLE);
+            mBinding.fragmentTripRightArrow.setVisibility(View.VISIBLE);
         }
     }
 }
