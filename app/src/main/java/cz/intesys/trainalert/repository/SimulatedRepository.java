@@ -6,6 +6,7 @@ import android.util.Log;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -51,7 +52,9 @@ public class SimulatedRepository implements Repository {
     @Override
     public void getCurrentLocation(TaCallback<Location> taCallback) {
         new Handler().postDelayed(() -> {
-            taCallback.onResponse(mExampleRoute.get(mLocationIterator));
+            Location location = mExampleRoute.get(mLocationIterator);
+            location.setTime(new Date());
+            taCallback.onResponse(location);
             Log.d(LOG_POSTGRE, "getCurrentLocation response");
         }, getRandomServerDelay());
 

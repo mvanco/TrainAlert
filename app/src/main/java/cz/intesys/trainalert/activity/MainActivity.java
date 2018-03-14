@@ -1,6 +1,7 @@
 package cz.intesys.trainalert.activity;
 
 import android.Manifest;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -12,17 +13,22 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import cz.intesys.trainalert.R;
@@ -34,6 +40,7 @@ import cz.intesys.trainalert.fragment.TripFragment;
 import cz.intesys.trainalert.fragment.TripIdDialogFragment;
 import cz.intesys.trainalert.fragment.TripIdManuallyDialogFragment;
 import cz.intesys.trainalert.repository.DataHelper;
+import cz.intesys.trainalert.viewmodel.MainActivityViewModel;
 
 import static android.support.v4.widget.DrawerLayout.STATE_IDLE;
 import static android.support.v4.widget.DrawerLayout.STATE_SETTLING;
@@ -53,11 +60,15 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     private ActionBarDrawerToggle mToggle;
     private TripIdDialogFragment mTripDialogFragment;
     private Menu mMenu;
+    private MainActivityViewModel mViewModel;
+    private TextView mClockTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        mViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+        getLifecycle().addObserver(mViewModel);
         getSupportFragmentManager().beginTransaction().add(R.id.activityMain_fragmentContainer, MainFragment.newInstance(), MAIN_FRAGMENT_TAG).commit();
         getSupportFragmentManager().executePendingTransactions();
         setupActionBar();
@@ -78,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                 );
             }
         }
+
+        mViewModel.getLocationLiveData().observe(this, (location) -> onTimeChanged(location.getTime()));
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
@@ -166,6 +179,12 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
+
+        MenuItem clockItem = menu.findItem(R.id.menu_clock);
+        mClockTextView = (TextView) MenuItemCompat.getActionView(clockItem);
+        mClockTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.activityMain_clock_textSize));
+
+
         mMenu = menu;
         return true;
     }
@@ -177,6 +196,16 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void onTimeChanged(Date time) {
+        if (mClockTextView != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(time);
+            int hours = cal.get(Calendar.HOUR_OF_DAY);
+            int minutes = cal.get(Calendar.MINUTE);
+            mClockTextView.setText(hours + ":" + minutes);
         }
     }
 

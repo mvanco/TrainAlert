@@ -200,6 +200,5 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
         } else {
             return true;
         }
-
     }
 }

@@ -119,6 +119,14 @@ public class PoiMapFragment extends Fragment {
                 mListener.onPoiEdited(mViewModel.getWorkingPoi().getId(), mViewModel.getWorkingPoi());
             }
         });
+
+
+        if (mViewModel.getMode() == MODE_NONE) {
+            mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoIcon.setVisibility(View.GONE);
+            mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setVisibility(View.GONE);
+            mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoConfirmButton.setVisibility(View.GONE);
+        }
+
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoIcon.setOnClickListener(v -> mListener.onCategoryIconClick(mViewModel.getWorkingPoi().getCategory()));
 
 //        View.OnClickListener inputListener = v -> {
@@ -175,6 +183,11 @@ public class PoiMapFragment extends Fragment {
         mBinding.fragmentPoiMapMapView.getController().setCenter(poi);
         mViewModel.setWorkingPoi(poi);
         mViewModel.setMode(MODE_EDIT_POI);
+
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoIcon.setVisibility(View.VISIBLE);
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setVisibility(View.VISIBLE);
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoConfirmButton.setVisibility(View.VISIBLE);
+
         mViewModel.setPoiId(poi.getId());
 
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoMarker.setImageResource(R.drawable.ic_edit_location);
@@ -187,6 +200,10 @@ public class PoiMapFragment extends Fragment {
         mBinding.fragmentPoiMapMapView.getController().setCenter(mViewModel.getLocation());
         mViewModel.setWorkingPoi(new Poi(mViewModel.getLocation()));
         mViewModel.setMode(MODE_ADD_POI);
+
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoIcon.setVisibility(View.VISIBLE);
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setVisibility(View.VISIBLE);
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoConfirmButton.setVisibility(View.VISIBLE);
 
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoMarker.setImageResource(R.drawable.ic_add_location);
     }

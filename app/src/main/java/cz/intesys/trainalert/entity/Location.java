@@ -68,6 +68,14 @@ public class Location implements IGeoPoint {
         return longitude;
     }
 
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
     public int getMetaIndex() {
         return metaIndex;
     }

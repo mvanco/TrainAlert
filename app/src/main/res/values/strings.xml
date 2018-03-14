@@ -6,6 +6,7 @@
     <string name="nav_categories">@string/title_activity_category</string>
 
     <string name="menu_trip_selection">Vyběr jízdy</string>
+    <string name="menu_clock">Hodiny</string>
 
     <string name="activity_main_navigation_drawer_open">Open</string>
     <string name="activity_main_navigation_drawer_close">Close</string>

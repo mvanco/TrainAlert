@@ -59,6 +59,8 @@ import static cz.intesys.trainalert.TaConfig.MAP_DEFAULT_ZOOM;
 import static cz.intesys.trainalert.TaConfig.OSMDROID_DEBUGGING;
 import static cz.intesys.trainalert.TaConfig.REST_BASE_URL;
 import static cz.intesys.trainalert.TaConfig.USE_OFFLINE_MAPS;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_20;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_70;
 import static cz.intesys.trainalert.utility.Utility.convertToDegrees;
 import static cz.intesys.trainalert.utility.Utility.getMarkerRotation;
 
@@ -67,6 +69,11 @@ public class MainFragment extends Fragment {
     private FragmentMainBinding mBinding;
     private MainFragmentViewModel mViewModel;
     private Marker mTrainMarker;
+    private OnFragmentInteractionListener mListener;
+
+    public interface OnFragmentInteractionListener {
+        // Prepared for possible future use.
+    }
 
     public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
@@ -74,6 +81,16 @@ public class MainFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//        if (context instanceof OnFragmentInteractionListener) {
+//            mListener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
+//        }
+//    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -228,9 +245,9 @@ public class MainFragment extends Fragment {
 
         Poi passingPoi = mViewModel.getPassingPoi();
         if (passingPoi != null) {
-//            if (passingPoi.getCategory() > POI_TYPE_SPEED_LIMITATION_20 && passingPoi.getCategory() < POI_TYPE_SPEED_LIMITATION_70) {
+            if (passingPoi.getCategory() > POI_TYPE_SPEED_LIMITATION_20 && passingPoi.getCategory() < POI_TYPE_SPEED_LIMITATION_70) {
             setSpeedLimit(passingPoi.getCategory());
-//            }
+            }
         }
     }
 

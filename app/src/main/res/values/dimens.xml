@@ -10,6 +10,7 @@
     <dimen name="speed_view_stroke_width">1dp</dimen>
     <dimen name="speed_view_whitePadding_width">2dp</dimen>
     <dimen name="speed_view_outerBorder_width">10dp</dimen>
+    <dimen name="speed_view_text_size">48sp</dimen>
 
 
     <dimen name="drawable_timePoint_borderWidth">2.5dp</dimen>
@@ -62,8 +63,9 @@
     <dimen name="fragmentTrip_goAhead_textSize">24sp</dimen>
     <dimen name="action_icon_width">32dp</dimen>
     <dimen name="action_icon_height">@dimen/action_icon_width</dimen>
-    <dimen name="speedLimitView_width">84dp</dimen>
+    <dimen name="speedLimitView_width">100dp</dimen>
     <dimen name="speedLimitView_height">@dimen/speedLimitView_width</dimen>
+    <dimen name="activityMain_clock_textSize">38sp</dimen>
 
     <item name="activityMain_mainContentRatio" format="float" type="dimen">0.6</item>
     <item name="activityMain_sideContentRatio" format="float" type="dimen">0.4</item>
