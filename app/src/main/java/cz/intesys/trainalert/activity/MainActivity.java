@@ -21,6 +21,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 
 import java.util.List;
 
@@ -77,22 +78,8 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                 );
             }
         }
-    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
-                    getSupportFragmentManager().beginTransaction()
-                            .remove(fragment)
-                            .add(R.id.activityMain_fragmentContainer, MainFragment.newInstance(), MAIN_FRAGMENT_TAG)
-                            .commit();
-                    getSupportFragmentManager().executePendingTransactions();
-                }
-                return;
-        }
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     @Override protected void onStart() {
@@ -124,6 +111,22 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
         if (tripIdManuallyDialogFragment != null && tripIdManuallyDialogFragment.getDialog() != null && tripIdManuallyDialogFragment.getDialog().isShowing()) {
             tripIdManuallyDialogFragment.dismiss();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
+                    getSupportFragmentManager().beginTransaction()
+                            .remove(fragment)
+                            .add(R.id.activityMain_fragmentContainer, MainFragment.newInstance(), MAIN_FRAGMENT_TAG)
+                            .commit();
+                    getSupportFragmentManager().executePendingTransactions();
+                }
+                return;
         }
     }
 

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import cz.intesys.trainalert.R;
@@ -45,6 +46,8 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
         if (savedInstanceState == null) { // Not restoring from previous state, otherwise performance issue
             setupLayout();
         }
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     @Override
