@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -8,38 +10,10 @@
             type="cz.intesys.trainalert.viewmodel.PoiMapFragmentViewModel" />
     </data>
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/poiMapInfo_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-
-        <EditText
-            android:id="@+id/poiMapInfo_latitude"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="@{String.valueOf(viewModel.poi.latitude)}"
-            app:layout_constraintBottom_toTopOf="@+id/poiMapInfo_marker"
-            app:layout_constraintEnd_toStartOf="@+id/poiMapInfo_longitude"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <EditText
-            android:id="@+id/poiMapInfo_longitude"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:text="@{String.valueOf(viewModel.poi.longitude)}"
-            app:layout_constraintBaseline_toBaselineOf="@+id/poiMapInfo_latitude"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/poiMapInfo_latitude" />
 
         <ImageView
             android:id="@+id/poiMapInfo_marker"
@@ -47,6 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
+            android:src="@drawable/ic_edit_location"
             app:layout_constraintBottom_toTopOf="@+id/poiMapInfo_horizontalLine"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -72,15 +47,15 @@
             app:layout_constraintGuide_percent="0.5" />
 
         <GridLayout
+            android:id="@+id/poiMapInfo_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toTopOf="@id/poiMapInfo_latitude"
+            app:layout_constraintBottom_toTopOf="@+id/poiMapInfo_marker"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:layout_editor_absoluteY="91dp">
+            app:layout_constraintStart_toStartOf="parent">
 
             <ImageView
                 android:id="@+id/poiMapInfo_icon"

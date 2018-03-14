@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import cz.intesys.trainalert.adapter.PoiListAdapter;
 import cz.intesys.trainalert.databinding.FragmentPoiListBinding;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.viewmodel.PoiListFragmentViewModel;
+
+import static android.support.v7.widget.helper.ItemTouchHelper.RIGHT;
 
 public class PoiListFragment extends Fragment {
 
@@ -26,6 +29,8 @@ public class PoiListFragment extends Fragment {
 
     public interface OnFragmentInteractionListener extends PoiListAdapter.OnItemClickListener {
         void onPoiAdd();
+
+        void onPoiDeleted(Poi poi);
     }
 
     public PoiListFragment() {
@@ -66,6 +71,36 @@ public class PoiListFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getActivity());
         mBinding.fragmentPoiListRecyclerView.hasFixedSize();
         mBinding.fragmentPoiListRecyclerView.setLayoutManager(mLayoutManager);
+
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder,
+                                  RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public float getSwipeThreshold(RecyclerView.ViewHolder viewHolder) {
+                if (viewHolder instanceof PoiListAdapter.ViewHolder) return 1f;
+                return super.getSwipeThreshold(viewHolder);
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                if (swipeDir == RIGHT) {
+                    if (viewHolder instanceof PoiListAdapter.ViewHolder) {
+                        Poi poi = ((PoiListAdapter.ViewHolder) viewHolder).getBinding().getData();
+                        mListener.onPoiDeleted(poi);
+                    }
+                }
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(mBinding.fragmentPoiListRecyclerView);
+
         mAdapter = new PoiListAdapter(mListener);
         mBinding.fragmentPoiListRecyclerView.setAdapter(mAdapter);
         mViewModel.getPoisLiveData().observe(this, pois -> {

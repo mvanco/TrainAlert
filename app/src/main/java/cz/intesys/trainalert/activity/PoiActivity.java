@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.databinding.ActivityPoiBinding;
@@ -74,7 +75,6 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
 
             @Override
             public void onFailure(Throwable t) {
-
             }
         });
     }
@@ -107,6 +107,18 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
             PoiMapFragment fragment = (PoiMapFragment) getSupportFragmentManager().findFragmentById(R.id.activityPoi_mapFragment);
             fragment.addPoi();
         }
+    }
+
+    @Override public void onPoiDeleted(Poi poi) {
+        mViewModel.deletePoi(poi.getId(), new TaCallback<Poi>() {
+            @Override public void onResponse(Poi response) {
+                // Nothing to show here is needed.
+            }
+
+            @Override public void onFailure(Throwable t) {
+                Toast.makeText(getApplicationContext(), R.string.activity_main_poi_deleted_toast, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override

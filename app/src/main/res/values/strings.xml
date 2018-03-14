@@ -10,6 +10,9 @@
     <string name="activity_main_navigation_drawer_open">Open</string>
     <string name="activity_main_navigation_drawer_close">Close</string>
 
+    <!-- Toast messages -->
+    <string name="activity_main_poi_deleted_toast">Nemůžu vymazat (chyba serveru)</string>
+
     <!-- Alarm -->
     <string name="fragment_main_poi_type_message_crossing">Přejezd za %1$d metrů</string>
     <string name="fragment_main_poi_type_message_speed_limitation">Omezení rychlosti %1$d km/h</string>

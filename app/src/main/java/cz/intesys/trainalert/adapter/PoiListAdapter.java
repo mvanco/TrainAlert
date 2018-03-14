@@ -80,5 +80,9 @@ public class PoiListAdapter extends RecyclerView.Adapter<PoiListAdapter.ViewHold
             super(binding.getRoot());
             mBinding = binding;
         }
+
+        public FragmentPoiListItemBinding getBinding() {
+            return mBinding;
+        }
     }
 }

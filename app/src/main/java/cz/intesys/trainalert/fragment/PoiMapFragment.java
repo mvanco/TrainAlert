@@ -145,9 +145,11 @@ public class PoiMapFragment extends Fragment {
             }
         };
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.addTextChangedListener(tw);
-        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setOnClickListener(v ->
-                mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setText("")
-        );
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setOnClickListener(v -> {
+            if (mViewModel.getMode() == MODE_ADD_POI) {
+                mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setText("");
+            }
+        });
 
         return mBinding.getRoot();
     }
@@ -175,7 +177,7 @@ public class PoiMapFragment extends Fragment {
         mViewModel.setMode(MODE_EDIT_POI);
         mViewModel.setPoiId(poi.getId());
 
-        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoMarker.setBackgroundResource(R.drawable.ic_edit_location);
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoMarker.setImageResource(R.drawable.ic_edit_location);
     }
 
     /**

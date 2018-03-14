@@ -29,7 +29,7 @@ import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_TRAIN_STATION
 import static cz.intesys.trainalert.repository.PostgreSqlRepository.LOG_POSTGRE;
 
 public class SimulatedRepository implements Repository {
-    private final List<Poi> mExamplePois;
+    private final List<Poi> mPois;
     private static SimulatedRepository sInstance;
     private int mLocationIterator = 0; // 0 - the most right Poi, 230 - the most left Poi
     private boolean toTheLeftDirection = true;
@@ -37,7 +37,7 @@ public class SimulatedRepository implements Repository {
 
     private SimulatedRepository() {
         mExampleRoute = getExampleRoute();
-        mExamplePois = getExamplePois();
+        mPois = getPois();
     }
 
     public static SimulatedRepository getInstance() {
@@ -77,7 +77,7 @@ public class SimulatedRepository implements Repository {
     @Override
     public void getPois(TaCallback<List<Poi>> taCallback) {
         new Handler().postDelayed(() -> {
-            taCallback.onResponse(mExamplePois);
+            taCallback.onResponse(mPois);
             Log.d(LOG_POSTGRE, "getPois response");
         }, getRandomServerDelay());
         Log.d(LOG_POSTGRE, "getPois enqueued");
@@ -85,7 +85,7 @@ public class SimulatedRepository implements Repository {
 
     @Override
     public void addPoi(Poi poi, TaCallback<Poi> taCallback) {
-        mExamplePois.add(poi);
+        mPois.add(poi);
         new Handler().postDelayed(() -> {
             taCallback.onResponse(poi);
             Log.d(LOG_POSTGRE, "addPoi response");
@@ -96,10 +96,10 @@ public class SimulatedRepository implements Repository {
     @Override
     public void editPoi(long id, Poi poi, TaCallback<Poi> taCallback) {
         new Handler().postDelayed(() -> {
-            for (int i = 0; i < mExamplePois.size(); i++) {
-                Poi examplePoi = mExamplePois.get(i);
+            for (int i = 0; i < mPois.size(); i++) {
+                Poi examplePoi = mPois.get(i);
                 if (examplePoi.getId() == id) {
-                    mExamplePois.set(i, poi);
+                    mPois.set(i, poi);
                     taCallback.onResponse(poi);
                     Log.d(LOG_POSTGRE, "editPoi response");
                 }
@@ -111,7 +111,16 @@ public class SimulatedRepository implements Repository {
     }
 
     @Override public void deletePoi(long id, TaCallback<Poi> taCallback) {
-        // TODO: simulate this
+        new Handler().postDelayed(() -> {
+            Poi poi = mPois.get((int) id); // In simulated environment int is sufficient.
+            mPois.remove((int) id);
+            for (int i = 0; i < mPois.size(); i++) {
+                mPois.get(i).setId(i);
+            }
+            taCallback.onResponse(poi);
+            Log.d(LOG_POSTGRE, "deletePoi response");
+        }, getRandomServerDelay());
+        Log.d(LOG_POSTGRE, "deletePoi enqueued");
     }
 
     @Override public void getTrips(String id, TaCallback<List<String>> taCallback) {
@@ -188,7 +197,7 @@ public class SimulatedRepository implements Repository {
         }, getRandomServerDelay());
     }
 
-    private List<Poi> getExamplePois() {
+    private List<Poi> getPois() {
         List<Poi> sExamplePOIs = new ArrayList<Poi>();
 
         sExamplePOIs.add(new Poi(1, "Přechod 1", 50.47902, 14.03453, POI_TYPE_CROSSING));
