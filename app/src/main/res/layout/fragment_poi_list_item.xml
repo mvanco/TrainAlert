@@ -18,13 +18,16 @@
         android:layout_marginLeft="@dimen/poiListItem_cardView_margin_left"
         android:layout_marginRight="@dimen/poiListItem_cardView_margin_right"
         android:layout_marginTop="@dimen/poiListItem_cardView_margin_top"
+        android:clickable="true"
         android:padding="@dimen/poiListItem_cardView_padding"
         app:cardCornerRadius="@dimen/poiListItem_cardView_cornerRadius"
         app:cardElevation="@dimen/poiListItem_cardView_elevation">
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/poiListItem_cardViewContent"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/poi_list_item_background">
 
             <ImageView
                 android:id="@+id/poiListItem_icon"

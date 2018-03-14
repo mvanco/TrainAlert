@@ -9,7 +9,7 @@ import cz.intesys.trainalert.repository.SimulatedRepository;
 
 public class TaConfig {
     public static final int GPS_TIME_INTERVAL = 2000; // Time between two gps coordinates measurements in milliseconds
-    public static final int TRIP_TIME_INTERVAL = 10000;
+    public static final int TRIP_TIME_INTERVAL = 5000;
     public static final String REST_BASE_URL = "http://192.168.16.158:5000"; // Application server with offline maps
     public static final boolean LOGS = BuildConfig.LOGS;
     public static final int MAP_DEFAULT_ZOOM = 15; //

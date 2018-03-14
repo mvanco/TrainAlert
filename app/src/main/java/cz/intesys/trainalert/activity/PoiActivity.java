@@ -111,6 +111,8 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
 
     @Override
     public void onPoiSelect(Poi poi) {
+        getPoiListFragment().select(poi);
+
         if (inSingleFragmentMode()) {
             if (inPoiListFragment()) {
                 switchToPoiMapFragment(poi);

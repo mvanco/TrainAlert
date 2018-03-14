@@ -90,6 +90,6 @@ public class PoiListFragment extends Fragment {
     }
 
     public void select(Poi poi) {
-        // TODO: Select an item
+        mAdapter.selectPoi(poi);
     }
 }
