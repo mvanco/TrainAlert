@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -36,6 +37,7 @@ import cz.intesys.trainalert.adapter.NavAdapter;
 import cz.intesys.trainalert.databinding.ActivityMainBinding;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.fragment.MainFragment;
+import cz.intesys.trainalert.fragment.PasswordDialogFragment;
 import cz.intesys.trainalert.fragment.TripFragment;
 import cz.intesys.trainalert.fragment.TripIdDialogFragment;
 import cz.intesys.trainalert.fragment.TripIdManuallyDialogFragment;
@@ -48,12 +50,13 @@ import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_NEXT_STOP_COUNT;
 import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_PREVIOUS_STOP_COUNT;
 import static cz.intesys.trainalert.TaConfig.USE_OFFLINE_MAPS;
 
-public class MainActivity extends AppCompatActivity implements TripIdDialogFragment.OnFragmentInteractionListener, TripFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements TripIdDialogFragment.OnFragmentInteractionListener, TripFragment.OnFragmentInteractionListener, PasswordDialogFragment.OnFragmentInteractionListener {
 
     public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
     private static final String MAIN_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.mainFragmentTag";
     private static final String TRIP_ID_DIALOG_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.tripIdTag";
     private static final String TRIP_ID_MANUALLY_DIALOG_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.tripIdManuallyTag";
+    private static final String PASSWORD_DIALOG_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.passwordTag";
     private static final String TRIP_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.sideFragmentTag";
 
     private ActivityMainBinding mBinding;
@@ -62,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     private Menu mMenu;
     private MainActivityViewModel mViewModel;
     private TextView mClockTextView;
+    private boolean mShouldShowPasswordDialog = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,6 +203,23 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         }
     }
 
+    @Override public void onPasswordEntered(int password) {
+        DataHelper.getInstance().register(password, new TaCallback<Void>() {
+            @Override public void onResponse(Void response) {
+                mBinding.activityMainDrawerLayout.openDrawer(Gravity.LEFT);
+            }
+
+            @Override public void onFailure(Throwable t) {
+                Toast.makeText(MainActivity.this, R.string.activity_main_wrong_password, Toast.LENGTH_SHORT).show();
+            }
+        });
+        mShouldShowPasswordDialog = true;
+    }
+
+    @Override public void onDialogCanceled() {
+        mShouldShowPasswordDialog = true;
+    }
+
     public void onTimeChanged(Date time) {
         if (mClockTextView != null) {
             Calendar cal = Calendar.getInstance();
@@ -256,16 +277,22 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         mBinding.activityMainDrawerLayout.addDrawerListener(mToggle);
         mBinding.activityMainDrawerLayout.setScrimColor(Color.TRANSPARENT);
         mToggle.syncState();
+
         MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
         mBinding.activityMainDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-
+                if (!DataHelper.getInstance().isRegistered()) {
+                    mBinding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT);
+                    if (mShouldShowPasswordDialog) {
+                        PasswordDialogFragment.newInstance().show(getSupportFragmentManager(), PASSWORD_DIALOG_FRAGMENT_TAG);
+                        mShouldShowPasswordDialog = false;
+                    }
+                }
             }
 
             @Override
             public void onDrawerOpened(@NonNull View drawerView) {
-
             }
 
             @Override
@@ -282,5 +309,20 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                 }
             }
         });
+
+        //setDrawerState(false);
+    }
+
+    private void setDrawerState(boolean enabled) {
+        if (enabled) {
+            mBinding.activityMainDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            mToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_UNLOCKED);
+            mToggle.syncState();
+
+        } else {
+            mBinding.activityMainDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            mToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+            mToggle.syncState();
+        }
     }
 }

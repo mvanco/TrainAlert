@@ -66,6 +66,10 @@
     <dimen name="speedLimitView_width">100dp</dimen>
     <dimen name="speedLimitView_height">@dimen/speedLimitView_width</dimen>
     <dimen name="activityMain_clock_textSize">38sp</dimen>
+    <dimen name="stopView_bigHand_width">32dp</dimen>
+    <dimen name="stopView_bigHand_height">@dimen/stopView_bigHand_width</dimen>
+    <dimen name="stopView_hand_width">24dp</dimen>
+    <dimen name="stopView_hand_height">@dimen/stopView_hand_width</dimen>
 
     <item name="activityMain_mainContentRatio" format="float" type="dimen">0.6</item>
     <item name="activityMain_sideContentRatio" format="float" type="dimen">0.4</item>

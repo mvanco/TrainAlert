@@ -178,47 +178,49 @@ public class PostgreSqlRepository implements Repository {
     }
 
     @Override public void getTrips(String id, TaCallback<List<String>> taCallback) {
-        Call<ResponseApi<List<String>>> call = mApiService.getTrips();
-        call.enqueue(new Callback<ResponseApi<List<String>>>() {
-
-            @Override
-            public void onResponse(Call<ResponseApi<List<String>>> call, Response<ResponseApi<List<String>>> response) {
-                Log.d(LOG_POSTGRE, "getTrips response");
-                if (response.body() != null && response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
-                    taCallback.onResponse(response.body().getData());
-                } else {
-                    taCallback.onFailure(new Throwable());
-                }
-            }
-
-            @Override public void onFailure(Call<ResponseApi<List<String>>> call, Throwable t) {
-                taCallback.onFailure(t);
-                Log.d(LOG_POSTGRE, "getTrips failure");
-            }
-        });
-        Log.d(LOG_POSTGRE, "getTrips enqueued");
+        SimulatedRepository.getInstance().getTrips(id, taCallback);
+//        Call<ResponseApi<List<String>>> call = mApiService.getTrips();
+//        call.enqueue(new Callback<ResponseApi<List<String>>>() {
+//
+//            @Override
+//            public void onResponse(Call<ResponseApi<List<String>>> call, Response<ResponseApi<List<String>>> response) {
+//                Log.d(LOG_POSTGRE, "getTrips response");
+//                if (response.body() != null && response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
+//                    taCallback.onResponse(response.body().getData());
+//                } else {
+//                    taCallback.onFailure(new Throwable());
+//                }
+//            }
+//
+//            @Override public void onFailure(Call<ResponseApi<List<String>>> call, Throwable t) {
+//                taCallback.onFailure(t);
+//                Log.d(LOG_POSTGRE, "getTrips failure");
+//            }
+//        });
+//        Log.d(LOG_POSTGRE, "getTrips enqueued");
     }
 
     @Override public void setTrip(String id, TaCallback<Void> taCallback) {
-        Call<ResponseApi<Void>> call = mApiService.setTrip(id);
-        call.enqueue(new Callback<ResponseApi<Void>>() {
-
-            @Override
-            public void onResponse(Call<ResponseApi<Void>> call, Response<ResponseApi<Void>> response) {
-                Log.d(LOG_POSTGRE, "setTrip response");
-                if (response.body() != null && response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
-                    taCallback.onResponse(null); // Only call function is enough to inform about completition without error
-                } else {
-                    taCallback.onFailure(new Throwable());
-                }
-            }
-
-            @Override public void onFailure(Call<ResponseApi<Void>> call, Throwable t) {
-                Log.d(LOG_POSTGRE, "setTrip failure");
-                taCallback.onFailure(t);
-            }
-        });
-        Log.d(LOG_POSTGRE, "setTrip enqueued");
+        SimulatedRepository.getInstance().setTrip("a18352", taCallback);
+//        Call<ResponseApi<Void>> call = mApiService.setTrip(id);
+//        call.enqueue(new Callback<ResponseApi<Void>>() {
+//
+//            @Override
+//            public void onResponse(Call<ResponseApi<Void>> call, Response<ResponseApi<Void>> response) {
+//                Log.d(LOG_POSTGRE, "setTrip response");
+//                if (response.body() != null && response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
+//                    taCallback.onResponse(null); // Only call function is enough to inform about completition without error
+//                } else {
+//                    taCallback.onFailure(new Throwable());
+//                }
+//            }
+//
+//            @Override public void onFailure(Call<ResponseApi<Void>> call, Throwable t) {
+//                Log.d(LOG_POSTGRE, "setTrip failure");
+//                taCallback.onFailure(t);
+//            }
+//        });
+//        Log.d(LOG_POSTGRE, "setTrip enqueued");
     }
 
     @Override public void getPreviousStops(int count, TaCallback<List<Stop>> taCallback) {

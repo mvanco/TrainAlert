@@ -51,6 +51,7 @@ public class DataHelper implements LifecycleObserver {
     private static final String FIRST_RUN_KEY = "first_run";
     private static final String TRAIN_ID_KEY = "train_id";
     private static final String TRIP_ID_KEY = "trip_id";
+    private static final String REGISTERED_KEY = "registered";
 
     private static DataHelper sInstance;
     private Repository mRepository;
@@ -258,6 +259,20 @@ public class DataHelper implements LifecycleObserver {
 
     public String getTripId() {
         return mSharedPrefs.getString(TRIP_ID_KEY, "");
+    }
+
+    public void register(int password, TaCallback<Void> taCallback) {
+        if (password == 1234) {
+            mSharedPrefs.edit().putBoolean(REGISTERED_KEY, true).commit();
+            taCallback.onResponse(null);
+        } else {
+            mSharedPrefs.edit().putBoolean(REGISTERED_KEY, false).commit();
+            taCallback.onFailure(new Throwable());
+        }
+    }
+
+    public boolean isRegistered() {
+        return mSharedPrefs.getBoolean(REGISTERED_KEY, false);
     }
 
     public void getPreviousStops(int count, TaCallback<List<Stop>> taCallback) {

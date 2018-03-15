@@ -100,10 +100,6 @@ public class StopView extends FrameLayout {
         return mArrival;
     }
 
-    public void setArrival(Date arrival) {
-        mArrival = arrival;
-    }
-
     public void setArrival(String arrival) {
         if (arrival == null) {
             return;
@@ -114,6 +110,10 @@ public class StopView extends FrameLayout {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setArrival(Date arrival) {
+        mArrival = arrival;
     }
 
     public int getDelay() {
@@ -239,8 +239,10 @@ public class StopView extends FrameLayout {
         int hours = mDelay / 3600;
         int minutes = (mDelay - hours * 3600) / 60;
         int onlyMinutes = mDelay / 60;
-        mBinding.stopViewDelay.setText(String.format("%d", onlyMinutes));
-        if (onlyMinutes < 5) {
+        mBinding.stopViewDelay.setText(String.format("%d", Math.abs(onlyMinutes)));
+        if (onlyMinutes < 0) {
+            mBinding.stopViewDelay.setTextColor(ContextCompat.getColor(getContext(), R.color.green));
+        } else if (onlyMinutes == 0) {
             mBinding.stopViewDelay.setTextColor(ContextCompat.getColor(getContext(), R.color.trip_grey));
         } else {
             mBinding.stopViewDelay.setTextColor(ContextCompat.getColor(getContext(), R.color.trip_delay_red));
@@ -263,11 +265,23 @@ public class StopView extends FrameLayout {
                 break;
         }
 
+        ViewGroup.LayoutParams lp = mBinding.stopViewHand.getLayoutParams();
+        if (mType == TYPE_CLOSEST_NEXT_STOP) {
+            lp.width = getResources().getDimensionPixelOffset(R.dimen.stopView_bigHand_width);
+            lp.height = getResources().getDimensionPixelSize(R.dimen.stopView_bigHand_height);
+            mBinding.stopViewHand.setLayoutParams(lp);
+        } else {
+            lp.width = getResources().getDimensionPixelOffset(R.dimen.stopView_hand_width);
+            lp.height = getResources().getDimensionPixelSize(R.dimen.stopView_hand_height);
+            mBinding.stopViewHand.setLayoutParams(lp);
+        }
+
         if (mButtonPressed) {
             mBinding.stopViewHand.setVisibility(View.VISIBLE);
         } else {
             mBinding.stopViewHand.setVisibility(View.GONE);
         }
+
 
         invalidate();
         requestLayout();

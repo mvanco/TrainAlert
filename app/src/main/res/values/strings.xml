@@ -139,5 +139,8 @@
         <item>300</item>
     </string-array>
     <string name="pref_distances_summary">Nastav vzdálenosti které vyvolávají upozornění</string>
+    <string name="title_fragment_password">Heslo</string>
+    <string name="password_dialog_fragment_positive_button">Potvrď</string>
+    <string name="activity_main_wrong_password">Bylo zadáno zlé heslo</string>
 
 </resources>
