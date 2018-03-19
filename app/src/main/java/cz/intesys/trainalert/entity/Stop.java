@@ -10,6 +10,7 @@ public class Stop {
     private Date arrival;
     private int delay;
     private boolean pressed;
+    private @StopApi.StopCategory String type;
 
     public Stop(StopApi stopApi) {
         this.id = stopApi.getId();
@@ -17,14 +18,16 @@ public class Stop {
         this.arrival = stopApi.getArrival();
         this.delay = stopApi.getDelay();
         this.pressed = stopApi.isPressed() && StopApi.CATEGORY_ON_DEMAND.contains(stopApi.getType());
+        this.type = stopApi.getType();
     }
 
-    public Stop(String id, String name, Date arrival, int delay, boolean pressed) {
+    public Stop(String id, String name, Date arrival, int delay, boolean pressed, String type) {
         this.id = id;
         this.name = name;
         this.arrival = arrival;
         this.delay = delay;
         this.pressed = pressed;
+        this.type = type;
     }
 
     public String getId() {
@@ -65,5 +68,9 @@ public class Stop {
 
     public void setPressed(boolean pressed) {
         this.pressed = pressed;
+    }
+
+    public String getType() {
+        return type;
     }
 }

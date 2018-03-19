@@ -45,4 +45,7 @@ public interface TaServerApi {
 
     @GET("/Trip/ShouldStop")
     Call<ResponseApi<Boolean>> shouldStop();
+
+    @GET("/Trip/GetTripStatus")
+    Call<ResponseApi<TripStatusApi>> getTripStatus();
 }

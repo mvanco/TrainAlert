@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.adapter.TripAdapter;
 import cz.intesys.trainalert.databinding.FragmentTripBinding;
@@ -76,7 +77,12 @@ public class TripFragment extends Fragment {
             mAdapter.setFinalStop(finalStop);
             mAdapter.notifyDataSetChanged();
         });
-        mViewModel.getShouldStopLiveData().observe(this, shouldStop -> setShouldStop(shouldStop));
+
+        mViewModel.getTrainStatusLiveData().observe(this, trainStatus -> {
+            setTripHeader(trainStatus.isPressed(), trainStatus.isCanPass());
+        });
+
+//        mViewModel.getShouldStopLiveData().observe(this, shouldStop -> setTripHeader(shouldStop));
     }
 
     @Override
@@ -102,6 +108,11 @@ public class TripFragment extends Fragment {
             }
         });
         mBinding.tripId.setText(String.valueOf(DataHelper.getInstance().getTripId()));
+
+//        mViewModel.getTrainStatusLiveData().observe(this, trainStatus -> {
+//            setTripHeader(trainStatus.isPressed(), trainStatus.isCanPass());
+//            setCanPass(trainStatus.isCanPass());
+//        });
     }
 
     @Override
@@ -128,15 +139,28 @@ public class TripFragment extends Fragment {
         }
     }
 
-    private void setShouldStop(boolean shouldStop) {
-        if (shouldStop) {
-            mBinding.fragmentTripGreenBackground.setVisibility(View.INVISIBLE);
-            mBinding.fragmentTripGoAhead.setVisibility(View.INVISIBLE);
-            mBinding.fragmentTripRightArrow.setVisibility(View.INVISIBLE);
-        } else {
+    private void setTripHeader(boolean pressed, boolean canPass) {
+        if (canPass) {
             mBinding.fragmentTripGreenBackground.setVisibility(View.VISIBLE);
             mBinding.fragmentTripGoAhead.setVisibility(View.VISIBLE);
             mBinding.fragmentTripRightArrow.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.fragmentTripGreenBackground.setVisibility(View.INVISIBLE);
+            mBinding.fragmentTripGoAhead.setVisibility(View.INVISIBLE);
+            mBinding.fragmentTripRightArrow.setVisibility(View.INVISIBLE);
+        }
+
+        if (pressed) {
+            mBinding.fragmentTripHeaderHand.setVisibility(View.VISIBLE);
+            mBinding.fragmentTripOrangeBackground.setVisibility(View.VISIBLE);
+            if (canPass) {
+                mBinding.fragmentTripHeaderHand.setImageResource(R.drawable.ic_hand_green);
+            } else {
+                mBinding.fragmentTripHeaderHand.setImageResource(R.drawable.ic_hand_white);
+            }
+        } else {
+            mBinding.fragmentTripOrangeBackground.setVisibility(View.INVISIBLE);
+            mBinding.fragmentTripHeaderHand.setVisibility(View.INVISIBLE);
         }
     }
 }

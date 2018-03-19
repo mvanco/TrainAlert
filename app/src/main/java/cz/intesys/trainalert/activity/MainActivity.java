@@ -7,6 +7,7 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
@@ -49,6 +50,7 @@ import static android.support.v4.widget.DrawerLayout.STATE_IDLE;
 import static android.support.v4.widget.DrawerLayout.STATE_SETTLING;
 import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_NEXT_STOP_COUNT;
 import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_PREVIOUS_STOP_COUNT;
+import static cz.intesys.trainalert.TaConfig.TRIP_ID_LOADER_DURATION;
 import static cz.intesys.trainalert.TaConfig.USE_OFFLINE_MAPS;
 
 public class MainActivity extends AppCompatActivity implements TripIdDialogFragment.OnFragmentInteractionListener, TripFragment.OnFragmentInteractionListener, PasswordDialogFragment.OnFragmentInteractionListener {
@@ -156,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                 Fragment fragment = TripFragment.newInstance(TRIP_FRAGMENT_PREVIOUS_STOP_COUNT, TRIP_FRAGMENT_NEXT_STOP_COUNT);
                 getSupportFragmentManager().beginTransaction().replace(R.id.activityMain_sideContainer, fragment, TRIP_FRAGMENT_TAG).commit();
                 getSupportFragmentManager().executePendingTransactions();
+                hideTripIdSelectionIconLoader();
                 mMenu.findItem(R.id.menu_trip_selection).setIcon(R.drawable.ic_trip_selection);
             }
 
@@ -197,7 +200,11 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_trip_selection:
+                showTripIdSelectionIconLoader();
                 showTripIdDialogFragment();
+                new Handler().postDelayed(() -> {
+                    hideTripIdSelectionIconLoader();
+                }, TRIP_ID_LOADER_DURATION);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -260,6 +267,23 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         });
     }
 
+    private void showTripIdSelectionIconLoader() {
+        MenuItem item = mMenu.findItem(R.id.menu_trip_selection);
+        item.setIcon(R.drawable.ic_trip_selection_loader);
+        item.setEnabled(false);
+    }
+
+    private void hideTripIdSelectionIconLoader() {
+        MenuItem item = mMenu.findItem(R.id.menu_trip_selection);
+        if (!DataHelper.getInstance().getTripId().isEmpty()) {
+            item.setIcon(R.drawable.ic_trip_selection_red);
+            //Toast.makeText(this, R.string.activity_main_unsuccessful_trip_selection, Toast.LENGTH_SHORT).show();
+        } else {
+            item.setIcon(R.drawable.ic_trip_selection);
+        }
+        item.setEnabled(true);
+    }
+
     private void onNavigationItemSelected(@StringRes int id) {
         if (id == R.string.nav_pois) { // POIs
             mBinding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
@@ -267,6 +291,10 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         } else if (id == R.string.nav_categories) {
             mBinding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
             startActivity(CategoryActivity.newIntent(this));
+        } else if (id == R.string.nav_logout) {
+            mBinding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
+            Toast.makeText(this, R.string.activity_main_successful_logout, Toast.LENGTH_SHORT).show();
+            DataHelper.getInstance().unregister();
         }
     }
 

@@ -16,11 +16,11 @@
             android:layout_marginStart="8dp"
             android:background="@color/trip_grey"
             android:visibility="invisible"
-            tools:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/stopView_timePoint"
             app:layout_constraintEnd_toStartOf="@+id/stopView_card"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
 
         <ImageView
             android:id="@+id/stopView_bottomLine"
@@ -30,11 +30,11 @@
             android:layout_marginStart="8dp"
             android:background="@color/trip_grey"
             android:visibility="invisible"
-            tools:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/stopView_card"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/stopView_timePoint" />
+            app:layout_constraintTop_toBottomOf="@+id/stopView_timePoint"
+            tools:visibility="visible" />
 
         <ImageView
             android:id="@+id/stopView_timePoint"
@@ -109,7 +109,7 @@
             app:layout_constraintEnd_toEndOf="@+id/stopView_card"
             app:layout_constraintTop_toTopOf="@+id/stopView_card"
             app:layout_constraintVertical_bias="0.39999998"
-            app:srcCompat="@drawable/ic_hand"
+            app:srcCompat="@drawable/ic_hand_white"
             tools:visibility="visible" />
 
         <ImageView

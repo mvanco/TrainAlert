@@ -59,8 +59,6 @@ import static cz.intesys.trainalert.TaConfig.MAP_DEFAULT_ZOOM;
 import static cz.intesys.trainalert.TaConfig.OSMDROID_DEBUGGING;
 import static cz.intesys.trainalert.TaConfig.REST_BASE_URL;
 import static cz.intesys.trainalert.TaConfig.USE_OFFLINE_MAPS;
-import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_20;
-import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_70;
 import static cz.intesys.trainalert.utility.Utility.convertToDegrees;
 import static cz.intesys.trainalert.utility.Utility.getMarkerRotation;
 
@@ -219,6 +217,10 @@ public class MainFragment extends Fragment {
                 showGpsUnavailableLoader();
             }
         });
+
+        mViewModel.getTrainStatusLiveData().observe(this, trainStatus -> {
+            setSpeedLimit(trainStatus.getSpeedLimit());
+        });
     }
 
     private boolean onMapScroll(ScrollEvent event) {
@@ -264,12 +266,12 @@ public class MainFragment extends Fragment {
         }
         handleNotification(trainMarker.getPosition());
 
-        Poi passingPoi = mViewModel.getPassingPoi();
-        if (passingPoi != null) {
-            if (passingPoi.getCategory() > POI_TYPE_SPEED_LIMITATION_20 && passingPoi.getCategory() < POI_TYPE_SPEED_LIMITATION_70) {
-            setSpeedLimit(passingPoi.getCategory());
-            }
-        }
+//        Poi passingPoi = mViewModel.getPassingPoi();
+//        if (passingPoi != null) {
+//            if (passingPoi.getCategory() > POI_TYPE_SPEED_LIMITATION_20 && passingPoi.getCategory() < POI_TYPE_SPEED_LIMITATION_70) {
+//            setSpeedLimit(passingPoi.getCategory());
+//            }
+//        }
     }
 
     private void animateMarkerTo(final MapView map, final Marker marker, final GeoPoint finalPosition, final GeoPointInterpolator GeoPointInterpolator) {

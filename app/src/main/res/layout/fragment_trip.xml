@@ -134,12 +134,22 @@
                     app:srcCompat="@color/trip_go_ahead_green"
                     tools:visibility="visible" />
 
+                <ImageView
+                    android:id="@+id/fragmentTrip_orangeBackground"
+                    android:layout_width="166dp"
+                    android:layout_height="0dp"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="@id/fragmentTrip_divider"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/next_stop_pressed_background"
+                    tools:visibility="visible" />
+
                 <TextView
                     android:id="@+id/fragmentTrip_goAhead"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:text="@string/fragment_trip_go_ahead"
@@ -167,6 +177,19 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_chainStyle="packed"
                     app:srcCompat="@drawable/ic_go_ahead" />
+
+                <ImageView
+                    android:id="@+id/fragmentTrip_headerHand"
+                    android:layout_width="@dimen/header_hand_width"
+                    android:layout_height="@dimen/header_hand_height"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/fragmentTrip_delayLabel"
+                    app:layout_constraintEnd_toEndOf="@+id/fragmentTrip_orangeBackground"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_hand_white" />
+
             </android.support.constraint.ConstraintLayout>
 
             <android.support.v7.widget.RecyclerView

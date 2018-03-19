@@ -13,6 +13,9 @@
 
     <!-- Toast messages -->
     <string name="activity_main_poi_deleted_toast">Nemůžu vymazat (chyba serveru)</string>
+    <string name="activity_main_successful_logout">Byl jste úspěšně odhlášen</string>
+    <string name="activity_main_unsuccessful_trip_selection">Nepodařilo se získat seznam jízd</string>
+
 
     <!-- Alarm -->
     <string name="fragment_main_poi_type_message_crossing">Přejezd za %1$d metrů</string>
@@ -35,7 +38,7 @@
     <string name="fragment_trip_delay_label">Zpoždění\n(min.)</string>
     <string name="fragment_trip_arrival_label">Příjezd</string>
     <string name="fragment_trip_final_stop_label">Konečná zastávka</string>
-    <string name="fragment_trip_go_ahead">Průjezd volný</string>
+    <string name="fragment_trip_go_ahead">Projdi</string>
 
     <!-- Content Descriptions -->
     <string name="fragment_poi_list_icon_desc">Icon</string>
@@ -143,5 +146,7 @@
     <string name="password_dialog_fragment_positive_button">Potvrď</string>
     <string name="activity_main_wrong_password">Bylo zadáno zlé heslo</string>
     <string name="progress_bar_text_location_unavailable">GPS data\njsou nedostupná</string>
+    <string name="menu_logout">Odhlásit</string>
+    <string name="nav_logout">Odhlásit</string>
 
 </resources>

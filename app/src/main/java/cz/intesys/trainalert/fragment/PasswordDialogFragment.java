@@ -34,7 +34,7 @@ public class PasswordDialogFragment extends DialogFragment {
     @NonNull @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        LinearLayout customView = (LinearLayout) inflater.inflate(R.layout.dialog_train_id, null);
+        LinearLayout customView = (LinearLayout) inflater.inflate(R.layout.dialog_password, null);
 
 
         builder.setTitle(R.string.title_fragment_password);

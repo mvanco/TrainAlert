@@ -19,6 +19,7 @@ import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.entity.TaCallback;
+import cz.intesys.trainalert.entity.TripStatus;
 import cz.intesys.trainalert.repository.DataHelper;
 import cz.intesys.trainalert.utility.Utility;
 import io.reactivex.Observable;
@@ -31,6 +32,7 @@ public class BaseViewModel extends ViewModel implements LifecycleObserver {
     private DataHelper mDataHelper;
     private MediatorLiveData<Location> mLocation;
     private MediatorLiveData<List<Poi>> mPois;
+    private MediatorLiveData<TripStatus> mTrainStatus;
     private MutableLiveData<Boolean> mEnableGpsUnavailableLoader;
     private long mLastServerResponse;
 
@@ -38,9 +40,15 @@ public class BaseViewModel extends ViewModel implements LifecycleObserver {
         mDataHelper = DataHelper.getInstance();
         mLocation = new MediatorLiveData<>();
         mPois = new MediatorLiveData<>();
+        mTrainStatus = new MediatorLiveData<>();
         mEnableGpsUnavailableLoader = new MutableLiveData<>();
         mLocation.addSource(mDataHelper.getLocationLiveData(), location -> mLocation.setValue(location));
         mPois.addSource(mDataHelper.getPoisLiveData(), pois -> mPois.setValue(pois));
+        mTrainStatus.addSource(mDataHelper.getTrainStatusLiveData(), trainStatus -> mTrainStatus.setValue(trainStatus));
+    }
+
+    public LiveData<TripStatus> getTrainStatusLiveData() {
+        return mTrainStatus;
     }
 
     public Observable<Boolean> getGpsTimeoutLiveData(LifecycleOwner owner) {

@@ -11,10 +11,12 @@ import cz.intesys.trainalert.api.PoisApi;
 import cz.intesys.trainalert.api.ResponseApi;
 import cz.intesys.trainalert.api.StopApi;
 import cz.intesys.trainalert.api.TaServerApi;
+import cz.intesys.trainalert.api.TripStatusApi;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.entity.TaCallback;
+import cz.intesys.trainalert.entity.TripStatus;
 import cz.intesys.trainalert.rest.TaClient;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -326,30 +328,53 @@ public class PostgreSqlRepository implements Repository {
         Log.d(LOG_POSTGRE, "getTrainId enqueued");
     }
 
-    @Override public void shouldStop(TaCallback<Boolean> taCallback) {
-        Call<ResponseApi<Boolean>> call = mApiService.shouldStop();
-        call.enqueue(new Callback<ResponseApi<Boolean>>() {
+//    @Override public void shouldStop(TaCallback<Boolean> taCallback) {
+//        Call<ResponseApi<Boolean>> call = mApiService.shouldStop();
+//        call.enqueue(new Callback<ResponseApi<Boolean>>() {
+//            @Override
+//            public void onResponse(Call<ResponseApi<Boolean>> call, Response<ResponseApi<Boolean>> response) {
+//                if (response.body() != null
+//                        && response.body().getErrorCode() == ResponseApi.ECODE_OK
+//                        && response.body().getData() != null) {
+//                    taCallback.onResponse(response.body().getData());
+//                    Log.d(LOG_POSTGRE, "shouldStop response");
+//                } else {
+//                    taCallback.onFailure(new Throwable());
+//                    Log.d(LOG_POSTGRE, "shouldStop failure");
+//                }
+//            }
+//
+//            @Override public void onFailure(Call<ResponseApi<Boolean>> call, Throwable t) {
+//                taCallback.onFailure(new Throwable(t));
+//                Log.d(LOG_POSTGRE, "shouldStop failure");
+//            }
+//        });
+//        Log.d(LOG_POSTGRE, "shouldStop enqueued");
+//    }
+
+    @Override public void getTripStatus(TaCallback<TripStatus> taCallback) {
+        Call<ResponseApi<TripStatusApi>> call = mApiService.getTripStatus();
+        call.enqueue(new Callback<ResponseApi<TripStatusApi>>() {
             @Override
-            public void onResponse(Call<ResponseApi<Boolean>> call, Response<ResponseApi<Boolean>> response) {
+            public void onResponse(Call<ResponseApi<TripStatusApi>> call, Response<ResponseApi<TripStatusApi>> response) {
                 if (response.body() != null
                         && response.body().getErrorCode() == ResponseApi.ECODE_OK
                         && response.body().getData() != null) {
-                    taCallback.onResponse(response.body().getData());
-                    Log.d(LOG_POSTGRE, "shouldStop response");
+                    taCallback.onResponse(new TripStatus(response.body().getData()));
+                    Log.d(LOG_POSTGRE, "getTripStatus response");
                 } else {
                     taCallback.onFailure(new Throwable());
-                    Log.d(LOG_POSTGRE, "shouldStop failure");
+                    Log.d(LOG_POSTGRE, "getTripStatus failure");
                 }
             }
 
-            @Override public void onFailure(Call<ResponseApi<Boolean>> call, Throwable t) {
+            @Override public void onFailure(Call<ResponseApi<TripStatusApi>> call, Throwable t) {
                 taCallback.onFailure(new Throwable(t));
-                Log.d(LOG_POSTGRE, "shouldStop failure");
+                Log.d(LOG_POSTGRE, "getTripStatus failure");
             }
         });
-        Log.d(LOG_POSTGRE, "shouldStop enqueued");
+        Log.d(LOG_POSTGRE, "getTripStatus enqueued");
     }
-
 
 }
 

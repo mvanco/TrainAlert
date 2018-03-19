@@ -76,7 +76,7 @@ public class SpeedLimitView extends FrameLayout {
 
         mBinding.speedLimitText.setText(mText);
 
-        if (categoryId > POI_TYPE_SPEED_LIMITATION_20 && categoryId < POI_TYPE_SPEED_LIMITATION_70) {
+        if (categoryId >= POI_TYPE_SPEED_LIMITATION_20 && categoryId <= POI_TYPE_SPEED_LIMITATION_70) {
             mBinding.getRoot().setVisibility(View.VISIBLE);
         } else {
             mBinding.getRoot().setVisibility(View.INVISIBLE);

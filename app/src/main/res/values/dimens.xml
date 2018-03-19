@@ -72,6 +72,8 @@
     <dimen name="stopView_hand_height">@dimen/stopView_hand_width</dimen>
     <dimen name="progress_bar_width">250dp</dimen>
     <dimen name="progress_bar_height">@dimen/progress_bar_width</dimen>
+    <dimen name="header_hand_width">64dp</dimen>
+    <dimen name="header_hand_height">@dimen/header_hand_width</dimen>
 
     <item name="activityMain_mainContentRatio" format="float" type="dimen">0.6</item>
     <item name="activityMain_sideContentRatio" format="float" type="dimen">0.4</item>

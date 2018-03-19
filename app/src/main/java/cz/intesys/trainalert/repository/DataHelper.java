@@ -20,6 +20,7 @@ import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.entity.TaCallback;
+import cz.intesys.trainalert.entity.TripStatus;
 import cz.intesys.trainalert.utility.Utility;
 
 import static cz.intesys.trainalert.TaConfig.REPOSITORY;
@@ -54,7 +55,7 @@ public class DataHelper implements LifecycleObserver {
     private static final String TRAIN_ID_KEY = "train_id";
     private static final String TRIP_ID_KEY = "trip_id";
     private static final String REGISTERED_KEY = "registered";
-
+    private final MutableLiveData<TripStatus> mTrainStatusLiveData;
     private static DataHelper sInstance;
     private Repository mRepository;
     private SharedPreferences mSharedPrefs;
@@ -64,6 +65,7 @@ public class DataHelper implements LifecycleObserver {
     private MutableLiveData<List<Poi>> mPoisLiveData;
     private Utility.IntervalPoller mLocationPoller;
     private boolean mShouldStop;
+    private TripStatus mTripStatus;
     private MutableLiveData<Boolean> mShouldStopLiveData;
     private MutableLiveData<Long> mLatestTimeLiveData;
 
@@ -85,8 +87,10 @@ public class DataHelper implements LifecycleObserver {
         mLocation = TaConfig.DEFAULT_LOCATION;
         mLocationLiveData = new MutableLiveData<Location>();
         mPois = new ArrayList<>();
+        mTripStatus = new TripStatus(true, false, POI_TYPE_SPEED_LIMITATION_40);
         mPoisLiveData = new MutableLiveData<>();
         mShouldStopLiveData = new MutableLiveData<>();
+        mTrainStatusLiveData = new MutableLiveData<>();
         mLatestTimeLiveData = new MutableLiveData<>();
 
         mLocationPoller = new Utility.IntervalPoller(TaConfig.GPS_TIME_INTERVAL, () -> {
@@ -98,6 +102,8 @@ public class DataHelper implements LifecycleObserver {
 //            if (mShouldStopLiveData.getValue() != null && mShouldStop != mShouldStopLiveData.getValue().booleanValue()) {
 //                mShouldStopLiveData.setValue(mShouldStop);
 //            }
+
+            mTrainStatusLiveData.setValue(mTripStatus);
 
             mRepository.getCurrentLocation(new TaCallback<Location>() {
                 @Override
@@ -114,9 +120,10 @@ public class DataHelper implements LifecycleObserver {
 
                 }
             });
-            mRepository.shouldStop(new TaCallback<Boolean>() {
-                @Override public void onResponse(Boolean response) {
-                    mShouldStop = response;
+
+            mRepository.getTripStatus(new TaCallback<TripStatus>() {
+                @Override public void onResponse(TripStatus response) {
+                    mTripStatus = response;
                 }
 
                 @Override public void onFailure(Throwable t) {
@@ -131,6 +138,10 @@ public class DataHelper implements LifecycleObserver {
             sInstance = new DataHelper();
         }
         return sInstance;
+    }
+
+    public MutableLiveData<TripStatus> getTrainStatusLiveData() {
+        return mTrainStatusLiveData;
     }
 
     public MutableLiveData<Long> getLatestTimeLiveData() {
@@ -281,6 +292,10 @@ public class DataHelper implements LifecycleObserver {
             mSharedPrefs.edit().putBoolean(REGISTERED_KEY, false).commit();
             taCallback.onFailure(new Throwable());
         }
+    }
+
+    public void unregister() {
+        mSharedPrefs.edit().putBoolean(REGISTERED_KEY, false).commit();
     }
 
     public boolean isRegistered() {

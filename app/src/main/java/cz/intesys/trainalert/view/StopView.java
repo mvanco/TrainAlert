@@ -18,6 +18,7 @@ import java.util.Date;
 
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.TaConfig;
+import cz.intesys.trainalert.api.StopApi;
 import cz.intesys.trainalert.databinding.ViewStopBinding;
 import cz.intesys.trainalert.entity.Stop;
 
@@ -42,6 +43,7 @@ public class StopView extends FrameLayout {
     private int mColor;
     private @StopType
     int mType;
+    private @StopApi.StopCategory String mCategory;
     private boolean mFinalStage;
     private boolean mButtonPressed;
 
@@ -100,6 +102,10 @@ public class StopView extends FrameLayout {
         return mArrival;
     }
 
+    public void setArrival(Date arrival) {
+        mArrival = arrival;
+    }
+
     public void setArrival(String arrival) {
         if (arrival == null) {
             return;
@@ -110,10 +116,6 @@ public class StopView extends FrameLayout {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setArrival(Date arrival) {
-        mArrival = arrival;
     }
 
     public int getDelay() {
@@ -143,10 +145,15 @@ public class StopView extends FrameLayout {
         invalidateStopView();
     }
 
+    public void setCategory(@StopApi.StopCategory String category) {
+        mCategory = category;
+    }
+
     public void setStop(Stop stop) {
         mName = stop.getName();
         mArrival = stop.getArrival();
         mDelay = stop.getDelay();
+        mCategory = stop.getType();
     }
 
     public void setAsTrainMarker(boolean value) {
@@ -276,10 +283,21 @@ public class StopView extends FrameLayout {
             mBinding.stopViewHand.setLayoutParams(lp);
         }
 
+        if (mCategory != null) {
+            if (StopApi.CATEGORY_ON_DEMAND.equals(mCategory)) {
+                mBinding.stopViewHand.setVisibility(VISIBLE);
+            } else {
+                mBinding.stopViewHand.setVisibility(GONE);
+            }
+        }
+
         if (mButtonPressed) {
-            mBinding.stopViewHand.setVisibility(View.VISIBLE);
+//            mBinding.stopViewHand.setVisibility(View.VISIBLE);
+            mBinding.stopViewHand.setImageResource(R.drawable.ic_hand);
         } else {
-            mBinding.stopViewHand.setVisibility(View.GONE);
+//            mBinding.stopViewHand.setVisibility(View.INVISIBLE);
+            mBinding.stopViewHand.setImageResource(R.drawable.ic_hand_white);
+
         }
 
 

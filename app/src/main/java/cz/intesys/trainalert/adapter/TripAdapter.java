@@ -23,6 +23,9 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
     private OnItemClickListener mListener;
     private boolean mFinalStage = false;
 
+    public interface OnItemClickListener {
+    }
+
     public TripAdapter(Context context, OnItemClickListener listener) {
         mContext = context; // TODO: make with Dagger
         mListener = listener;
@@ -50,6 +53,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
             holder.stopView.setArrival(stop.getArrival());
             holder.stopView.setDelay(stop.getDelay());
             holder.stopView.setButtonPressed(stop.isPressed());
+            holder.stopView.setCategory(stop.getType());
         }
 
         int listPosition = 0;
@@ -144,9 +148,6 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
         } else { // Final stop.
             stopView.setColor(ContextCompat.getColor(mContext, R.color.stop_blue));
         }
-    }
-
-    public interface OnItemClickListener {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

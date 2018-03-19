@@ -15,6 +15,7 @@ import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.entity.TaCallback;
+import cz.intesys.trainalert.entity.TripStatus;
 
 import static cz.intesys.trainalert.TaConfig.SIMULATED_REPOSITORY_GET_TRIPS_RESPONSE_DELAY_RANGE;
 import static cz.intesys.trainalert.TaConfig.SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE;
@@ -167,7 +168,7 @@ public class SimulatedRepository implements Repository {
         new Handler().postDelayed(() -> {
             List<Stop> stops = new ArrayList<>();
             try {
-                stops.add(new Stop("0", "Predosla 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 3900, true));
+                stops.add(new Stop("0", "Predosla 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 3900, true, "stop"));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -217,9 +218,16 @@ public class SimulatedRepository implements Repository {
         Log.d(LOG_POSTGRE, "getTrainId enqueued");
     }
 
-    @Override public void shouldStop(TaCallback<Boolean> taCallback) {
+//    @Override public void shouldStop(TaCallback<Boolean> taCallback) {
+//        new Handler().postDelayed(() -> {
+//            taCallback.onResponse(false);
+//        }, getRandomServerDelay());
+//    }
+
+    @Override public void getTripStatus(TaCallback<TripStatus> taCallback) {
         new Handler().postDelayed(() -> {
-            taCallback.onResponse(false);
+            TripStatus ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_50);
+            taCallback.onResponse(ts);
         }, getRandomServerDelay());
     }
 
@@ -230,13 +238,13 @@ public class SimulatedRepository implements Repository {
                 case 0:
                     break;
                 case 1:
-                    stops.add(new Stop("0", "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true));
+                    stops.add(new Stop("0", "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "on_request"));
                     break;
                 case 2:
-                    stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+                    stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "stop"));
                     break;
                 case 3:
-                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "stop"));
                     break;
                 case 4:
                     // Empty stops
@@ -254,16 +262,16 @@ public class SimulatedRepository implements Repository {
         try {
             switch (i) {
                 case 0:
-                    stops.add(new Stop("0", "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true));
-                    stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
-                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+                    stops.add(new Stop("0", "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "stop"));
+                    stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "on_request"));
+                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "stop"));
                     break;
                 case 1:
-                    stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true));
-                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+                    stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "on_request"));
+                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "stop"));
                     break;
                 case 2:
-                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "stop"));
                     break;
                 case 3:
                     // Empty stops
@@ -286,7 +294,7 @@ public class SimulatedRepository implements Repository {
                 case 1:
                 case 2:
                 case 3:
-                    return new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true);
+                    return new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop");
                 case 4:
                     // Empty stop
                     break;

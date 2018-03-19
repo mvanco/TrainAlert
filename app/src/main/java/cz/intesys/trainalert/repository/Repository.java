@@ -6,6 +6,7 @@ import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.entity.TaCallback;
+import cz.intesys.trainalert.entity.TripStatus;
 
 public interface Repository {
     void getCurrentLocation(TaCallback<Location> taCallback);
@@ -30,5 +31,5 @@ public interface Repository {
 
     void getTrainId(TaCallback<String> taCallback);
 
-    void shouldStop(TaCallback<Boolean> taCallback);
+    void getTripStatus(TaCallback<TripStatus> taCallback);
 }
