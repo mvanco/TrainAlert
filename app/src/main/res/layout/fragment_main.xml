@@ -9,7 +9,6 @@
         android:layout_height="match_parent"
         tools:context="cz.intesys.trainalert.fragment.MainFragment">
 
-
         <org.osmdroid.views.MapView
             android:id="@+id/fragmentMain_mapView"
             android:layout_width="match_parent"
@@ -57,6 +56,11 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:visibility="visible" />
+
+        <include
+            android:id="@+id/fragmentMain_progressBarInclude"
+            layout="@layout/progress_bar"
+            android:visibility="invisible" />
 
     </android.support.constraint.ConstraintLayout>
 

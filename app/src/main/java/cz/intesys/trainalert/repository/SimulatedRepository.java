@@ -35,6 +35,8 @@ public class SimulatedRepository implements Repository {
     private int mLocationIterator = 0; // 0 - the most right Poi, 230 - the most left Poi
     private boolean toTheLeftDirection = true;
     private List<Location> mExampleRoute;
+    private int mTime = -1;
+
 
     private SimulatedRepository() {
         mExampleRoute = getExampleRoute();
@@ -49,32 +51,50 @@ public class SimulatedRepository implements Repository {
         return sInstance;
     }
 
+    public static int getRandomServerDelay() {
+        if (SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0] == 0 && SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0] == 0) {
+            return 0;
+        }
+
+        int rangeSize = SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[1] - SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0];
+        int serverDelay = new Random().nextInt(rangeSize) + SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0]; // <500, 1500)
+        Log.d("serverDelay", "serverDelay:" + serverDelay);
+        return serverDelay;
+    }
+
     @Override
     public void getCurrentLocation(TaCallback<Location> taCallback) {
-        new Handler().postDelayed(() -> {
-            Location location = mExampleRoute.get(mLocationIterator);
-            location.setTime(new Date());
-            taCallback.onResponse(location);
-            Log.d(LOG_POSTGRE, "getCurrentLocation response");
-        }, getRandomServerDelay());
+        int randomInt = new Random().nextInt(4);
+        if (randomInt == 2) {
+            new Handler().postDelayed(() -> {
+                Location location = mExampleRoute.get(mLocationIterator);
+                location.setTime(new Date());
+                taCallback.onResponse(location);
+                Log.d(LOG_POSTGRE, "getCurrentLocation response");
+            }, getRandomServerDelay());
 
-        // Prepare next location
-        if (toTheLeftDirection) {
-            if (mLocationIterator < mExampleRoute.size() - 1) {
-                mLocationIterator++;
+
+            // Prepare next location
+            if (toTheLeftDirection) {
+                if (mLocationIterator < mExampleRoute.size() - 1) {
+                    mLocationIterator++;
+                } else {
+                    toTheLeftDirection = false;
+                    mLocationIterator--;
+                }
             } else {
-                toTheLeftDirection = false;
-                mLocationIterator--;
+                if (mLocationIterator > 1) {
+                    mLocationIterator--;
+                } else {
+                    toTheLeftDirection = true;
+                    mLocationIterator++;
+                }
             }
-        } else {
-            if (mLocationIterator > 1) {
-                mLocationIterator--;
-            } else {
-                toTheLeftDirection = true;
-                mLocationIterator++;
-            }
+            Log.d(LOG_POSTGRE, "getCurrentLocation enqueued");
+
         }
-        Log.d(LOG_POSTGRE, "getCurrentLocation enqueued");
+
+
     }
 
     @Override
@@ -158,30 +178,33 @@ public class SimulatedRepository implements Repository {
     }
 
     @Override public void getNextStops(int id, TaCallback<List<Stop>> taCallback) {
+        mTime++;
         new Handler().postDelayed(() -> {
-            List<Stop> stops = new ArrayList<>();
-            try {
-                stops.add(new Stop("0", "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true));
-                stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            taCallback.onResponse(stops);
-            Log.d(LOG_POSTGRE, "getNextStops response");
+            taCallback.onResponse(getNextStops(mTime));
+//            List<Stop> stops = new ArrayList<>();
+//            try {
+//                stops.add(new Stop("0", "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true));
+//                stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//            taCallback.onResponse(stops);
+//            Log.d(LOG_POSTGRE, "getNextStops response");
         }, getRandomServerDelay());
         Log.d(LOG_POSTGRE, "getNextStops enqueued");
     }
 
     @Override public void getFinalStop(TaCallback<Stop> taCallback) {
         new Handler().postDelayed(() -> {
-            Stop stop = null;
-            try {
-                stop = new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, true);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            taCallback.onResponse(stop);
-            Log.d(LOG_POSTGRE, "getFinalStop response");
+            taCallback.onResponse(getFinalStop(mTime));
+//            Stop stop = null;
+//            try {
+//                stop = new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, true);
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
+//            taCallback.onResponse(stop);
+//            Log.d(LOG_POSTGRE, "getFinalStop response");
         }, getRandomServerDelay());
         Log.d(LOG_POSTGRE, "getFinalStop enqueued");
     }
@@ -198,6 +221,84 @@ public class SimulatedRepository implements Repository {
         new Handler().postDelayed(() -> {
             taCallback.onResponse(false);
         }, getRandomServerDelay());
+    }
+
+    private List<Stop> getPreviousStops(int i) {
+        List<Stop> stops = new ArrayList<>();
+        try {
+            switch (i) {
+                case 0:
+                    break;
+                case 1:
+                    stops.add(new Stop("0", "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true));
+                    break;
+                case 2:
+                    stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+                    break;
+                case 3:
+                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+                    break;
+                case 4:
+                    // Empty stops
+                    break;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return stops;
+    }
+
+    private List<Stop> getNextStops(int i) {
+        List<Stop> stops = new ArrayList<>();
+        try {
+            switch (i) {
+                case 0:
+                    stops.add(new Stop("0", "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true));
+                    stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+                    break;
+                case 1:
+                    stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true));
+                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+                    break;
+                case 2:
+                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false));
+                    break;
+                case 3:
+                    // Empty stops
+                    break;
+                case 4:
+                    // Empty stops
+                    break;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return stops;
+    }
+
+    private Stop getFinalStop(int i) {
+        try {
+            switch (i) {
+                case 0:
+                case 1:
+                case 2:
+                case 3:
+                    return new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true);
+                case 4:
+                    // Empty stop
+                    break;
+                case 5:
+                    // Empty stop
+                    break;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     private List<Poi> getPois() {
@@ -281,16 +382,6 @@ public class SimulatedRepository implements Repository {
         }
 
         return sExamplePOIs;
-    }
-
-    private int getRandomServerDelay() {
-        if (SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0] == 0 && SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0] == 0) {
-            return 0;
-        }
-
-        int rangeSize = SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[1] - SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0];
-        int serverDelay = new Random().nextInt(rangeSize) + SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0]; // <500, 1500)
-        return serverDelay;
     }
 
     private int getCustomRandomServerDelay(int[] delayRange) {

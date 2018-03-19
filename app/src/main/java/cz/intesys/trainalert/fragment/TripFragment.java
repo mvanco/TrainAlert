@@ -65,9 +65,9 @@ public class TripFragment extends Fragment {
             mAdapter.setPreviousStops(previousStops);
             mAdapter.notifyDataSetChanged();
         });
-        mViewModel.getNextStopsLiveData().observe(this, (previousStops) -> {
-            mAdapter.setNextStops(previousStops);
-            if (previousStops.size() < TaConfig.TRIP_FRAGMENT_NEXT_STOP_COUNT) {
+        mViewModel.getNextStopsLiveData().observe(this, (nextStops) -> {
+            mAdapter.setNextStops(nextStops);
+            if (nextStops.size() < TaConfig.TRIP_FRAGMENT_NEXT_STOP_COUNT) {
                 mAdapter.setFinalStage(true);
             }
             mAdapter.notifyDataSetChanged();

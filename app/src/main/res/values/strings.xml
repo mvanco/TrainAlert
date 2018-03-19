@@ -142,5 +142,6 @@
     <string name="title_fragment_password">Heslo</string>
     <string name="password_dialog_fragment_positive_button">Potvrď</string>
     <string name="activity_main_wrong_password">Bylo zadáno zlé heslo</string>
+    <string name="progress_bar_text_location_unavailable">GPS data\njsou nedostupná</string>
 
 </resources>

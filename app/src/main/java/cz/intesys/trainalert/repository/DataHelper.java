@@ -4,10 +4,12 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.SharedPreferences;
 import android.support.annotation.IntDef;
+import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import cz.intesys.trainalert.R;
@@ -63,6 +65,7 @@ public class DataHelper implements LifecycleObserver {
     private Utility.IntervalPoller mLocationPoller;
     private boolean mShouldStop;
     private MutableLiveData<Boolean> mShouldStopLiveData;
+    private MutableLiveData<Long> mLatestTimeLiveData;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({POI_TYPE_CROSSING, POI_TYPE_TRAIN_STATION, POI_TYPE_STOP, POI_TYPE_LIGHTS, POI_TYPE_BEFORE_LIGHTS, POI_TYPE_SPEED_LIMITATION_20,
@@ -84,6 +87,7 @@ public class DataHelper implements LifecycleObserver {
         mPois = new ArrayList<>();
         mPoisLiveData = new MutableLiveData<>();
         mShouldStopLiveData = new MutableLiveData<>();
+        mLatestTimeLiveData = new MutableLiveData<>();
 
         mLocationPoller = new Utility.IntervalPoller(TaConfig.GPS_TIME_INTERVAL, () -> {
             if (!mLocation.equals(mLocationLiveData.getValue())) {
@@ -99,6 +103,10 @@ public class DataHelper implements LifecycleObserver {
                 @Override
                 public void onResponse(Location response) {
                     mLocation = response;
+                    Calendar cal = Calendar.getInstance();
+                    Log.d("loader2", "latest time: " + cal.getTime().toString());
+                    mLatestTimeLiveData.setValue(cal.getTimeInMillis());
+                    Log.d("loader", "new real location");
                 }
 
                 @Override
@@ -123,6 +131,10 @@ public class DataHelper implements LifecycleObserver {
             sInstance = new DataHelper();
         }
         return sInstance;
+    }
+
+    public MutableLiveData<Long> getLatestTimeLiveData() {
+        return mLatestTimeLiveData;
     }
 
     public MutableLiveData<Boolean> getShouldStopLiveData() {

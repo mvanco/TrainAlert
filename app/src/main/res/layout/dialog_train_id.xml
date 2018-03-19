@@ -11,6 +11,6 @@
         android:layout_marginLeft="@dimen/dialog_train_id_left_margin"
         android:ems="5"
         android:gravity="center_horizontal"
-        android:inputType="number" />
+        android:inputType="text" />
 
 </LinearLayout>

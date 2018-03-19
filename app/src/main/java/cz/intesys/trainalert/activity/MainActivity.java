@@ -42,6 +42,7 @@ import cz.intesys.trainalert.fragment.TripFragment;
 import cz.intesys.trainalert.fragment.TripIdDialogFragment;
 import cz.intesys.trainalert.fragment.TripIdManuallyDialogFragment;
 import cz.intesys.trainalert.repository.DataHelper;
+import cz.intesys.trainalert.utility.Utility;
 import cz.intesys.trainalert.viewmodel.MainActivityViewModel;
 
 import static android.support.v4.widget.DrawerLayout.STATE_IDLE;
@@ -226,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             cal.setTime(time);
             int hours = cal.get(Calendar.HOUR_OF_DAY);
             int minutes = cal.get(Calendar.MINUTE);
-            mClockTextView.setText(hours + ":" + minutes);
+            mClockTextView.setText(Utility.getTwoDigitString(hours) + ":" + Utility.getTwoDigitString(minutes));
         }
     }
 

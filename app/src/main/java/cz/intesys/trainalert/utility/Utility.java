@@ -101,6 +101,18 @@ public class Utility {
         return observable.sample(TaConfig.UPDATE_INTERVAL, TaConfig.UPDATE_INTERVAL_UNIT).mergeWith(observable.take(1));
     }
 
+    public static String getTwoDigitString(int number) {
+        if (number > 99) {
+            return null;
+        }
+
+        if (number < 10) {
+            return String.format("0%d", number);
+        } else {
+            return String.format("%d", number);
+        }
+    }
+
     public static class IntervalPoller {
         private Handler mHandler;
         private Runnable mPeriodicUpdateRunnable;

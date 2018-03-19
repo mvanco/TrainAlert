@@ -131,6 +131,16 @@ public class MainFragment extends Fragment {
         mViewModel.setAnimating(shouldAnimating);
     }
 
+    private void showGpsUnavailableLoader() {
+        mBinding.fragmentMainProgressBarInclude.setVisibility(View.VISIBLE);
+        mBinding.fragmentMainFab.setVisibility(View.INVISIBLE);
+    }
+
+    private void hideGpsUnavailableLoader() {
+        mBinding.fragmentMainProgressBarInclude.setVisibility(View.INVISIBLE);
+        mBinding.fragmentMainFab.setVisibility(View.VISIBLE);
+    }
+
     private void initMap(Context context) {
         Configuration.getInstance().load(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Load configuration.
 
@@ -196,8 +206,19 @@ public class MainFragment extends Fragment {
         initMap(getActivity()); // Initialize map using osmdroid library and set current position on the map.
         initTrainMarker(mBinding.fragmentMainMapView);
         mBinding.fragmentMainMapView.getOverlayManager().add(mTrainMarker); // Add train marker.
-        mViewModel.getLocationLiveData().observe(this, currentLocation -> handleLocationChange(mTrainMarker, currentLocation));
-        mViewModel.getPoisLiveData().observe(this, pois -> handlePOIsChange(pois));
+        mViewModel.getLocationLiveData().observe(this, currentLocation -> {
+            handleLocationChange(mTrainMarker, currentLocation);
+            hideGpsUnavailableLoader();
+        });
+        mViewModel.getPoisLiveData().observe(this, pois -> {
+            handlePOIsChange(pois);
+        });
+
+        mViewModel.getGpsTimeoutLiveData(this).subscribe((show) -> {
+            if (show) {
+                showGpsUnavailableLoader();
+            }
+        });
     }
 
     private boolean onMapScroll(ScrollEvent event) {
