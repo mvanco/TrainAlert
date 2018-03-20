@@ -18,4 +18,6 @@
     <color name="trip_orange">#FF9800</color>
     <color name="trip_go_ahead_green">@color/green</color>
     <color name="trip_delay_red">#F44336</color>
+
+    <color name="ic_trip_selection_loader_fillColor">#e0e0e0</color>
 </resources>

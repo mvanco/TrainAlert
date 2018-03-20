@@ -9,10 +9,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.Date;
 
 public class StopApi {
-    public static final String CATEGORY_STARTING = "starting_stop";
-    public static final String CATEGORY_REGULAR = "stop";
-    public static final String CATEGORY_ON_DEMAND = "on_request";
-    public static final String CATEGORY_FINAL = "final_stop";
+    public static final String TYPE_STARTING = "starting_stop";
+    public static final String TYPE_REGULAR = "stop";
+    public static final String TYPE_ON_DEMAND = "on_request";
+    public static final String TYPE_FINAL = "final_stop";
     @Expose
     private String id;
     @Expose
@@ -27,8 +27,8 @@ public class StopApi {
     private boolean pressed;
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({CATEGORY_STARTING, CATEGORY_REGULAR, CATEGORY_ON_DEMAND, CATEGORY_FINAL})
-    public @interface StopCategory {
+    @StringDef({TYPE_STARTING, TYPE_REGULAR, TYPE_ON_DEMAND, TYPE_FINAL})
+    public @interface StopType {
     }
 
     public String getId() {

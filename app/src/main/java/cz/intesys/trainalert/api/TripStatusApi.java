@@ -4,13 +4,13 @@ import com.google.gson.annotations.Expose;
 
 public class TripStatusApi {
     @Expose
-    boolean pressed;
+    boolean pressed; // From original "shouldStop" attribute.
 
     @Expose
-    boolean canPass;
+    boolean canPass; // From original "canBeIgnored" attribute.
 
     @Expose
-    int speedLimit;
+    int speedLimit; // From original "speedLimit" attribute.
 
     public boolean isPressed() {
         return pressed;

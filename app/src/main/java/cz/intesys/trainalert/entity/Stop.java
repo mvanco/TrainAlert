@@ -10,14 +10,14 @@ public class Stop {
     private Date arrival;
     private int delay;
     private boolean pressed;
-    private @StopApi.StopCategory String type;
+    private @StopApi.StopType String type;
 
     public Stop(StopApi stopApi) {
         this.id = stopApi.getId();
         this.name = stopApi.getName();
         this.arrival = stopApi.getArrival();
         this.delay = stopApi.getDelay();
-        this.pressed = stopApi.isPressed() && StopApi.CATEGORY_ON_DEMAND.contains(stopApi.getType());
+        this.pressed = stopApi.isPressed() && StopApi.TYPE_ON_DEMAND.contains(stopApi.getType());
         this.type = stopApi.getType();
     }
 

@@ -34,6 +34,7 @@ public class StopView extends FrameLayout {
     public static final int TYPE_LATEST_NEXT_STOP = 3;
     public static final int TYPE_FINAL_STOP = 4;
     public static final int TYPE_TRAIN_MARKER = 5;
+
     private ViewStopBinding mBinding;
     private int mListPosition;
     private String mLabel;
@@ -41,15 +42,14 @@ public class StopView extends FrameLayout {
     private Date mArrival;
     private int mDelay;
     private int mColor;
-    private @StopType
-    int mType;
-    private @StopApi.StopCategory String mCategory;
+    private @StopViewType int mType;
+    private @StopApi.StopType String mCategory;
     private boolean mFinalStage;
     private boolean mButtonPressed;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({TYPE_PREVIOUS_STOP, TYPE_CLOSEST_NEXT_STOP, TYPE_NEXT_STOP, TYPE_LATEST_NEXT_STOP, TYPE_FINAL_STOP, TYPE_TRAIN_MARKER})
-    public @interface StopType {
+    public @interface StopViewType {
     }
 
     public StopView(Context context) {
@@ -102,10 +102,6 @@ public class StopView extends FrameLayout {
         return mArrival;
     }
 
-    public void setArrival(Date arrival) {
-        mArrival = arrival;
-    }
-
     public void setArrival(String arrival) {
         if (arrival == null) {
             return;
@@ -116,6 +112,10 @@ public class StopView extends FrameLayout {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setArrival(Date arrival) {
+        mArrival = arrival;
     }
 
     public int getDelay() {
@@ -140,12 +140,12 @@ public class StopView extends FrameLayout {
         return mType;
     }
 
-    public void setType(@StopType int type) {
+    public void setType(@StopViewType int type) {
         mType = type;
         invalidateStopView();
     }
 
-    public void setCategory(@StopApi.StopCategory String category) {
+    public void setCategory(@StopApi.StopType String category) {
         mCategory = category;
     }
 
@@ -284,7 +284,7 @@ public class StopView extends FrameLayout {
         }
 
         if (mCategory != null) {
-            if (StopApi.CATEGORY_ON_DEMAND.equals(mCategory)) {
+            if (StopApi.TYPE_ON_DEMAND.equals(mCategory)) {
                 mBinding.stopViewHand.setVisibility(VISIBLE);
             } else {
                 mBinding.stopViewHand.setVisibility(GONE);

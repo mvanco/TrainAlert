@@ -119,7 +119,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
         }
     }
 
-    private @StopView.StopType
+    private @StopView.StopViewType
     int getStopType(int position) {
         if (position < mPreviousStops.size()) { // Previous stops.
             return TYPE_PREVIOUS_STOP;

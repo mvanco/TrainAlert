@@ -285,7 +285,7 @@ public class DataHelper implements LifecycleObserver {
     }
 
     public void register(int password, TaCallback<Void> taCallback) {
-        if (password == 1234) {
+        if (password == TaConfig.ADMINISTRATOR_PASSWORD) {
             mSharedPrefs.edit().putBoolean(REGISTERED_KEY, true).commit();
             taCallback.onResponse(null);
         } else {
