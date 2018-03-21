@@ -1,5 +1,7 @@
 package cz.intesys.trainalert.fragment;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -256,7 +258,7 @@ public class MainFragment extends Fragment {
             mTrainMarker.setTitle("Train LocationApi");
             mTrainMarker.setPosition(mViewModel.getLocation().toGeoPoint());
             mTrainMarker.setIcon(getResources().getDrawable(R.drawable.ic_current_location));
-            mTrainMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+            mTrainMarker.setAnchor(Marker.ANCHOR_CENTER, 0.913f);
         }
     }
 
@@ -410,7 +412,15 @@ public class MainFragment extends Fragment {
     }
 
     private void setSpeedLimit(@DataHelper.CategoryId int id) {
+        boolean shouldShowAnimation = mBinding.fragmentMainSpeedLimitView.getCategoryId() != id;
+
         mBinding.fragmentMainSpeedLimitView.setCategory(id);
         mBinding.fragmentMainSpeedLimitView.setVisibility(View.VISIBLE);
+
+        if (shouldShowAnimation) {
+            AnimatorSet mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.speed_limit_view_animator);
+            mAnimSet.setTarget(mBinding.fragmentMainSpeedLimitView);
+            mAnimSet.start();
+        }
     }
 }

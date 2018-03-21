@@ -271,6 +271,7 @@ public class DataHelper implements LifecycleObserver {
             }
 
             @Override public void onFailure(Throwable t) {
+                taCallback.onFailure(new Throwable());
             }
         });
     }

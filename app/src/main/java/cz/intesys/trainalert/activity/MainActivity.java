@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     private TextView mClockTextView;
     private boolean mShouldShowPasswordDialog = true;
     private AnimatorSet mAnimSet;
+    private boolean mTripSelectionIconEnabled = true;
 
 
     @Override
@@ -211,7 +212,9 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_trip_selection:
-                showTripIdDialogFragment();
+                if (mTripSelectionIconEnabled) {
+                    showTripIdDialogFragment();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -280,19 +283,25 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         MenuItem item = mMenu.findItem(R.id.menu_trip_selection);
         mAnimSet.setTarget(item.getActionView());
         mAnimSet.start();
-        item.setEnabled(false);
+        mTripSelectionIconEnabled = false; // Suppress functionality.
+        item.setEnabled(false); // Suppress click animation.
     }
 
     private void hideTripIdSelectionIconLoader() {
-        mAnimSet.end();
         MenuItem item = mMenu.findItem(R.id.menu_trip_selection);
+
+        // SET DEFAULT VALUES
+        mAnimSet.end();
         item.getActionView().setRotation(0f);
+        item.getActionView().setAlpha(1f);
+
         if (DataHelper.getInstance().getTripId().isEmpty()) {
             ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_trip_selection_red);
             //Toast.makeText(this, R.string.activity_main_unsuccessful_trip_selection, Toast.LENGTH_SHORT).show();
         } else {
             ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_trip_selection);
         }
+        mTripSelectionIconEnabled = true;
         item.setEnabled(true);
     }
 

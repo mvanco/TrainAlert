@@ -21,6 +21,7 @@ import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITAT
 
 public class SpeedLimitView extends FrameLayout {
     private String mText;
+    private @DataHelper.CategoryId int mCategoryId;
 
     private ViewSpeedLimitBinding mBinding;
 
@@ -53,6 +54,7 @@ public class SpeedLimitView extends FrameLayout {
     }
 
     public void setCategory(@DataHelper.CategoryId int categoryId) {
+        mCategoryId = categoryId;
         switch (categoryId) {
             case POI_TYPE_SPEED_LIMITATION_20:
                 mText = "20";
@@ -84,6 +86,10 @@ public class SpeedLimitView extends FrameLayout {
 
         invalidate();
         requestLayout();
+    }
+
+    public int getCategoryId() {
+        return mCategoryId;
     }
 
     /**
