@@ -31,7 +31,6 @@
 
         </cz.intesys.trainalert.view.SignView>
 
-
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/fragmentMain_fab"
             android:layout_width="wrap_content"

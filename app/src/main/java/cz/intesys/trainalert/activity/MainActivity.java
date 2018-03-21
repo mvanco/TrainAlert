@@ -1,13 +1,15 @@
 package cz.intesys.trainalert.activity;
 
 import android.Manifest;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
@@ -22,10 +24,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +54,6 @@ import static android.support.v4.widget.DrawerLayout.STATE_IDLE;
 import static android.support.v4.widget.DrawerLayout.STATE_SETTLING;
 import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_NEXT_STOP_COUNT;
 import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_PREVIOUS_STOP_COUNT;
-import static cz.intesys.trainalert.TaConfig.TRIP_ID_LOADER_DURATION;
 import static cz.intesys.trainalert.TaConfig.USE_OFFLINE_MAPS;
 
 public class MainActivity extends AppCompatActivity implements TripIdDialogFragment.OnFragmentInteractionListener, TripFragment.OnFragmentInteractionListener, PasswordDialogFragment.OnFragmentInteractionListener {
@@ -69,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     private MainActivityViewModel mViewModel;
     private TextView mClockTextView;
     private boolean mShouldShowPasswordDialog = true;
+    private AnimatorSet mAnimSet;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         mViewModel.getLocationLiveData().observe(this, (location) -> onTimeChanged(location.getTime()));
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.ic_trip_selection_animator);
     }
 
     @Override protected void onStart() {
@@ -118,8 +124,6 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     @Override
     protected void onResume() {
         super.onResume();
-        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
-        fragment.setAnimating(true);
 
         DialogFragment tripIdDialogFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(TRIP_ID_DIALOG_FRAGMENT_TAG);
 
@@ -152,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
     @Override
     public void onTripSelected(String tripId) { // Returned from TripIdDialogFragment or TripIdManuallyDialogFragment
+        showTripIdSelectionIconLoader();
         DataHelper.getInstance().setTrip(tripId, new TaCallback<Void>() {
             @Override public void onResponse(Void response) {
                 mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.VISIBLE);
@@ -163,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             }
 
             @Override public void onFailure(Throwable t) {
-
+                hideTripIdSelectionIconLoader();
             }
         });
     }
@@ -188,23 +193,25 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
 
+        MenuItem tripSelectionItem = menu.findItem(R.id.menu_trip_selection);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ImageView iv = (ImageView) inflater.inflate(R.layout.custom_action_view, null);
+        iv.setOnClickListener(v -> MainActivity.this.onOptionsItemSelected(tripSelectionItem));
+        tripSelectionItem.setActionView(iv);
+
         MenuItem clockItem = menu.findItem(R.id.menu_clock);
         mClockTextView = (TextView) MenuItemCompat.getActionView(clockItem);
         mClockTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.activityMain_clock_textSize));
 
-
         mMenu = menu;
+        hideTripIdSelectionIconLoader();
         return true;
     }
 
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_trip_selection:
-                showTripIdSelectionIconLoader();
                 showTripIdDialogFragment();
-                new Handler().postDelayed(() -> {
-                    hideTripIdSelectionIconLoader();
-                }, TRIP_ID_LOADER_DURATION);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -242,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
      * There must be already set train id
      */
     synchronized private void showTripIdDialogFragment() {
+        showTripIdSelectionIconLoader();
         DataHelper.getInstance().getTrips(new TaCallback<List<String>>() {
             @Override public void onResponse(List<String> response) {
 
@@ -259,27 +267,31 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
                 mTripDialogFragment = TripIdDialogFragment.newInstance(response);
                 mTripDialogFragment.show(getSupportFragmentManager(), TRIP_ID_DIALOG_FRAGMENT_TAG);
+                hideTripIdSelectionIconLoader();
             }
 
             @Override public void onFailure(Throwable t) {
-
+                hideTripIdSelectionIconLoader();
             }
         });
     }
 
     private void showTripIdSelectionIconLoader() {
         MenuItem item = mMenu.findItem(R.id.menu_trip_selection);
-        item.setIcon(R.drawable.ic_trip_selection_loader);
+        mAnimSet.setTarget(item.getActionView());
+        mAnimSet.start();
         item.setEnabled(false);
     }
 
     private void hideTripIdSelectionIconLoader() {
+        mAnimSet.end();
         MenuItem item = mMenu.findItem(R.id.menu_trip_selection);
-        if (!DataHelper.getInstance().getTripId().isEmpty()) {
-            item.setIcon(R.drawable.ic_trip_selection_red);
+        item.getActionView().setRotation(0f);
+        if (DataHelper.getInstance().getTripId().isEmpty()) {
+            ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_trip_selection_red);
             //Toast.makeText(this, R.string.activity_main_unsuccessful_trip_selection, Toast.LENGTH_SHORT).show();
         } else {
-            item.setIcon(R.drawable.ic_trip_selection);
+            ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_trip_selection);
         }
         item.setEnabled(true);
     }

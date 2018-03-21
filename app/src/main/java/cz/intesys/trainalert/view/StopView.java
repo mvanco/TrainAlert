@@ -102,6 +102,10 @@ public class StopView extends FrameLayout {
         return mArrival;
     }
 
+    public void setArrival(Date arrival) {
+        mArrival = arrival;
+    }
+
     public void setArrival(String arrival) {
         if (arrival == null) {
             return;
@@ -112,10 +116,6 @@ public class StopView extends FrameLayout {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setArrival(Date arrival) {
-        mArrival = arrival;
     }
 
     public int getDelay() {
@@ -221,19 +221,19 @@ public class StopView extends FrameLayout {
         }
 
         if (mFinalStage) {
-            mBinding.stopViewBottomLine.setBackgroundResource(R.color.trip_grey);
-            mBinding.stopViewTopLine.setBackgroundResource(R.color.trip_grey);
+            mBinding.stopViewBottomLine.setBackgroundResource(R.color.trip_line);
+            mBinding.stopViewTopLine.setBackgroundResource(R.color.trip_line);
         } else {
             if (mType == TYPE_LATEST_NEXT_STOP) {
                 mBinding.stopViewBottomLine.setBackgroundResource(R.drawable.dashed_line_bottom);
             } else {
-                mBinding.stopViewBottomLine.setBackgroundResource(R.color.trip_grey);
+                mBinding.stopViewBottomLine.setBackgroundResource(R.color.trip_line);
             }
 
             if (mType == TYPE_FINAL_STOP) {
                 mBinding.stopViewTopLine.setBackgroundResource(R.drawable.dashed_line_top);
             } else {
-                mBinding.stopViewTopLine.setBackgroundResource(R.color.trip_grey);
+                mBinding.stopViewTopLine.setBackgroundResource(R.color.trip_line);
             }
         }
 
@@ -250,9 +250,9 @@ public class StopView extends FrameLayout {
         if (onlyMinutes < 0) {
             mBinding.stopViewDelay.setTextColor(ContextCompat.getColor(getContext(), R.color.green));
         } else if (onlyMinutes == 0) {
-            mBinding.stopViewDelay.setTextColor(ContextCompat.getColor(getContext(), R.color.trip_grey));
+            mBinding.stopViewDelay.setTextColor(ContextCompat.getColor(getContext(), R.color.trip_line));
         } else {
-            mBinding.stopViewDelay.setTextColor(ContextCompat.getColor(getContext(), R.color.trip_delay_red));
+            mBinding.stopViewDelay.setTextColor(ContextCompat.getColor(getContext(), R.color.red));
         }
         mBinding.stopViewCard.setBackgroundColor(mColor);
 

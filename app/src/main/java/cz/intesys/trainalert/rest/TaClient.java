@@ -57,9 +57,9 @@ public class TaClient {
 
     private static OkHttpClient buildClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        builder.connectTimeout(30, TimeUnit.SECONDS);
-        builder.readTimeout(30, TimeUnit.SECONDS);
-        builder.writeTimeout(30, TimeUnit.SECONDS);
+        builder.connectTimeout(TaConfig.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
+        builder.readTimeout(TaConfig.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
+        builder.writeTimeout(TaConfig.SERVER_TIMEOUT, TimeUnit.MILLISECONDS);
         builder.addNetworkInterceptor(createLoggingInterceptor());
         return builder.build();
     }

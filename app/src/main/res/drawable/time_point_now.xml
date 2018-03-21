@@ -7,7 +7,7 @@
         android:height="@dimen/drawable_timePointNow_height"
         android:gravity="center">
         <shape android:shape="oval">
-            <solid android:color="@color/trip_grey" />
+            <solid android:color="@color/trip_line" />
         </shape>
     </item>
 
@@ -32,7 +32,7 @@
         android:right="@dimen/drawable_timePoint_borderWidth_bold"
         android:top="@dimen/drawable_timePoint_borderWidth_bold">
         <shape android:shape="oval">
-            <solid android:color="@color/trip_point_green" />
+            <solid android:color="@color/trip_point" />
         </shape>
     </item>
 

@@ -7,7 +7,6 @@
     <dimen name="alarm_textView_margin">48dp</dimen>
     <dimen name="alarm_roundRadius">4dp</dimen>
 
-    <dimen name="speed_view_stroke_width">1dp</dimen>
     <dimen name="speed_view_whitePadding_width">2dp</dimen>
     <dimen name="speed_view_outerBorder_width">10dp</dimen>
     <dimen name="speed_view_text_size">48sp</dimen>
@@ -17,7 +16,6 @@
     <dimen name="drawable_timePoint_borderWidth_bold">5dp</dimen>
 
     <dimen name="drawable_timePoint_width">14dp</dimen>
-    <dimen name="drawable_timePoint_height">@dimen/drawable_timePoint_width</dimen>
 
     <dimen name="drawable_timePointNow_width">24dp</dimen>
     <dimen name="drawable_timePointNow_height">@dimen/drawable_timePointNow_width</dimen>
@@ -48,18 +46,13 @@
 
     <dimen name="fragmentPoiMap">300dp</dimen>
     <dimen name="dialog_train_id_left_margin">20dp</dimen>
-    <dimen name="fragmentTrip_headerHeight">130dp</dimen>
     <dimen name="stopFragment_name_textSize">18dp</dimen>
     <dimen name="stopView_height">85dp</dimen>
     <dimen name="stopView_height_train">60dp</dimen>
     <dimen name="stopView_lineHeight">2dp</dimen>
 
-    <dimen name="fragmentTrip_hand_width">32dp</dimen>
-    <dimen name="fragmentTrip_hand_height">@dimen/fragmentTrip_hand_height</dimen>
-
     <dimen name="fragmentTrip_cellPaddingBottom">3dp</dimen>
     <dimen name="fragmentTrip_cellPaddingRight">3dp</dimen>
-    <dimen name="fragmentTrip_nextStopPressed_padding">14dp</dimen>
     <dimen name="fragmentTrip_goAhead_textSize">24sp</dimen>
     <dimen name="action_icon_width">32dp</dimen>
     <dimen name="action_icon_height">@dimen/action_icon_width</dimen>
@@ -74,10 +67,11 @@
     <dimen name="progress_bar_height">@dimen/progress_bar_width</dimen>
     <dimen name="header_hand_width">64dp</dimen>
     <dimen name="header_hand_height">@dimen/header_hand_width</dimen>
+    <dimen name="nav_icon_width">48dp</dimen>
+    <dimen name="nav_icon_height">@dimen/nav_icon_width</dimen>
+    <dimen name="drawer_item_textSize">16sp</dimen>
 
     <item name="activityMain_mainContentRatio" format="float" type="dimen">0.6</item>
     <item name="activityMain_sideContentRatio" format="float" type="dimen">0.4</item>
 
-    <item name="activityMain_portrait_mainContentRatio" format="float" type="dimen">0.6</item>
-    <item name="activityMain_portrait_sideContentRatio" format="float" type="dimen">0.4</item>
 </resources>

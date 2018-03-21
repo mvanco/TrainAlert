@@ -5,7 +5,7 @@
             <corners android:radius="@dimen/alarm_roundRadius" />
             <stroke
                 android:width="@dimen/alarm_stroke_width"
-                android:color="#a6a6a6" />
+                android:color="@color/trip_border" />
             <solid android:color="#ffffff" />
         </shape>
     </item>

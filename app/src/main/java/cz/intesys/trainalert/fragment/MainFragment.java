@@ -115,6 +115,12 @@ public class MainFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mTrainMarker.setPosition(mViewModel.getLocation().toGeoPoint());
+        setAnimating(true);
+    }
+
+    @Override public void onPause() {
+        super.onPause();
+        setAnimating(false);
     }
 
     public void restartAnimation(Context context) {
