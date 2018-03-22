@@ -87,7 +87,7 @@ public class DataHelper implements LifecycleObserver {
         mLocation = TaConfig.DEFAULT_LOCATION;
         mLocationLiveData = new MutableLiveData<Location>();
         mPois = new ArrayList<>();
-        mTripStatus = new TripStatus(true, false, POI_TYPE_SPEED_LIMITATION_40);
+        mTripStatus = new TripStatus(true, false, 0);
         mPoisLiveData = new MutableLiveData<>();
         mShouldStopLiveData = new MutableLiveData<>();
         mTrainStatusLiveData = new MutableLiveData<>();
@@ -330,6 +330,10 @@ public class DataHelper implements LifecycleObserver {
             });
             setTrainId(trainId);
         }
+    }
+
+    public boolean isSpeedLimitCategory(@CategoryId int categoryId) {
+        return categoryId >= POI_TYPE_SPEED_LIMITATION_20 && categoryId <= POI_TYPE_SPEED_LIMITATION_70;
     }
 
     private void setTrainId(String id) {

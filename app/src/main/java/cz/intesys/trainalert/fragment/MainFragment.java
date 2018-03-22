@@ -1,7 +1,5 @@
 package cz.intesys.trainalert.fragment;
 
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -52,7 +50,6 @@ import cz.intesys.trainalert.databinding.FragmentMainBinding;
 import cz.intesys.trainalert.entity.Alarm;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
-import cz.intesys.trainalert.repository.DataHelper;
 import cz.intesys.trainalert.utility.Utility;
 import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 
@@ -227,7 +224,7 @@ public class MainFragment extends Fragment {
         });
 
         mViewModel.getTrainStatusLiveData().observe(this, trainStatus -> {
-            setSpeedLimit(trainStatus.getSpeedLimit());
+            mBinding.fragmentMainSpeedLimitView.setCategory(trainStatus.getSpeedLimit());
         });
     }
 
@@ -409,18 +406,5 @@ public class MainFragment extends Fragment {
 
     private void setFabAsNotFixed() {
         mBinding.fragmentMainFab.setImageResource(R.drawable.fab_gps_not_fixed);
-    }
-
-    private void setSpeedLimit(@DataHelper.CategoryId int id) {
-        boolean shouldShowAnimation = mBinding.fragmentMainSpeedLimitView.getCategoryId() != id;
-
-        mBinding.fragmentMainSpeedLimitView.setCategory(id);
-        mBinding.fragmentMainSpeedLimitView.setVisibility(View.VISIBLE);
-
-        if (shouldShowAnimation) {
-            AnimatorSet mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.speed_limit_view_animator);
-            mAnimSet.setTarget(mBinding.fragmentMainSpeedLimitView);
-            mAnimSet.start();
-        }
     }
 }

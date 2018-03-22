@@ -24,8 +24,10 @@ import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_BEFORE_LIGHTS
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_CROSSING;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_LIGHTS;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_20;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_30;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_40;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_50;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_70;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_STOP;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_TRAIN_STATION;
 import static cz.intesys.trainalert.repository.PostgreSqlRepository.LOG_POSTGRE;
@@ -218,15 +220,26 @@ public class SimulatedRepository implements Repository {
         Log.d(LOG_POSTGRE, "getTrainId enqueued");
     }
 
-//    @Override public void shouldStop(TaCallback<Boolean> taCallback) {
-//        new Handler().postDelayed(() -> {
-//            taCallback.onResponse(false);
-//        }, getRandomServerDelay());
-//    }
-
     @Override public void getTripStatus(TaCallback<TripStatus> taCallback) {
         new Handler().postDelayed(() -> {
-            TripStatus ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_50);
+            TripStatus ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_20);
+            switch (mTime) {
+                case 0:
+                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_30);
+                    break;
+                case 1:
+                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_30);
+                    break;
+                case 2:
+                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_50);
+                    break;
+                case 3:
+                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_50);
+                    break;
+                case 4:
+                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_70);
+                    break;
+            }
             taCallback.onResponse(ts);
         }, getRandomServerDelay());
     }
@@ -324,13 +337,13 @@ public class SimulatedRepository implements Repository {
         sExamplePOIs.add(new Poi(13, "Přejezd P9232, rychlost 50 (od Třebenic)", 50.4740139540184, 13.9995043137494, POI_TYPE_CROSSING));
         sExamplePOIs.add(new Poi(14, "Rychlost 20 (do Třebenic)", 50.4745653426215, 13.9977291331572, DataHelper.POI_TYPE_SPEED_LIMITATION_20));
         sExamplePOIs.add(new Poi(18, "Rychlost 50 (do Třebenic)", 50.481587594321, 13.9856805240407, POI_TYPE_SPEED_LIMITATION_50));
-        sExamplePOIs.add(new Poi(20, "Rychlost 30 (od Třebenic)", 50.4780920210965, 13.9799934835995, DataHelper.POI_TYPE_SPEED_LIMITATION_30));
+        sExamplePOIs.add(new Poi(20, "Rychlost 30 (od Třebenic)", 50.4780920210965, 13.9799934835995, POI_TYPE_SPEED_LIMITATION_30));
         sExamplePOIs.add(new Poi(21, "Přejezd P9235, rychlost 50 (do i od Třebenic)", 50.4768068188871, 13.9803408454446, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi(22, "Rychlost 30 (do Třebenic)", 50.4750023360137, 13.9804579790901, DataHelper.POI_TYPE_SPEED_LIMITATION_30));
+        sExamplePOIs.add(new Poi(22, "Rychlost 30 (do Třebenic)", 50.4750023360137, 13.9804579790901, POI_TYPE_SPEED_LIMITATION_30));
         sExamplePOIs.add(new Poi(24, "Přejezd P9237, rychlost 30 (od Třebenic)", 50.4668170361303, 13.9677308026482, POI_TYPE_CROSSING));
         sExamplePOIs.add(new Poi(25, "Přejezd P9238, rychlost 50 (od Třebenic)", 50.4670792756229, 13.9657051984002, POI_TYPE_CROSSING));
         sExamplePOIs.add(new Poi(26, "Přejezd P9239", 50.4677168714598, 13.9613611557904, POI_TYPE_CROSSING));
-        sExamplePOIs.add(new Poi(27, "Rychlost 30 (od Třebenic)", 50.4700974960634, 13.9542361988741, DataHelper.POI_TYPE_SPEED_LIMITATION_30));
+        sExamplePOIs.add(new Poi(27, "Rychlost 30 (od Třebenic)", 50.4700974960634, 13.9542361988741, POI_TYPE_SPEED_LIMITATION_30));
         sExamplePOIs.add(new Poi(28, "Rychlost 50 (do Třebenic)", 50.4703378656436, 13.9530890969669, POI_TYPE_SPEED_LIMITATION_50));
         sExamplePOIs.add(new Poi(29, "Přejezd P9240", 50.470357146573, 13.9520268159754, POI_TYPE_CROSSING));
         sExamplePOIs.add(new Poi(31, "Přejezd P9241", 50.468812076499, 13.9474586038029, POI_TYPE_CROSSING));

@@ -5,14 +5,14 @@
     <objectAnimator
         android:duration="2000"
         android:propertyName="translationY"
-        android:repeatCount="1"
+        android:repeatCount="0"
         android:valueFrom="120dp"
         android:valueTo="0dp" />
 
     <objectAnimator
         android:duration="2000"
         android:propertyName="alpha"
-        android:repeatCount="1"
+        android:repeatCount="0"
         android:valueFrom="0f"
         android:valueTo="1f" />
 </set>

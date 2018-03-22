@@ -1,5 +1,7 @@
 package cz.intesys.trainalert.view;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -10,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.databinding.ViewSpeedLimitBinding;
 import cz.intesys.trainalert.repository.DataHelper;
 
@@ -20,6 +23,8 @@ import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITAT
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_70;
 
 public class SpeedLimitView extends FrameLayout {
+    private final boolean ANIMATION_ENABLED = true;
+
     private String mText;
     private @DataHelper.CategoryId int mCategoryId;
 
@@ -54,7 +59,6 @@ public class SpeedLimitView extends FrameLayout {
     }
 
     public void setCategory(@DataHelper.CategoryId int categoryId) {
-        mCategoryId = categoryId;
         switch (categoryId) {
             case POI_TYPE_SPEED_LIMITATION_20:
                 mText = "20";
@@ -78,14 +82,25 @@ public class SpeedLimitView extends FrameLayout {
 
         mBinding.speedLimitText.setText(mText);
 
-        if (categoryId >= POI_TYPE_SPEED_LIMITATION_20 && categoryId <= POI_TYPE_SPEED_LIMITATION_70) {
+        if (DataHelper.getInstance().isSpeedLimitCategory(categoryId)) {
             mBinding.getRoot().setVisibility(View.VISIBLE);
+            this.setVisibility(View.VISIBLE);
         } else {
             mBinding.getRoot().setVisibility(View.INVISIBLE);
+            this.setVisibility(View.INVISIBLE);
         }
 
         invalidate();
         requestLayout();
+
+        boolean shouldShowAnimation = getCategoryId() != categoryId;
+        mCategoryId = categoryId;
+
+        if (ANIMATION_ENABLED && shouldShowAnimation) {
+            AnimatorSet mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.speed_limit_view_animator);
+            mAnimSet.setTarget(this);
+            mAnimSet.start();
+        }
     }
 
     public int getCategoryId() {
@@ -99,17 +114,6 @@ public class SpeedLimitView extends FrameLayout {
      */
     private void init(AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         initLayout();
-//        TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.SpeedLimitView, defStyleAttr, defStyleRes);
-//
-//        try {
-//            mText = a.getString(R.styleable.SpeedLimitView_text);
-//
-//            mBinding.speedLimitText.setText(mText);
-//            invalidate();
-//            requestLayout();
-//        } finally {
-//            a.recycle();
-//        }
     }
 
     private void initLayout() {
