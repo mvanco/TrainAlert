@@ -69,6 +69,7 @@ public class StopView extends FrameLayout {
 
     public void setFinalStage(boolean mFinalStage) {
         this.mFinalStage = mFinalStage;
+        invalidateStopView();
     }
 
     public int getListPosition() {
@@ -102,10 +103,6 @@ public class StopView extends FrameLayout {
         return mArrival;
     }
 
-    public void setArrival(Date arrival) {
-        mArrival = arrival;
-    }
-
     public void setArrival(String arrival) {
         if (arrival == null) {
             return;
@@ -116,6 +113,10 @@ public class StopView extends FrameLayout {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setArrival(Date arrival) {
+        mArrival = arrival;
     }
 
     public int getDelay() {
@@ -292,14 +293,10 @@ public class StopView extends FrameLayout {
         }
 
         if (mButtonPressed) {
-//            mBinding.stopViewHand.setVisibility(View.VISIBLE);
             mBinding.stopViewHand.setImageResource(R.drawable.ic_hand);
         } else {
-//            mBinding.stopViewHand.setVisibility(View.INVISIBLE);
             mBinding.stopViewHand.setImageResource(R.drawable.ic_hand_white);
-
         }
-
 
         invalidate();
         requestLayout();

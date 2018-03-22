@@ -275,21 +275,16 @@ public class SimulatedRepository implements Repository {
         try {
             switch (i) {
                 case 0:
-                    stops.add(new Stop("0", "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "stop"));
-                    stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "on_request"));
-                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "stop"));
-                    break;
-                case 1:
                     stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "on_request"));
                     stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "stop"));
                     break;
-                case 2:
+                case 1:
                     stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "stop"));
                     break;
-                case 3:
+                case 2:
                     // Empty stops
                     break;
-                case 4:
+                case 3:
                     // Empty stops
                     break;
             }
@@ -306,8 +301,8 @@ public class SimulatedRepository implements Repository {
                 case 0:
                 case 1:
                 case 2:
-                case 3:
                     return new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop");
+                case 3:
                 case 4:
                     // Empty stop
                     break;
