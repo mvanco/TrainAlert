@@ -8,8 +8,9 @@ import cz.intesys.trainalert.repository.Repository;
 import cz.intesys.trainalert.repository.SimulatedRepository;
 
 public class TaConfig {
-    public static final int GPS_TIME_INTERVAL = 2000; // Time between two gps coordinates measurements in milliseconds
-    public static final int TRIP_TIME_INTERVAL = 5000;
+    public static final int GPS_TIME_INTERVAL = 2000; // Time between two gps coordinates measurements in milliseconds, GetLocation service polling.
+    public static final int TRIP_TIME_INTERVAL = 5000; // GetNextStops, GetPreviousStops, GetFinalStop services polling.
+    public static final int TRIP_STATUS_TIME_INTERVAL = 3000;
 
     public static final int SERVER_TIMEOUT = 30000; // In miliseconds.
     public static final int GPS_TIMEOUT_DELAY = 15000;

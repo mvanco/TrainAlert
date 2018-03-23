@@ -55,7 +55,6 @@ public class DataHelper implements LifecycleObserver {
     private static final String TRAIN_ID_KEY = "train_id";
     private static final String TRIP_ID_KEY = "trip_id";
     private static final String REGISTERED_KEY = "registered";
-    private final MutableLiveData<TripStatus> mTrainStatusLiveData;
     private static DataHelper sInstance;
     private Repository mRepository;
     private SharedPreferences mSharedPrefs;
@@ -64,10 +63,9 @@ public class DataHelper implements LifecycleObserver {
     private List<Poi> mPois;
     private MutableLiveData<List<Poi>> mPoisLiveData;
     private Utility.IntervalPoller mLocationPoller;
-    private boolean mShouldStop;
-    private TripStatus mTripStatus;
-    private MutableLiveData<Boolean> mShouldStopLiveData;
     private MutableLiveData<Long> mLatestTimeLiveData;
+    private MutableLiveData<TripStatus> mTripStatusLiveData;
+    private Utility.IntervalPoller mTripStatusPoller;
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({POI_TYPE_CROSSING, POI_TYPE_TRAIN_STATION, POI_TYPE_STOP, POI_TYPE_LIGHTS, POI_TYPE_BEFORE_LIGHTS, POI_TYPE_SPEED_LIMITATION_20,
@@ -87,23 +85,13 @@ public class DataHelper implements LifecycleObserver {
         mLocation = TaConfig.DEFAULT_LOCATION;
         mLocationLiveData = new MutableLiveData<Location>();
         mPois = new ArrayList<>();
-        mTripStatus = new TripStatus(true, false, 0);
         mPoisLiveData = new MutableLiveData<>();
-        mShouldStopLiveData = new MutableLiveData<>();
-        mTrainStatusLiveData = new MutableLiveData<>();
         mLatestTimeLiveData = new MutableLiveData<>();
 
         mLocationPoller = new Utility.IntervalPoller(TaConfig.GPS_TIME_INTERVAL, () -> {
             if (!mLocation.equals(mLocationLiveData.getValue())) {
                 mLocationLiveData.setValue(mLocation);
             }
-
-            mShouldStopLiveData.setValue(mShouldStop);
-//            if (mShouldStopLiveData.getValue() != null && mShouldStop != mShouldStopLiveData.getValue().booleanValue()) {
-//                mShouldStopLiveData.setValue(mShouldStop);
-//            }
-
-            mTrainStatusLiveData.setValue(mTripStatus);
 
             mRepository.getCurrentLocation(new TaCallback<Location>() {
                 @Override
@@ -120,10 +108,13 @@ public class DataHelper implements LifecycleObserver {
 
                 }
             });
+        });
 
-            mRepository.getTripStatus(new TaCallback<TripStatus>() {
+        mTripStatusLiveData = new MutableLiveData<>();
+        mTripStatusPoller = new Utility.IntervalPoller(TaConfig.TRIP_STATUS_TIME_INTERVAL, () -> {
+            DataHelper.getInstance().getTripStatus(new TaCallback<TripStatus>() {
                 @Override public void onResponse(TripStatus response) {
-                    mTripStatus = response;
+                    mTripStatusLiveData.setValue(response);
                 }
 
                 @Override public void onFailure(Throwable t) {
@@ -140,16 +131,8 @@ public class DataHelper implements LifecycleObserver {
         return sInstance;
     }
 
-    public MutableLiveData<TripStatus> getTrainStatusLiveData() {
-        return mTrainStatusLiveData;
-    }
-
     public MutableLiveData<Long> getLatestTimeLiveData() {
         return mLatestTimeLiveData;
-    }
-
-    public MutableLiveData<Boolean> getShouldStopLiveData() {
-        return mShouldStopLiveData;
     }
 
     /**
@@ -185,6 +168,18 @@ public class DataHelper implements LifecycleObserver {
 
     public synchronized void stopLocationPolling() {
         mLocationPoller.stopPolling();
+    }
+
+    public MutableLiveData<TripStatus> getTripStatusLiveData() {
+        return mTripStatusLiveData;
+    }
+
+    public synchronized void startTripStatusPolling() {
+        mTripStatusPoller.startPolling();
+    }
+
+    public synchronized void stopTripStatusPolling() {
+        mTripStatusPoller.stopPolling();
     }
 
     public synchronized MutableLiveData<Location> getLocationLiveData() {
@@ -313,6 +308,10 @@ public class DataHelper implements LifecycleObserver {
 
     public void getFinalStop(TaCallback<Stop> taCallback) {
         REPOSITORY.getFinalStop(taCallback);
+    }
+
+    public void getTripStatus(TaCallback<TripStatus> taCallback) {
+        REPOSITORY.getTripStatus(taCallback);
     }
 
     public void getTrainId(TaCallback<String> taCallback) {

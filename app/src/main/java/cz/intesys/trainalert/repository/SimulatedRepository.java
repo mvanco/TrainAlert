@@ -67,37 +67,34 @@ public class SimulatedRepository implements Repository {
 
     @Override
     public void getCurrentLocation(TaCallback<Location> taCallback) {
-        int randomInt = new Random().nextInt(4);
-        if (randomInt == 2) {
-            new Handler().postDelayed(() -> {
-                Location location = mExampleRoute.get(mLocationIterator);
-                location.setTime(new Date());
-                taCallback.onResponse(location);
-                Log.d(LOG_POSTGRE, "getCurrentLocation response");
-            }, getRandomServerDelay());
+        //int randomInt = new Random().nextInt(4);
+        //if (randomInt == 2) {
+        new Handler().postDelayed(() -> {
+            Location location = mExampleRoute.get(mLocationIterator);
+            location.setTime(new Date());
+            taCallback.onResponse(location);
+            Log.d(LOG_POSTGRE, "getCurrentLocation response");
+        }, getRandomServerDelay());
 
 
-            // Prepare next location
-            if (toTheLeftDirection) {
-                if (mLocationIterator < mExampleRoute.size() - 1) {
-                    mLocationIterator++;
-                } else {
-                    toTheLeftDirection = false;
-                    mLocationIterator--;
-                }
+        // Prepare next location
+        if (toTheLeftDirection) {
+            if (mLocationIterator < mExampleRoute.size() - 1) {
+                mLocationIterator++;
             } else {
-                if (mLocationIterator > 1) {
-                    mLocationIterator--;
-                } else {
-                    toTheLeftDirection = true;
-                    mLocationIterator++;
-                }
+                toTheLeftDirection = false;
+                mLocationIterator--;
             }
-            Log.d(LOG_POSTGRE, "getCurrentLocation enqueued");
-
+        } else {
+            if (mLocationIterator > 1) {
+                mLocationIterator--;
+            } else {
+                toTheLeftDirection = true;
+                mLocationIterator++;
+            }
         }
-
-
+        Log.d(LOG_POSTGRE, "getCurrentLocation enqueued");
+        //}
     }
 
     @Override
@@ -168,14 +165,14 @@ public class SimulatedRepository implements Repository {
 
     @Override public void getPreviousStops(int id, TaCallback<List<Stop>> taCallback) {
         new Handler().postDelayed(() -> {
-            List<Stop> stops = new ArrayList<>();
-            try {
-                stops.add(new Stop("0", "Predosla 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 3900, true, "stop"));
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            taCallback.onResponse(stops);
             Log.d(LOG_POSTGRE, "getPreviousStops response");
+            taCallback.onResponse(getPreviousStops(mTime));
+//            List<Stop> stops = new ArrayList<>();
+//            try {
+//                stops.add(new Stop("0", "Predosla 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 3900, true, "stop"));
+//            } catch (ParseException e) {
+//                e.printStackTrace();
+//            }
         }, getRandomServerDelay());
         Log.d(LOG_POSTGRE, "getPreviousStops enqueued");
     }
@@ -183,6 +180,7 @@ public class SimulatedRepository implements Repository {
     @Override public void getNextStops(int id, TaCallback<List<Stop>> taCallback) {
         mTime++;
         new Handler().postDelayed(() -> {
+            Log.d(LOG_POSTGRE, "getNextStops response");
             taCallback.onResponse(getNextStops(mTime));
 //            List<Stop> stops = new ArrayList<>();
 //            try {
@@ -199,6 +197,7 @@ public class SimulatedRepository implements Repository {
 
     @Override public void getFinalStop(TaCallback<Stop> taCallback) {
         new Handler().postDelayed(() -> {
+            Log.d(LOG_POSTGRE, "getFinalStop response");
             taCallback.onResponse(getFinalStop(mTime));
 //            Stop stop = null;
 //            try {
@@ -214,14 +213,15 @@ public class SimulatedRepository implements Repository {
 
     @Override public void getTrainId(TaCallback<String> taCallback) {
         new Handler().postDelayed(() -> {
-            taCallback.onResponse("TRAINID");
             Log.d(LOG_POSTGRE, "getTrainId response");
+            taCallback.onResponse("TRAINID");
         }, getRandomServerDelay());
         Log.d(LOG_POSTGRE, "getTrainId enqueued");
     }
 
     @Override public void getTripStatus(TaCallback<TripStatus> taCallback) {
         new Handler().postDelayed(() -> {
+            Log.d(LOG_POSTGRE, "getTripStatus response");
             TripStatus ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_20);
             switch (mTime) {
                 case 0:
@@ -242,6 +242,7 @@ public class SimulatedRepository implements Repository {
             }
             taCallback.onResponse(ts);
         }, getRandomServerDelay());
+        Log.d(LOG_POSTGRE, "getTripStatus enqueued");
     }
 
     private List<Stop> getPreviousStops(int i) {

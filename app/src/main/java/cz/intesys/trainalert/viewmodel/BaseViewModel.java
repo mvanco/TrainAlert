@@ -32,23 +32,21 @@ public class BaseViewModel extends ViewModel implements LifecycleObserver {
     private DataHelper mDataHelper;
     private MediatorLiveData<Location> mLocation;
     private MediatorLiveData<List<Poi>> mPois;
-    private MediatorLiveData<TripStatus> mTrainStatus;
-    private MutableLiveData<Boolean> mEnableGpsUnavailableLoader;
+    private MediatorLiveData<TripStatus> mTripStatusLiveData;
     private long mLastServerResponse;
 
     public BaseViewModel() {
         mDataHelper = DataHelper.getInstance();
         mLocation = new MediatorLiveData<>();
         mPois = new MediatorLiveData<>();
-        mTrainStatus = new MediatorLiveData<>();
-        mEnableGpsUnavailableLoader = new MutableLiveData<>();
+        mTripStatusLiveData = new MediatorLiveData<>();
         mLocation.addSource(mDataHelper.getLocationLiveData(), location -> mLocation.setValue(location));
         mPois.addSource(mDataHelper.getPoisLiveData(), pois -> mPois.setValue(pois));
-        mTrainStatus.addSource(mDataHelper.getTrainStatusLiveData(), trainStatus -> mTrainStatus.setValue(trainStatus));
+        mTripStatusLiveData.addSource(mDataHelper.getTripStatusLiveData(), tripStatus -> mTripStatusLiveData.setValue(tripStatus));
     }
 
-    public LiveData<TripStatus> getTrainStatusLiveData() {
-        return mTrainStatus;
+    public MutableLiveData<TripStatus> getTripStatusLiveData() {
+        return mTripStatusLiveData;
     }
 
     public Observable<Boolean> getGpsTimeoutLiveData(LifecycleOwner owner) {
@@ -70,11 +68,13 @@ public class BaseViewModel extends ViewModel implements LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     public void startLocationPolling() {
         mDataHelper.startLocationPolling();
+        mDataHelper.startTripStatusPolling();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     public void stopLocationPolling() {
         mDataHelper.stopLocationPolling();
+        mDataHelper.stopTripStatusPolling();
     }
 
     public LiveData<Location> getLocationLiveData() {

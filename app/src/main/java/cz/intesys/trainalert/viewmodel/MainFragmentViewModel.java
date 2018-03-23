@@ -15,6 +15,7 @@ public class MainFragmentViewModel extends BaseViewModel {
     private boolean mFreeMode = false;
     private boolean animating = true;
 
+
     public MainFragmentViewModel() {
         mDisabledAlarms = new ArrayList<Alarm>();
     }

@@ -78,7 +78,7 @@ public class TripFragment extends Fragment {
             mAdapter.notifyDataSetChanged();
         });
 
-        mViewModel.getTrainStatusLiveData().observe(this, trainStatus -> {
+        mViewModel.getTripStatusLiveData().observe(this, trainStatus -> {
             setTripHeader(trainStatus.isPressed(), trainStatus.isCanPass());
         });
 

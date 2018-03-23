@@ -2,12 +2,10 @@ package cz.intesys.trainalert.viewmodel;
 
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import java.util.List;
 
@@ -60,11 +58,6 @@ public class TripFragmentViewModel extends BaseViewModel {
                 @Override public void onFailure(Throwable t) {
                 }
             });
-        });
-        shouldStop.addSource(DataHelper.getInstance().getShouldStopLiveData(), new Observer<Boolean>() {
-            @Override public void onChanged(@Nullable Boolean aBoolean) {
-                shouldStop.setValue(aBoolean);
-            }
         });
     }
 
