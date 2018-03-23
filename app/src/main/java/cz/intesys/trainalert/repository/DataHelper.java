@@ -55,15 +55,21 @@ public class DataHelper implements LifecycleObserver {
     private static final String TRAIN_ID_KEY = "train_id";
     private static final String TRIP_ID_KEY = "trip_id";
     private static final String REGISTERED_KEY = "registered";
+
     private static DataHelper sInstance;
     private Repository mRepository;
     private SharedPreferences mSharedPrefs;
+
     private Location mLocation;
     private MutableLiveData<Location> mLocationLiveData;
+    private Utility.IntervalPoller mLocationPoller;
+
     private List<Poi> mPois;
     private MutableLiveData<List<Poi>> mPoisLiveData;
-    private Utility.IntervalPoller mLocationPoller;
+    private Utility.IntervalPoller mPoisPoller;
+
     private MutableLiveData<Long> mLatestTimeLiveData;
+
     private MutableLiveData<TripStatus> mTripStatusLiveData;
     private Utility.IntervalPoller mTripStatusPoller;
 
@@ -82,12 +88,10 @@ public class DataHelper implements LifecycleObserver {
     private DataHelper() {
         mRepository = REPOSITORY;
         mSharedPrefs = TaApplication.getInstance().getSharedPreferences();
-        mLocation = TaConfig.DEFAULT_LOCATION;
-        mLocationLiveData = new MutableLiveData<Location>();
-        mPois = new ArrayList<>();
-        mPoisLiveData = new MutableLiveData<>();
         mLatestTimeLiveData = new MutableLiveData<>();
 
+        mLocation = TaConfig.DEFAULT_LOCATION;
+        mLocationLiveData = new MutableLiveData<Location>();
         mLocationPoller = new Utility.IntervalPoller(TaConfig.GPS_TIME_INTERVAL, () -> {
             if (!mLocation.equals(mLocationLiveData.getValue())) {
                 mLocationLiveData.setValue(mLocation);
@@ -121,6 +125,12 @@ public class DataHelper implements LifecycleObserver {
 
                 }
             });
+        });
+
+        mPois = new ArrayList<>();
+        mPoisLiveData = new MutableLiveData<>();
+        mPoisPoller = new Utility.IntervalPoller(TaConfig.GET_POIS_INTERVAL, () -> {
+            reloadPois();
         });
     }
 
@@ -182,6 +192,14 @@ public class DataHelper implements LifecycleObserver {
         mTripStatusPoller.stopPolling();
     }
 
+    public synchronized void startPoisPolling() {
+        mPoisPoller.startPolling();
+    }
+
+    public synchronized void stopPoisPolling() {
+        mPoisPoller.stopPolling();
+    }
+
     public synchronized MutableLiveData<Location> getLocationLiveData() {
         return mLocationLiveData;
     }
@@ -195,7 +213,6 @@ public class DataHelper implements LifecycleObserver {
     }
 
     public synchronized MutableLiveData<List<Poi>> getPoisLiveData() {
-        reloadPois();
         return mPoisLiveData;
     }
 

@@ -103,6 +103,10 @@ public class StopView extends FrameLayout {
         return mArrival;
     }
 
+    public void setArrival(Date arrival) {
+        mArrival = arrival;
+    }
+
     public void setArrival(String arrival) {
         if (arrival == null) {
             return;
@@ -113,10 +117,6 @@ public class StopView extends FrameLayout {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-    }
-
-    public void setArrival(Date arrival) {
-        mArrival = arrival;
     }
 
     public int getDelay() {
@@ -285,7 +285,7 @@ public class StopView extends FrameLayout {
         }
 
         if (mCategory != null) {
-            if (StopApi.TYPE_ON_DEMAND.equals(mCategory)) {
+            if (StopApi.TYPE_ON_DEMAND.equals(mCategory) && mType != TYPE_TRAIN_MARKER) {
                 mBinding.stopViewHand.setVisibility(VISIBLE);
             } else {
                 mBinding.stopViewHand.setVisibility(GONE);

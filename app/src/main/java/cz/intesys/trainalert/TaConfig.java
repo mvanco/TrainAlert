@@ -9,8 +9,9 @@ import cz.intesys.trainalert.repository.SimulatedRepository;
 
 public class TaConfig {
     public static final int GPS_TIME_INTERVAL = 2000; // Time between two gps coordinates measurements in milliseconds, GetLocation service polling.
+    public static final int TRIP_STATUS_TIME_INTERVAL = 3000; // GetTripStatus service polling.
     public static final int TRIP_TIME_INTERVAL = 5000; // GetNextStops, GetPreviousStops, GetFinalStop services polling.
-    public static final int TRIP_STATUS_TIME_INTERVAL = 3000;
+    public static final int GET_POIS_INTERVAL = 300000; // GetPois service polling (5min.).
 
     public static final int SERVER_TIMEOUT = 30000; // In miliseconds.
     public static final int GPS_TIMEOUT_DELAY = 15000;
@@ -23,7 +24,7 @@ public class TaConfig {
     public static final int MAP_DEFAULT_ZOOM = 15; //
 
     public static final int[] SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE = {0, 200}; // [0, 0] or [x, y] where x, y > 0
-    public static final int[] SIMULATED_REPOSITORY_GET_TRIPS_RESPONSE_DELAY_RANGE = {50, 5000};
+    public static final int[] SIMULATED_REPOSITORY_GET_TRIPS_RESPONSE_DELAY_RANGE = {50, 500};
     public static final int[] SIMULATED_REPOSITORY_SET_TRIP_RESPONSE_DELAY_RANGE = {50, 500}; // [0, 0] or [x, y] where x, y > 0
 
     public static final Repository REPOSITORY = SimulatedRepository.getInstance(); // TODO: Make sure this is real PostgreSqlRepository.

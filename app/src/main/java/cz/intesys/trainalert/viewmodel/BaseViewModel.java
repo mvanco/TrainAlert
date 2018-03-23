@@ -69,12 +69,14 @@ public class BaseViewModel extends ViewModel implements LifecycleObserver {
     public void startLocationPolling() {
         mDataHelper.startLocationPolling();
         mDataHelper.startTripStatusPolling();
+        mDataHelper.startPoisPolling();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     public void stopLocationPolling() {
         mDataHelper.stopLocationPolling();
         mDataHelper.stopTripStatusPolling();
+        mDataHelper.stopPoisPolling();
     }
 
     public LiveData<Location> getLocationLiveData() {
