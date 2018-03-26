@@ -120,5 +120,6 @@
     <string name="activity_main_wrong_password">Bylo zadáno zlé heslo</string>
     <string name="progress_bar_text_location_unavailable">GPS data\njsou nedostupná</string>
     <string name="nav_logout">Odhlásit</string>
+    <string name="finish_animation_text">Dosáhl jsi cílové stanice</string>
 
 </resources>

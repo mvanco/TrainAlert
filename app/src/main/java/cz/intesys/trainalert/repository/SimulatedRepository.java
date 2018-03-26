@@ -300,9 +300,10 @@ public class SimulatedRepository implements Repository {
         try {
             switch (i) {
                 case 0:
+                    return new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop");
                 case 1:
                 case 2:
-                    return new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop");
+//                    return new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop");
                 case 3:
                 case 4:
                     // Empty stop

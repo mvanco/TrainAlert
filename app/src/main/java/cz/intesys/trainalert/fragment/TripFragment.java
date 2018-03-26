@@ -74,8 +74,13 @@ public class TripFragment extends Fragment {
             mAdapter.notifyDataSetChanged();
         });
         mViewModel.getFinalStopLiveData().observe(this, (finalStop) -> {
-            mAdapter.setFinalStop(finalStop);
-            mAdapter.notifyDataSetChanged();
+            if (finalStop == null) {
+                showFinishAnimationView();
+            } else {
+                hideFinishAnimationView();
+                mAdapter.setFinalStop(finalStop);
+                mAdapter.notifyDataSetChanged();
+            }
         });
 
         mViewModel.getTripStatusLiveData().observe(this, trainStatus -> {
@@ -137,6 +142,19 @@ public class TripFragment extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
+    }
+
+    private void showFinishAnimationView() {
+        mBinding.fragmentTripFinishAnimationView.setVisibility(View.VISIBLE);
+        mBinding.fragmentTripFinishAnimationText.setVisibility(View.VISIBLE);
+        mBinding.fragmentTripRecycler.setVisibility(View.GONE);
+        mBinding.fragmentTripFinishAnimationView.startAnimation();
+    }
+
+    private void hideFinishAnimationView() {
+        mBinding.fragmentTripFinishAnimationView.setVisibility(View.GONE);
+        mBinding.fragmentTripFinishAnimationText.setVisibility(View.GONE);
+        mBinding.fragmentTripRecycler.setVisibility(View.VISIBLE);
     }
 
     private void setTripHeader(boolean pressed, boolean canPass) {
