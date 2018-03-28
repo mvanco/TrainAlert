@@ -4,32 +4,26 @@
     <!-- Navigation item IDs/titles -->
     <string name="nav_pois">@string/title_activity_poi</string>
     <string name="nav_categories">@string/title_activity_category</string>
+    <string name="nav_logout">Odhlásit</string>
 
+    <!-- ActionBar items -->
     <string name="menu_trip_selection">Vyběr jízdy</string>
     <string name="menu_clock">Hodiny</string>
 
-    <string name="activity_main_navigation_drawer_open">Open</string>
-    <string name="activity_main_navigation_drawer_close">Close</string>
-
-    <!-- Toast messages -->
-    <string name="activity_main_poi_deleted_toast">Nemůžu vymazat (chyba serveru)</string>
-    <string name="activity_main_successful_logout">Byl jste úspěšně odhlášen</string>
-
-
-    <!-- Alarm -->
-
     <!-- Dialog fragments -->
-
     <string name="fragment_trip_id_business_trip">Služební jízda</string>
     <string name="fragment_trip_id_manual_selection">Ruční zadání</string>
 
     <!-- TripFragment -->
-    <string name="fragmentTrip_trainIdLabel">Číslo vlaku:</string>
-    <string name="fragmentTrip_tripIdLabel">Číslo jízdy:</string>
+    <string name="fragment_trip_train_id_label">Číslo vlaku:</string>
+    <string name="fragment_trip_trip_id_label">Číslo jízdy:</string>
     <string name="fragment_trip_name_label">Zastávka</string>
     <string name="fragment_trip_delay_label">Zpoždění\n(min.)</string>
     <string name="fragment_trip_arrival_label">Příjezd</string>
-    <string name="fragment_trip_go_ahead">Projdi</string>
+    <string name="fragment_trip_go_ahead">Projeď</string>
+
+    <string name="activity_main_navigation_drawer_open">Open</string>
+    <string name="activity_main_navigation_drawer_close">Close</string>
 
     <!-- Content Descriptions -->
     <string name="fragment_poi_list_icon_desc">Icon</string>
@@ -43,20 +37,23 @@
     <string name="title_activity_category">Kategorie</string>
     <string name="title_fragment_category_picker">Kategorie</string>
     <string name="title_fragment_trip_id">Číslo jízdy</string>
+    <string name="title_fragment_password">Heslo</string>
 
-    <string name="pref_title_ringtone">Zvukové upozornění</string>
-    <string name="pref_ringtone_silent">silent</string>
-    <string name="pref_title_vibrate">Vibrovat</string>
-    <string name="pref_title_before_text">Text upozornění</string>
-    <string name="pref_title_include_distance">Zahrnout vzdálenost</string>
-    <string name="pref_title_after_text">Text upozornění za vzdáleností</string>
+    <!-- Information Messages -->
+    <string name="message_new_poi_added">Bod zájmu byl přidán</string>
+    <string name="message_new_poi_edited">Bod zájmu byl editován</string>
+    <string name="message_destination_reached">Přijel jsi do cílové stanice\n%s</string>
+    <string name="message_successful_logout">Byl jste úspěšně odhlášen</string>
 
-    <string name="new_poi_added">Bod zájmu byl přidán</string>
-    <string name="new_poi_edited">Bod zájmu byl editován</string>
+    <!-- Error Messages -->
+    <string name="error_wrong_password">Bylo zadáno špatné heslo</string>
+    <string name="error_location_unavailable">GPS data\nnejsou dostupná</string>
+    <string name="error_cannot_delete_poi">Nemůžu vymazat (chyba serveru)</string>
 
-    <string name="dialog_fragment_positive_button">Ulož</string>
-    <string name="dialog_fragment_negative_button">Zruš</string>
-    <string name="button_text_save">Ulož</string>
+    <!-- Button Labels -->
+    <string name="button_save">Ulož</string>
+    <string name="button_cancel">Zruš</string>
+    <string name="button_confirm">Potvrď</string>
 
     <!-- Categories -->
     <string name="category_crossing">Přejezd</string>
@@ -72,8 +69,18 @@
     <string name="category_stop_azd">Zastávka</string>
 
     <!-- Preferences -->
+    <string name="pref_ringtone_silent">silent</string>
 
+    <string name="pref_title_ringtone">Zvukové upozornění</string>
+    <string name="pref_title_vibrate">Vibrovat</string>
+    <string name="pref_title_before_text">Text upozornění</string>
+    <string name="pref_title_include_distance">Zahrnout vzdálenost</string>
+    <string name="pref_title_after_text">Text upozornění za vzdáleností</string>
     <string name="pref_title_graphics">Grafika</string>
+    <string name="pref_title_distances">Vzdálenosti</string>
+
+    <string name="pref_summary_distances">Nastav vzdálenosti, které vyvolávají upozornění</string>
+
     <string-array name="pref_graphics_titles">
         <item>Černý čtverec</item>
         <item>Modrý kruh</item>
@@ -97,7 +104,6 @@
         <item>8</item>
     </string-array>
 
-    <string name="pref_title_distances">Vzdálenosti</string>
     <string-array name="pref_distances_titles">
         <item>50m</item>
         <item>70m</item>
@@ -114,12 +120,5 @@
         <item>150</item>
         <item>300</item>
     </string-array>
-    <string name="pref_distances_summary">Nastav vzdálenosti které vyvolávají upozornění</string>
-    <string name="title_fragment_password">Heslo</string>
-    <string name="password_dialog_fragment_positive_button">Potvrď</string>
-    <string name="activity_main_wrong_password">Bylo zadáno zlé heslo</string>
-    <string name="progress_bar_text_location_unavailable">GPS data\njsou nedostupná</string>
-    <string name="nav_logout">Odhlásit</string>
-    <string name="finish_animation_text">Dosáhl jsi cílové stanice</string>
 
 </resources>

@@ -39,7 +39,7 @@ public class TripIdManuallyDialogFragment extends DialogFragment {
         builder.setView(customView);
 
         builder.setPositiveButton(
-                R.string.dialog_fragment_positive_button,
+                R.string.button_save,
                 (dialog, which) -> {
                     EditText editText = customView.findViewById(R.id.trainId);
                     mListener.onTripSelected(editText.getText().toString());
@@ -48,7 +48,7 @@ public class TripIdManuallyDialogFragment extends DialogFragment {
         );
 
         builder.setNegativeButton(
-                R.string.dialog_fragment_negative_button,
+                R.string.button_cancel,
                 (dialog, which) -> {
                     TripIdManuallyDialogFragment.this.getDialog().cancel();
                 }

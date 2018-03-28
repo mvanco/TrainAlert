@@ -1,13 +1,19 @@
 package cz.intesys.trainalert.entity;
 
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.annotation.StringDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import cz.intesys.trainalert.repository.DataHelper;
+
+import static cz.intesys.trainalert.repository.DataHelper.GRAPHICS_BLUE_CIRCLE;
 
 public class CategorySharedPrefs {
     public static final String CATEGORY_KEY = "cz.intesys.trainalert.categorypreferencefragment.category";
@@ -19,8 +25,16 @@ public class CategorySharedPrefs {
     public static final String TEXT_BEFORE_PREF_KEY = "text_before";
     public static final String INCLUDE_DISTANCE_PREF_KEY = "include_distance";
     public static final String TEXT_AFTER_PREF_KEY = "text_after";
+
+    public static final String GRAPHICS_DEFAULT_VALUE = String.valueOf(GRAPHICS_BLUE_CIRCLE);
+    public static final Uri RINGTONE_DEFAULT_VALUE = Settings.System.DEFAULT_NOTIFICATION_URI;
+    public static final boolean VIBRATE_DEFAULT_VALUE = false;
+    public static final HashSet DISTANCE_DEFAULT_VALUE = new HashSet(Arrays.asList("300"));
+    public static final String TEXT_BEFORE_DEFAULT_VALUE = "Pozor za ";
+    public static final boolean INCLUDE_DISTANCE_DEFAULT_VALUE = true;
+    public static final String TEXT_AFTER_DEFAULT_VALUE = "m";
+
     public static final String DEFAULT_VALUE = "0";
-    public static final String DISTANCE_DEFAULT_VALUE = "300";
 
     private @DataHelper.CategoryId
     int mCategoryId;

@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 import cz.intesys.trainalert.TaConfig;
+import cz.intesys.trainalert.api.ResponseApi;
 import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.repository.DataHelper;
@@ -20,7 +21,7 @@ public class TripFragmentViewModel extends BaseViewModel {
     private Utility.IntervalPoller mTripPoller;
     private MediatorLiveData<List<Stop>> previousStops;
     private MediatorLiveData<List<Stop>> nextStops;
-    private MediatorLiveData<Stop> finalStop;
+    private MediatorLiveData<ResponseApi<Stop>> finalStop;
     private MediatorLiveData<Boolean> shouldStop;
     private int mPreviousStopCount;
     private int mNextStopCount;
@@ -50,8 +51,8 @@ public class TripFragmentViewModel extends BaseViewModel {
                 @Override public void onFailure(Throwable t) {
                 }
             });
-            DataHelper.getInstance().getFinalStop(new TaCallback<Stop>() {
-                @Override public void onResponse(Stop response) {
+            DataHelper.getInstance().getFinalStop(new TaCallback<ResponseApi<Stop>>() {
+                @Override public void onResponse(ResponseApi<Stop> response) {
                     finalStop.setValue(response);
                 }
 
@@ -79,12 +80,8 @@ public class TripFragmentViewModel extends BaseViewModel {
         return nextStops;
     }
 
-    public MediatorLiveData<Stop> getFinalStopLiveData() {
+    public MediatorLiveData<ResponseApi<Stop>> getFinalStopLiveData() {
         return finalStop;
-    }
-
-    public MediatorLiveData<Boolean> getShouldStopLiveData() {
-        return shouldStop;
     }
 
     public static class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {

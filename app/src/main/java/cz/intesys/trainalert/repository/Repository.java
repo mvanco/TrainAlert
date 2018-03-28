@@ -2,6 +2,7 @@ package cz.intesys.trainalert.repository;
 
 import java.util.List;
 
+import cz.intesys.trainalert.api.ResponseApi;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.Stop;
@@ -27,7 +28,7 @@ public interface Repository {
 
     void getNextStops(int count, TaCallback<List<Stop>> taCallback);
 
-    void getFinalStop(TaCallback<Stop> taCallback);
+    void getFinalStop(TaCallback<ResponseApi<Stop>> taCallback);
 
     void getTrainId(TaCallback<String> taCallback);
 

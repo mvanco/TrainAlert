@@ -119,7 +119,7 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
             }
 
             @Override public void onFailure(Throwable t) {
-                Toast.makeText(getApplicationContext(), R.string.activity_main_poi_deleted_toast, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), R.string.error_cannot_delete_poi, Toast.LENGTH_LONG).show();
             }
         });
     }

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.adapter.TripAdapter;
+import cz.intesys.trainalert.api.ResponseApi;
 import cz.intesys.trainalert.databinding.FragmentTripBinding;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.repository.DataHelper;
@@ -75,11 +76,17 @@ public class TripFragment extends Fragment {
         });
         mViewModel.getFinalStopLiveData().observe(this, (finalStop) -> {
             if (finalStop == null) {
-                showFinishAnimationView();
-            } else {
                 hideFinishAnimationView();
-                mAdapter.setFinalStop(finalStop);
+                mAdapter.setFinalStop(null);
                 mAdapter.notifyDataSetChanged();
+            } else {
+                if (finalStop.getErrorCode() == ResponseApi.ECODE_NO_TRIP_REGISTERED) {
+                    showFinishAnimationView(finalStop.getData().getName());
+                } else {
+                    hideFinishAnimationView();
+                    mAdapter.setFinalStop(finalStop.getData());
+                    mAdapter.notifyDataSetChanged();
+                }
             }
         });
 
@@ -144,9 +151,10 @@ public class TripFragment extends Fragment {
         }
     }
 
-    private void showFinishAnimationView() {
+    private void showFinishAnimationView(String name) {
         mBinding.fragmentTripFinishAnimationView.setVisibility(View.VISIBLE);
         mBinding.fragmentTripFinishAnimationText.setVisibility(View.VISIBLE);
+        mBinding.fragmentTripFinishAnimationText.setText(String.format(getResources().getString(R.string.message_destination_reached), name));
         mBinding.fragmentTripRecycler.setVisibility(View.GONE);
         mBinding.fragmentTripFinishAnimationView.startAnimation();
     }

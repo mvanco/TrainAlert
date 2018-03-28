@@ -279,17 +279,24 @@ public class PostgreSqlRepository implements Repository {
         Log.d(LOG_POSTGRE, "getNextStops enqueued");
     }
 
-    @Override public void getFinalStop(TaCallback<Stop> taCallback) {
+    /**
+     * Warning: Uses StopApi, not Stop because we need lower access to detect final station has been reached.
+     *
+     * @param taCallback
+     */
+    @Override public void getFinalStop(TaCallback<ResponseApi<Stop>> taCallback) {
         Call<ResponseApi<StopApi>> call = mApiService.getFinalStop();
         call.enqueue(new Callback<ResponseApi<StopApi>>() {
             @Override
             public void onResponse(Call<ResponseApi<StopApi>> call, Response<ResponseApi<StopApi>> response) {
-                if (response.body() != null
-                        && response.body().getErrorCode() == ResponseApi.ECODE_OK) { //TODO: make with enum or annotated int
+                if (response.body() != null) { //TODO: make with enum or annotated int
                     if (response.body().getData() == null) {
                         taCallback.onResponse(null);
                     } else {
-                        taCallback.onResponse(new Stop(response.body().getData())); // Only call function is enough to inform about completition without error
+                        ResponseApi<Stop> res = new ResponseApi<>();
+                        res.setData(new Stop(response.body().getData()));
+                        res.setErrorCode(response.body().getErrorCode());
+                        taCallback.onResponse(res); // Only call function is enough to inform about completition without error
                     }
                 } else {
                     taCallback.onFailure(new Throwable());

@@ -8,8 +8,6 @@ import android.support.annotation.DrawableRes;
 import org.osmdroid.api.IGeoPoint;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -196,7 +194,7 @@ public class Poi implements IGeoPoint, Parcelable {
 
     public List<Alarm> getAlarmList() {
         List<Alarm> alarmList = new ArrayList<>();
-        for (String strDistance : new ArrayList<String>(sharedPrefs.getStringSet(DISTANCES_PREF_KEY, new HashSet(Arrays.asList(DISTANCE_DEFAULT_VALUE))))) {
+        for (String strDistance : new ArrayList<String>(sharedPrefs.getStringSet(DISTANCES_PREF_KEY, DISTANCE_DEFAULT_VALUE))) {
             int distance = Integer.parseInt(strDistance);
             alarmList.add(new Alarm(distance, createMessage(distance), this));
         }

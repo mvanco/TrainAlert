@@ -52,14 +52,14 @@ public class CategoryPickerDialogFragment extends DialogFragment {
                 }
         );
         builder.setPositiveButton(
-                R.string.dialog_fragment_positive_button,
+                R.string.button_save,
                 (dialog, which) -> {
                     mListener.onCategorySelected(mSelectedItem);
                 }
         );
 
         builder.setNegativeButton(
-                R.string.dialog_fragment_negative_button,
+                R.string.button_cancel,
                 (dialog, which) -> {
                     // Nothing to do here.
                 }

@@ -41,7 +41,7 @@ public class PasswordDialogFragment extends DialogFragment {
         builder.setView(customView);
 
         builder.setPositiveButton(
-                R.string.password_dialog_fragment_positive_button,
+                R.string.button_confirm,
                 (dialog, which) -> {
                     EditText editText = customView.findViewById(R.id.trainId);
 
@@ -60,7 +60,7 @@ public class PasswordDialogFragment extends DialogFragment {
         );
 
         builder.setNegativeButton(
-                R.string.dialog_fragment_negative_button,
+                R.string.button_cancel,
                 (dialog, which) -> {
                     mListener.onDialogCanceled();
                     PasswordDialogFragment.this.getDialog().cancel();

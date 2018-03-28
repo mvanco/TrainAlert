@@ -12,11 +12,7 @@ import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.RingtonePreference;
 import android.preference.SwitchPreference;
-import android.provider.Settings;
 import android.view.MenuItem;
-
-import java.util.Arrays;
-import java.util.HashSet;
 
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.activity.CategoryActivity;
@@ -85,14 +81,14 @@ public class CategoryDetailFragment extends PreferenceFragment {
         ringtonePref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.RINGTONE_PREF_KEY, categoryId));
         ringtonePref.setTitle(R.string.pref_title_ringtone);
         ringtonePref.setRingtoneType(RingtoneManager.TYPE_NOTIFICATION);
-        ringtonePref.setDefaultValue(pref.getString(CategorySharedPrefs.RINGTONE_PREF_KEY, Settings.System.DEFAULT_NOTIFICATION_URI.toString()));
+        ringtonePref.setDefaultValue(pref.getString(CategorySharedPrefs.RINGTONE_PREF_KEY, CategorySharedPrefs.RINGTONE_DEFAULT_VALUE.toString()));
         screen.addPreference(ringtonePref);
         CategoryActivity.bindPreferenceSummaryToValue(ringtonePref);
 
         SwitchPreference switchPref = new SwitchPreference(getActivity());
         switchPref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.VIBRATE_PREF_KEY, categoryId));
         switchPref.setTitle(R.string.pref_title_vibrate);
-        switchPref.setDefaultValue(pref.getBoolean(CategorySharedPrefs.VIBRATE_PREF_KEY, true));
+        switchPref.setDefaultValue(pref.getBoolean(CategorySharedPrefs.VIBRATE_PREF_KEY, CategorySharedPrefs.VIBRATE_DEFAULT_VALUE));
         screen.addPreference(switchPref);
 
         MultiSelectListPreference distancesPref = new MultiSelectListPreference(getActivity());
@@ -100,26 +96,26 @@ public class CategoryDetailFragment extends PreferenceFragment {
         distancesPref.setTitle(R.string.pref_title_distances);
         distancesPref.setEntries(R.array.pref_distances_titles);
         distancesPref.setEntryValues(R.array.pref_distances_values);
-        distancesPref.setSummary(R.string.pref_distances_summary);
-        distancesPref.setDefaultValue(pref.getStringSet(CategorySharedPrefs.DISTANCES_PREF_KEY, new HashSet(Arrays.asList(CategorySharedPrefs.DISTANCE_DEFAULT_VALUE))));
+        distancesPref.setSummary(R.string.pref_summary_distances);
+        distancesPref.setDefaultValue(pref.getStringSet(CategorySharedPrefs.DISTANCES_PREF_KEY, CategorySharedPrefs.DISTANCE_DEFAULT_VALUE));
         screen.addPreference(distancesPref);
 
         EditTextPreference textBeforePref = new EditTextPreference(getActivity());
         textBeforePref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.TEXT_BEFORE_PREF_KEY, categoryId));
         textBeforePref.setTitle(R.string.pref_title_before_text);
-        textBeforePref.setDefaultValue(pref.getString(CategorySharedPrefs.TEXT_BEFORE_PREF_KEY, "Pozor za "));
+        textBeforePref.setDefaultValue(pref.getString(CategorySharedPrefs.TEXT_BEFORE_PREF_KEY, CategorySharedPrefs.TEXT_BEFORE_DEFAULT_VALUE));
         screen.addPreference(textBeforePref);
 
         SwitchPreference includeDistancePref = new SwitchPreference(getActivity());
         includeDistancePref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.INCLUDE_DISTANCE_PREF_KEY, categoryId));
         includeDistancePref.setTitle(R.string.pref_title_include_distance);
-        includeDistancePref.setDefaultValue(pref.getBoolean(CategorySharedPrefs.INCLUDE_DISTANCE_PREF_KEY, true));
+        includeDistancePref.setDefaultValue(pref.getBoolean(CategorySharedPrefs.INCLUDE_DISTANCE_PREF_KEY, CategorySharedPrefs.INCLUDE_DISTANCE_DEFAULT_VALUE));
         screen.addPreference(includeDistancePref);
 
         EditTextPreference textAfterPref = new EditTextPreference(getActivity());
         textAfterPref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.TEXT_AFTER_PREF_KEY, categoryId));
         textAfterPref.setTitle(R.string.pref_title_after_text);
-        textAfterPref.setDefaultValue(pref.getString(CategorySharedPrefs.TEXT_AFTER_PREF_KEY, "m"));
+        textAfterPref.setDefaultValue(pref.getString(CategorySharedPrefs.TEXT_AFTER_PREF_KEY, CategorySharedPrefs.TEXT_AFTER_DEFAULT_VALUE));
         screen.addPreference(textAfterPref);
         textAfterPref.setDependency(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.INCLUDE_DISTANCE_PREF_KEY, categoryId));
     }

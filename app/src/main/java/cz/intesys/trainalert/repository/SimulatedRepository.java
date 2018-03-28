@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Random;
 
 import cz.intesys.trainalert.TaConfig;
+import cz.intesys.trainalert.api.ResponseApi;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.Stop;
@@ -195,7 +196,7 @@ public class SimulatedRepository implements Repository {
         Log.d(LOG_POSTGRE, "getNextStops enqueued");
     }
 
-    @Override public void getFinalStop(TaCallback<Stop> taCallback) {
+    @Override public void getFinalStop(TaCallback<ResponseApi<Stop>> taCallback) {
         new Handler().postDelayed(() -> {
             Log.d(LOG_POSTGRE, "getFinalStop response");
             taCallback.onResponse(getFinalStop(mTime));
@@ -296,21 +297,23 @@ public class SimulatedRepository implements Repository {
         return stops;
     }
 
-    private Stop getFinalStop(int i) {
+    private ResponseApi<Stop> getFinalStop(int i) {
+        ResponseApi<Stop> res = new ResponseApi<>();
         try {
             switch (i) {
                 case 0:
-                    return new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop");
+                    res.setErrorCode(ResponseApi.ECODE_OK);
+                    res.setData(new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop"));
+                    return res;
                 case 1:
                 case 2:
 //                    return new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop");
                 case 3:
                 case 4:
-                    // Empty stop
-                    break;
                 case 5:
-                    // Empty stop
-                    break;
+                    res.setErrorCode(ResponseApi.ECODE_NO_TRIP_REGISTERED);
+                    res.setData(new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop"));
+                    return res;
             }
         } catch (ParseException e) {
             e.printStackTrace();

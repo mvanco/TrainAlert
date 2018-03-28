@@ -209,11 +209,11 @@ public class PoiMapFragment extends Fragment {
     }
 
     public void showNewPoiAddedNotification() {
-        showNotification(R.string.new_poi_added);
+        showNotification(R.string.message_new_poi_added);
     }
 
     public void showNewPoiEditedNotification() {
-        showNotification(R.string.new_poi_edited);
+        showNotification(R.string.message_new_poi_edited);
     }
 
     public void loadPois(List<Poi> pois) {

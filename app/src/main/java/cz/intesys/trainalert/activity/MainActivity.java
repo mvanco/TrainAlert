@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             }
 
             @Override public void onFailure(Throwable t) {
-                Toast.makeText(MainActivity.this, R.string.activity_main_wrong_password, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, R.string.error_wrong_password, Toast.LENGTH_SHORT).show();
             }
         });
         mShouldShowPasswordDialog = true;
@@ -314,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             startActivity(CategoryActivity.newIntent(this));
         } else if (id == R.string.nav_logout) {
             mBinding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
-            Toast.makeText(this, R.string.activity_main_successful_logout, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.message_successful_logout, Toast.LENGTH_SHORT).show();
             DataHelper.getInstance().unregister();
         }
     }

@@ -3,7 +3,6 @@ package cz.intesys.trainalert.entity;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.provider.Settings;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,9 +12,11 @@ import javax.inject.Inject;
 import cz.intesys.trainalert.di.CategoryModule;
 import cz.intesys.trainalert.repository.DataHelper;
 
-import static cz.intesys.trainalert.entity.CategorySharedPrefs.DEFAULT_VALUE;
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.GRAPHICS_DEFAULT_VALUE;
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.GRAPHICS_PREF_KEY;
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.RINGTONE_DEFAULT_VALUE;
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.RINGTONE_PREF_KEY;
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.VIBRATE_DEFAULT_VALUE;
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.VIBRATE_PREF_KEY;
 
 public class Alarm implements Parcelable {
@@ -93,17 +94,17 @@ public class Alarm implements Parcelable {
     }
 
     public @DataHelper.GraphicsId int getGraphics() {
-        String graphics = sharedPrefs.getString(GRAPHICS_PREF_KEY, DEFAULT_VALUE);
+        String graphics = sharedPrefs.getString(GRAPHICS_PREF_KEY, GRAPHICS_DEFAULT_VALUE);
         return Integer.valueOf(graphics);
     }
 
     public Uri getRingtone() {
-        String ringtone = sharedPrefs.getString(RINGTONE_PREF_KEY, Settings.System.DEFAULT_NOTIFICATION_URI.toString());
+        String ringtone = sharedPrefs.getString(RINGTONE_PREF_KEY, RINGTONE_DEFAULT_VALUE.toString());
         return Uri.parse(ringtone);
     }
 
     public boolean shouldVibrate() {
-        return sharedPrefs.getBoolean(VIBRATE_PREF_KEY, true);
+        return sharedPrefs.getBoolean(VIBRATE_PREF_KEY, VIBRATE_DEFAULT_VALUE);
     }
 
     public int getDistance() {

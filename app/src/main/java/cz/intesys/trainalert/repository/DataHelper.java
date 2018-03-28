@@ -15,6 +15,7 @@ import java.util.List;
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.TaApplication;
 import cz.intesys.trainalert.TaConfig;
+import cz.intesys.trainalert.api.ResponseApi;
 import cz.intesys.trainalert.entity.Category;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
@@ -323,7 +324,7 @@ public class DataHelper implements LifecycleObserver {
         REPOSITORY.getNextStops(count, taCallback);
     }
 
-    public void getFinalStop(TaCallback<Stop> taCallback) {
+    public void getFinalStop(TaCallback<ResponseApi<Stop>> taCallback) {
         REPOSITORY.getFinalStop(taCallback);
     }
 

@@ -3,11 +3,10 @@ package cz.intesys.trainalert.view;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.RectF;
+import android.graphics.Path;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
 
 import cz.intesys.trainalert.R;
 
@@ -62,35 +61,73 @@ public class FinishAnimationView extends View {
         float strokeWidth = 5 * mMyDp;
         float padding = strokeWidth / 2;
 
-        float ovalLeftMargin = padding;
-        float ovalWidth = 60 * mMyDp; //mInnerSquareDimension / 1.5f  - (2 * padding);
+//        float ovalLeftMargin = padding;
+//        float ovalWidth = 60 * mMyDp; //mInnerSquareDimension / 1.5f  - (2 * padding);
+//
+//        float ovalTopMargin = padding;
+//        float ovalHeight = 2.5f * ovalWidth;
+//
+//        float moveRight = 8 * mMyDp; //mInnerSquareDimension / 2.5f - (ovalWidth / 2);
+//        float moveBottom = -(62 * mMyDp); //-(mInnerSquareDimension / 3 - (ovalWidth / 2));
 
-        float ovalTopMargin = padding;
-        float ovalHeight = 2.5f * ovalWidth;
-
-        float moveRight = 8 * mMyDp; //mInnerSquareDimension / 2.5f - (ovalWidth / 2);
-        float moveBottom = -(62 * mMyDp); //-(mInnerSquareDimension / 3 - (ovalWidth / 2));
-
-        canvas.rotate(30f, mInnerSquareDimension / 2, mInnerSquareDimension / 2);
+//        canvas.rotate(30f, mInnerSquareDimension / 2, mInnerSquareDimension / 2);
 
         paint.setColor(getResources().getColor(R.color.green));
         paint.setStrokeWidth(strokeWidth);
         paint.setStyle(Paint.Style.STROKE);
 
-        RectF oval = new RectF(ovalLeftMargin + moveRight, ovalTopMargin + moveBottom, ovalLeftMargin + ovalWidth + moveRight, ovalTopMargin + ovalHeight + moveBottom);
-
-        AccelerateInterpolator interpolator = new AccelerateInterpolator(4f);
-
-        float mLength = 112f * interpolator.getInterpolation(animationFraction);
-        float mStartAngle = 15f + 112f - mLength;
-        float mSweepAngle = mLength;
+//        RectF oval = new RectF(ovalLeftMargin + moveRight, ovalTopMargin + moveBottom, ovalLeftMargin + ovalWidth + moveRight, ovalTopMargin + ovalHeight + moveBottom);
 
 
-        Log.d("drawArc", "startAngle:" + mStartAngle + "sweepAngle:" + mSweepAngle);
-        if (elapsedTime < animationDuration) {
-            canvas.drawArc(oval, mStartAngle, mSweepAngle, false, paint);
+//        float mLength = 112f * interpolator.getInterpolation(animationFraction);
+//        float mStartAngle = 15f + 112f - mLength;
+//        float mSweepAngle = mLength;
+//
+//
+//        Log.d("drawArc", "startAngle:" + mStartAngle + "sweepAngle:" + mSweepAngle);
+//        if (elapsedTime < animationDuration) {
+//            canvas.drawArc(oval, mStartAngle, mSweepAngle, false, paint);
+//        } else {
+//            canvas.drawArc(oval, 15f, 112f, false, paint);
+//        }
+
+        float animationFractionStage1;
+        if (animationFraction < 0f) {
+            animationFractionStage1 = 0f;
+        } else if (animationFraction < 0.5f) {
+            animationFractionStage1 = animationFraction / 0.5f;
         } else {
-            canvas.drawArc(oval, 15f, 112f, false, paint);
+            animationFractionStage1 = 1f;
+        }
+
+        float animationFractionStage2;
+        if (animationFraction < 0.5f) {
+            animationFractionStage2 = 0f;
+        } else if (animationFraction < 1f) {
+            animationFractionStage2 = animationFraction - 0.5f / 0.5f;
+        } else {
+            animationFractionStage2 = 1f;
+        }
+
+        Path path = new Path();
+        path.moveTo(10f * mMyDp, 50f * mMyDp);
+
+        if (animationFractionStage1 > 0f) {
+            float x = 10f + animationFractionStage1 * 20f;
+            float y = 50f + animationFractionStage1 * 30f;
+            path.lineTo(x * mMyDp, y * mMyDp);
+        }
+
+        if (animationFractionStage2 > 0f) {
+            float x = 30f + animationFractionStage2 * 60f;
+            float y = 80f - animationFractionStage2 * 60f;
+            path.lineTo(x * mMyDp, y * mMyDp);
+        }
+
+        canvas.drawPath(path, paint);
+
+        if (elapsedTime < animationDuration) {
+
         }
 
         if (elapsedTime < animationDuration) {
