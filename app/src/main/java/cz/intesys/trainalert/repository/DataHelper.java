@@ -57,6 +57,8 @@ public class DataHelper implements LifecycleObserver {
     private static final String TRIP_ID_KEY = "trip_id";
     private static final String REGISTERED_KEY = "registered";
 
+    public static final String TRIP_NO_TRIP = "";
+
     private static DataHelper sInstance;
     private Repository mRepository;
     private SharedPreferences mSharedPrefs;
@@ -290,14 +292,36 @@ public class DataHelper implements LifecycleObserver {
     }
 
     public void setTrip(String id, TaCallback<Void> taCallback) {
-        REPOSITORY.setTrip(id, taCallback);
-        mSharedPrefs.edit().putString(TRIP_ID_KEY, id).commit();
+        REPOSITORY.setTrip(id, new TaCallback<Void>() {
+            @Override public void onResponse(Void response) {
+                mSharedPrefs.edit().putString(TRIP_ID_KEY, id).commit();
+                taCallback.onResponse(null);
+            }
+
+            @Override public void onFailure(Throwable t) {
+                mSharedPrefs.edit().remove(TRIP_ID_KEY).commit();
+//                mSharedPrefs.edit().putString(TRIP_ID_KEY, TRIP_NO_TRIP).commit();
+                taCallback.onFailure(new Throwable());
+            }
+        });
+
+    }
+
+    public void unregisterTrip() {
+        mSharedPrefs.edit().remove(TRIP_ID_KEY).commit();
+//        mSharedPrefs.edit().putString(TRIP_ID_KEY, TRIP_NO_TRIP).commit();
     }
 
     public String getTripId() {
-        return mSharedPrefs.getString(TRIP_ID_KEY, "");
+        return mSharedPrefs.getString(TRIP_ID_KEY, TRIP_NO_TRIP);
     }
 
+    /**
+     * Register to gain access to side menu
+     *
+     * @param password
+     * @param taCallback
+     */
     public void register(int password, TaCallback<Void> taCallback) {
         if (password == TaConfig.ADMINISTRATOR_PASSWORD) {
             mSharedPrefs.edit().putBoolean(REGISTERED_KEY, true).commit();
@@ -308,6 +332,9 @@ public class DataHelper implements LifecycleObserver {
         }
     }
 
+    /**
+     * Unregister to prohibit access to side menu.
+     */
     public void unregister() {
         mSharedPrefs.edit().putBoolean(REGISTERED_KEY, false).commit();
     }

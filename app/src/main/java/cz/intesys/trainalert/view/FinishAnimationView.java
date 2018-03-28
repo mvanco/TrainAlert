@@ -14,7 +14,7 @@ public class FinishAnimationView extends View {
     final float DP_PORTION = 0.01f;
 
     int framesPerSecond = 60;
-    long animationDuration = 1000; // 10 seconds
+    public static final long ANIMATION_DURATION = 1000; // 10 seconds
 
     float mWidth;
     float mHeight;
@@ -45,7 +45,7 @@ public class FinishAnimationView extends View {
         super.onDraw(canvas);
 
         long elapsedTime = System.currentTimeMillis() - startTime;
-        float animationFraction = (float) elapsedTime / animationDuration;
+        float animationFraction = (float) elapsedTime / ANIMATION_DURATION;
         Log.d("animationFraction", "fraction:" + String.valueOf(animationFraction));
 
         mWidth = (float) getWidth();
@@ -85,7 +85,7 @@ public class FinishAnimationView extends View {
 //
 //
 //        Log.d("drawArc", "startAngle:" + mStartAngle + "sweepAngle:" + mSweepAngle);
-//        if (elapsedTime < animationDuration) {
+//        if (elapsedTime < ANIMATION_DURATION) {
 //            canvas.drawArc(oval, mStartAngle, mSweepAngle, false, paint);
 //        } else {
 //            canvas.drawArc(oval, 15f, 112f, false, paint);
@@ -104,7 +104,7 @@ public class FinishAnimationView extends View {
         if (animationFraction < 0.5f) {
             animationFractionStage2 = 0f;
         } else if (animationFraction < 1f) {
-            animationFractionStage2 = animationFraction - 0.5f / 0.5f;
+            animationFractionStage2 = (animationFraction - 0.5f) / 0.5f;
         } else {
             animationFractionStage2 = 1f;
         }
@@ -124,13 +124,12 @@ public class FinishAnimationView extends View {
             path.lineTo(x * mMyDp, y * mMyDp);
         }
 
-        canvas.drawPath(path, paint);
 
-        if (elapsedTime < animationDuration) {
-
+        if (elapsedTime < ANIMATION_DURATION) {
+            canvas.drawPath(path, paint);
         }
 
-        if (elapsedTime < animationDuration) {
+        if (elapsedTime < ANIMATION_DURATION) {
             postInvalidateDelayed(1000 / framesPerSecond);
         }
     }

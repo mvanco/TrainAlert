@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
@@ -16,7 +15,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -55,6 +53,7 @@ import static android.support.v4.widget.DrawerLayout.STATE_SETTLING;
 import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_NEXT_STOP_COUNT;
 import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_PREVIOUS_STOP_COUNT;
 import static cz.intesys.trainalert.TaConfig.USE_OFFLINE_MAPS;
+import static cz.intesys.trainalert.repository.DataHelper.TRIP_NO_TRIP;
 
 public class MainActivity extends AppCompatActivity implements TripIdDialogFragment.OnFragmentInteractionListener, TripFragment.OnFragmentInteractionListener, PasswordDialogFragment.OnFragmentInteractionListener {
 
@@ -187,10 +186,6 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         TripIdManuallyDialogFragment.newInstance().show(getSupportFragmentManager(), TRIP_ID_MANUALLY_DIALOG_FRAGMENT_TAG);
     }
 
-    @Override public void onFragmentInteraction(Uri uri) {
-
-    }
-
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
 
@@ -201,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         tripSelectionItem.setActionView(iv);
 
         MenuItem clockItem = menu.findItem(R.id.menu_clock);
-        mClockTextView = (TextView) MenuItemCompat.getActionView(clockItem);
+        mClockTextView = (TextView) clockItem.getActionView();
         mClockTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.activityMain_clock_textSize));
 
         mMenu = menu;
@@ -236,6 +231,15 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
     @Override public void onDialogCanceled() {
         mShouldShowPasswordDialog = true;
+    }
+
+    @Override public void onTripFinished() {
+        DataHelper.getInstance().unregisterTrip();
+        initTripIdSelectionIconLoader();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(TRIP_FRAGMENT_TAG);
+        getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        getSupportFragmentManager().executePendingTransactions();
+        mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.GONE);
     }
 
     public void onTimeChanged(Date time) {
@@ -288,6 +292,13 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     }
 
     private void hideTripIdSelectionIconLoader() {
+        initTripIdSelectionIconLoader();
+    }
+
+    /**
+     * Init trip id selection icon loader according to current trip id registration.
+     */
+    private void initTripIdSelectionIconLoader() {
         MenuItem item = mMenu.findItem(R.id.menu_trip_selection);
 
         // SET DEFAULT VALUES
@@ -295,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         item.getActionView().setRotation(0f);
         item.getActionView().setAlpha(1f);
 
-        if (DataHelper.getInstance().getTripId().isEmpty()) {
+        if (TRIP_NO_TRIP.equals(DataHelper.getInstance().getTripId())) {
             ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_trip_selection_red);
             //Toast.makeText(this, R.string.activity_main_unsuccessful_trip_selection, Toast.LENGTH_SHORT).show();
         } else {

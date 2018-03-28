@@ -2,8 +2,8 @@ package cz.intesys.trainalert.fragment;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +19,7 @@ import cz.intesys.trainalert.api.ResponseApi;
 import cz.intesys.trainalert.databinding.FragmentTripBinding;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.repository.DataHelper;
+import cz.intesys.trainalert.view.FinishAnimationView;
 import cz.intesys.trainalert.viewmodel.TripFragmentViewModel;
 
 public class TripFragment extends Fragment {
@@ -35,7 +36,7 @@ public class TripFragment extends Fragment {
     private TripAdapter mAdapter;
 
     public interface OnFragmentInteractionListener extends TripAdapter.OnItemClickListener {
-        void onFragmentInteraction(Uri uri);
+        void onTripFinished();
     }
 
     public TripFragment() {
@@ -74,20 +75,21 @@ public class TripFragment extends Fragment {
             }
             mAdapter.notifyDataSetChanged();
         });
-        mViewModel.getFinalStopLiveData().observe(this, (finalStop) -> {
-            if (finalStop == null) {
-                hideFinishAnimationView();
-                mAdapter.setFinalStop(null);
-                mAdapter.notifyDataSetChanged();
-            } else {
-                if (finalStop.getErrorCode() == ResponseApi.ECODE_NO_TRIP_REGISTERED) {
-                    showFinishAnimationView(finalStop.getData().getName());
-                } else {
-                    hideFinishAnimationView();
-                    mAdapter.setFinalStop(finalStop.getData());
-                    mAdapter.notifyDataSetChanged();
-                }
+        mViewModel.getFinalStopLiveData().observe(this, finalStop -> {
+            if (finalStop != null
+                    && finalStop.getErrorCode() == ResponseApi.ECODE_NO_TRIP_REGISTERED
+                    && finalStop.getData() != null) { // Special case which represent final station is currently reached
+                showFinishAnimationView(finalStop.getData().getName());
+                return;
             }
+
+            if (finalStop != null && finalStop.getData() != null) {
+                mAdapter.setFinalStop(finalStop.getData());
+            } else {
+                mAdapter.setFinalStop(null);
+            }
+            mAdapter.notifyDataSetChanged();
+            hideFinishAnimationView();
         });
 
         mViewModel.getTripStatusLiveData().observe(this, trainStatus -> {
@@ -144,19 +146,15 @@ public class TripFragment extends Fragment {
         mListener = null;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     private void showFinishAnimationView(String name) {
         mBinding.fragmentTripFinishAnimationView.setVisibility(View.VISIBLE);
         mBinding.fragmentTripFinishAnimationText.setVisibility(View.VISIBLE);
         mBinding.fragmentTripFinishAnimationText.setText(String.format(getResources().getString(R.string.message_destination_reached), name));
         mBinding.fragmentTripRecycler.setVisibility(View.GONE);
         mBinding.fragmentTripFinishAnimationView.startAnimation();
+        new Handler().postDelayed(() -> {
+            mListener.onTripFinished();
+        }, FinishAnimationView.ANIMATION_DURATION);
     }
 
     private void hideFinishAnimationView() {

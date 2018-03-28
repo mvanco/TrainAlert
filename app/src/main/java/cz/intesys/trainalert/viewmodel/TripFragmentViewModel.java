@@ -69,7 +69,7 @@ public class TripFragmentViewModel extends BaseViewModel {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     public void stopLocationPolling() {
-        mTripPoller.startPolling();
+        mTripPoller.stopPolling();
     }
 
     public MediatorLiveData<List<Stop>> getPreviousStopsLiveData() {
