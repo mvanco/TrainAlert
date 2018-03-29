@@ -83,6 +83,15 @@ public class TripFragment extends Fragment {
                 return;
             }
 
+            if (finalStop != null
+                    && finalStop.getErrorCode() == ResponseApi.ECODE_NO_TRIP_REGISTERED
+                    && finalStop.getData() == null) { // Trip has been unregistered.
+                if (mListener != null) {
+                    mListener.onTripFinished();
+                }
+                return;
+            }
+
             if (finalStop != null && finalStop.getData() != null) {
                 mAdapter.setFinalStop(finalStop.getData());
             } else {
@@ -95,8 +104,6 @@ public class TripFragment extends Fragment {
         mViewModel.getTripStatusLiveData().observe(this, trainStatus -> {
             setTripHeader(trainStatus.isPressed(), trainStatus.isCanPass());
         });
-
-//        mViewModel.getShouldStopLiveData().observe(this, shouldStop -> setTripHeader(shouldStop));
     }
 
     @Override
@@ -153,8 +160,10 @@ public class TripFragment extends Fragment {
         mBinding.fragmentTripRecycler.setVisibility(View.GONE);
         mBinding.fragmentTripFinishAnimationView.startAnimation();
         new Handler().postDelayed(() -> {
-            mListener.onTripFinished();
-        }, FinishAnimationView.ANIMATION_DURATION);
+            if (mListener != null) {
+                mListener.onTripFinished();
+            }
+        }, FinishAnimationView.ANIMATION_DURATION + TaConfig.TRIP_FRAGMENT_TIME_PADDING);
     }
 
     private void hideFinishAnimationView() {

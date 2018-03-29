@@ -127,7 +127,6 @@
             app:srcCompat="@drawable/ic_show_location_vector"
             tools:visibility="visible" />
 
-
         <View
             android:id="@+id/view"
             android:layout_width="10dp"

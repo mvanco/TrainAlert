@@ -9,12 +9,13 @@ import android.util.Log;
 import android.view.View;
 
 import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.TaConfig;
 
 public class FinishAnimationView extends View {
     final float DP_PORTION = 0.01f;
 
-    int framesPerSecond = 60;
-    public static final long ANIMATION_DURATION = 1000; // 10 seconds
+    public static final long ANIMATION_DURATION = 2000; // 10 seconds
+    int framesPerSecond = 360;
 
     float mWidth;
     float mHeight;
@@ -94,17 +95,17 @@ public class FinishAnimationView extends View {
         float animationFractionStage1;
         if (animationFraction < 0f) {
             animationFractionStage1 = 0f;
-        } else if (animationFraction < 0.5f) {
-            animationFractionStage1 = animationFraction / 0.5f;
+        } else if (animationFraction < 0.35f) {
+            animationFractionStage1 = animationFraction / 0.35f;
         } else {
             animationFractionStage1 = 1f;
         }
 
         float animationFractionStage2;
-        if (animationFraction < 0.5f) {
+        if (animationFraction < 0.35f) {
             animationFractionStage2 = 0f;
         } else if (animationFraction < 1f) {
-            animationFractionStage2 = (animationFraction - 0.5f) / 0.5f;
+            animationFractionStage2 = (animationFraction - 0.35f) / 0.65f;
         } else {
             animationFractionStage2 = 1f;
         }
@@ -116,17 +117,25 @@ public class FinishAnimationView extends View {
             float x = 10f + animationFractionStage1 * 20f;
             float y = 50f + animationFractionStage1 * 30f;
             path.lineTo(x * mMyDp, y * mMyDp);
+            Log.d("draww", "stage1:" + animationFractionStage1);
         }
 
         if (animationFractionStage2 > 0f) {
             float x = 30f + animationFractionStage2 * 60f;
             float y = 80f - animationFractionStage2 * 60f;
             path.lineTo(x * mMyDp, y * mMyDp);
+            Log.d("draww", "stage2:" + animationFractionStage2);
         }
 
 
         if (elapsedTime < ANIMATION_DURATION) {
             canvas.drawPath(path, paint);
+        } else {
+            Path finalPath = new Path();
+            finalPath.moveTo(10f * mMyDp, 50f * mMyDp);
+            finalPath.lineTo(30f * mMyDp, 80f * mMyDp);
+            finalPath.lineTo(90f * mMyDp, 20f * mMyDp);
+            canvas.drawPath(finalPath, paint);
         }
 
         if (elapsedTime < ANIMATION_DURATION) {
@@ -135,7 +144,11 @@ public class FinishAnimationView extends View {
     }
 
     public void startAnimation() {
-        startTime = System.currentTimeMillis();
+        long newStartTime = System.currentTimeMillis();
+        if ((newStartTime - startTime) < (ANIMATION_DURATION + TaConfig.TRIP_FRAGMENT_TIME_PADDING)) {
+            return;
+        }
+        startTime = newStartTime;
         postInvalidate();
     }
 
