@@ -20,9 +20,9 @@ public class TaConfig {
 
     public static final int TRIP_FRAGMENT_TIME_PADDING = 5000;
 
-
     public static final String REST_BASE_URL = "http://192.168.0.10:5000"; // Application server with offline maps
     //    public static final String REST_BASE_URL = "http://192.168.16.166:5000"; // Testing application server with offline maps
+
     public static final boolean LOGS = BuildConfig.LOGS;
     public static final int MAP_DEFAULT_ZOOM = 15; //
 

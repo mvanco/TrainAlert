@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
@@ -46,6 +47,7 @@ import cz.intesys.trainalert.fragment.TripIdDialogFragment;
 import cz.intesys.trainalert.fragment.TripIdManuallyDialogFragment;
 import cz.intesys.trainalert.repository.DataHelper;
 import cz.intesys.trainalert.utility.Utility;
+import cz.intesys.trainalert.view.FinishAnimationView;
 import cz.intesys.trainalert.viewmodel.MainActivityViewModel;
 
 import static android.support.v4.widget.DrawerLayout.STATE_IDLE;
@@ -231,6 +233,16 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
     @Override public void onDialogCanceled() {
         mShouldShowPasswordDialog = true;
+    }
+
+    @Override public void onFinishAnimationStarted() {
+        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
+        if (fragment != null) {
+            fragment.setAnimating(false);
+        }
+        new Handler().postDelayed(() -> {
+            fragment.setAnimating(true);
+        }, FinishAnimationView.ANIMATION_DURATION);
     }
 
     @Override public void onTripFinished() {

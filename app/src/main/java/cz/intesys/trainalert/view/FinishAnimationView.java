@@ -14,8 +14,8 @@ import cz.intesys.trainalert.TaConfig;
 public class FinishAnimationView extends View {
     final float DP_PORTION = 0.01f;
 
-    public static final long ANIMATION_DURATION = 2000; // 10 seconds
-    int framesPerSecond = 360;
+    public static final long ANIMATION_DURATION = 1500; // 10 seconds
+    int framesPerSecond = 60;
 
     float mWidth;
     float mHeight;

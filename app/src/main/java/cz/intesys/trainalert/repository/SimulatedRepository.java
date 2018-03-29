@@ -28,7 +28,6 @@ import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITAT
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_30;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_40;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_50;
-import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_70;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_STOP;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_TRAIN_STATION;
 import static cz.intesys.trainalert.repository.PostgreSqlRepository.LOG_POSTGRE;
@@ -223,22 +222,22 @@ public class SimulatedRepository implements Repository {
     @Override public void getTripStatus(TaCallback<TripStatus> taCallback) {
         new Handler().postDelayed(() -> {
             Log.d(LOG_POSTGRE, "getTripStatus response");
-            TripStatus ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_20);
+            TripStatus ts = new TripStatus(false, false, 0);
             switch (mTime) {
                 case 0:
-                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_30);
+                    ts = new TripStatus(false, true, 0);
                     break;
                 case 1:
-                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_30);
+                    ts = new TripStatus(false, true, 0);
                     break;
                 case 2:
-                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_50);
+                    ts = new TripStatus(false, true, 0);
                     break;
                 case 3:
-                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_50);
+                    ts = new TripStatus(false, true, 0);
                     break;
                 case 4:
-                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_70);
+                    ts = new TripStatus(false, true, 0);
                     break;
             }
             taCallback.onResponse(ts);

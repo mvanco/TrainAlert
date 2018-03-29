@@ -36,6 +36,7 @@ public class TripFragment extends Fragment {
     private TripAdapter mAdapter;
 
     public interface OnFragmentInteractionListener extends TripAdapter.OnItemClickListener {
+        void onFinishAnimationStarted();
         void onTripFinished();
     }
 
@@ -159,6 +160,9 @@ public class TripFragment extends Fragment {
         mBinding.fragmentTripFinishAnimationText.setText(String.format(getResources().getString(R.string.message_destination_reached), name));
         mBinding.fragmentTripRecycler.setVisibility(View.GONE);
         mBinding.fragmentTripFinishAnimationView.startAnimation();
+        if (mListener != null) {
+            mListener.onFinishAnimationStarted();
+        }
         new Handler().postDelayed(() -> {
             if (mListener != null) {
                 mListener.onTripFinished();
