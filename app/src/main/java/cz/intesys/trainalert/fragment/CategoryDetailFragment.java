@@ -121,7 +121,7 @@ public class CategoryDetailFragment extends PreferenceFragment {
         EditTextPreference textBeforePref = new EditTextPreference(getActivity());
         textBeforePref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.TEXT_BEFORE_PREF_KEY, categoryId));
         textBeforePref.setTitle(R.string.pref_title_before_text);
-        textBeforePref.setDefaultValue(pref.getString(CategorySharedPrefs.TEXT_BEFORE_PREF_KEY, getResources().getString(pref.getTextAfterDefaultValue()) + " "));
+        textBeforePref.setDefaultValue(pref.getString(CategorySharedPrefs.TEXT_BEFORE_PREF_KEY, getResources().getString(pref.getTextBeforeDefaultValue()) + " "));
         screen.addPreference(textBeforePref);
 
         SwitchPreference includeDistancePref = new SwitchPreference(getActivity());

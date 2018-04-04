@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -39,6 +40,7 @@ import java.util.List;
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.adapter.NavAdapter;
 import cz.intesys.trainalert.databinding.ActivityMainBinding;
+import cz.intesys.trainalert.entity.Alarm;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.fragment.MainFragment;
 import cz.intesys.trainalert.fragment.PasswordDialogFragment;
@@ -57,7 +59,7 @@ import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_PREVIOUS_STOP_COUNT;
 import static cz.intesys.trainalert.TaConfig.USE_OFFLINE_MAPS;
 import static cz.intesys.trainalert.repository.DataHelper.TRIP_NO_TRIP;
 
-public class MainActivity extends AppCompatActivity implements TripIdDialogFragment.OnFragmentInteractionListener, TripFragment.OnFragmentInteractionListener, PasswordDialogFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements TripIdDialogFragment.OnFragmentInteractionListener, TripFragment.OnFragmentInteractionListener, PasswordDialogFragment.OnFragmentInteractionListener, MainFragment.OnFragmentInteractionListener {
 
     public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
     private static final String MAIN_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.mainFragmentTag";
@@ -190,9 +192,9 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
     @Override public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         MenuItem tripSelectionItem = menu.findItem(R.id.menu_trip_selection);
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         ImageView iv = (ImageView) inflater.inflate(R.layout.custom_action_view, null);
         iv.setOnClickListener(v -> MainActivity.this.onOptionsItemSelected(tripSelectionItem));
         tripSelectionItem.setActionView(iv);
@@ -200,6 +202,10 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         MenuItem clockItem = menu.findItem(R.id.menu_clock);
         mClockTextView = (TextView) clockItem.getActionView();
         mClockTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.activityMain_clock_textSize));
+
+        MenuItem notificationItem = menu.findItem(R.id.menu_notification);
+        ConstraintLayout cl = (ConstraintLayout) inflater.inflate(R.layout.notification_action_view, null);
+        notificationItem.setActionView(cl);
 
         mMenu = menu;
         hideTripIdSelectionIconLoader();
@@ -262,6 +268,15 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             int minutes = cal.get(Calendar.MINUTE);
             mClockTextView.setText(Utility.getTwoDigitString(hours) + ":" + Utility.getTwoDigitString(minutes));
         }
+    }
+
+    @Override public void onNotificationShow(Alarm alarm) {
+        if (mMenu == null) {
+            return;
+        }
+        MenuItem notificationItem = mMenu.findItem(R.id.menu_notification);
+        TextView tv = ((ConstraintLayout) notificationItem.getActionView()).findViewById(R.id.notification_text);
+        tv.setText(alarm.getMessage());
     }
 
     /**

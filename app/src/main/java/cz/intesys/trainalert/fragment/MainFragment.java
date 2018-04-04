@@ -69,7 +69,7 @@ public class MainFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     public interface OnFragmentInteractionListener {
-        // Prepared for possible future use.
+        void onNotificationShow(Alarm alarm);
     }
 
     public static MainFragment newInstance() {
@@ -79,15 +79,15 @@ public class MainFragment extends Fragment {
         return fragment;
     }
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
-//        }
-//    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
+        }
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -358,6 +358,10 @@ public class MainFragment extends Fragment {
 
         Runnable hideNotificationAction = () -> mBinding.fragmentMainSignView.setVisibility(View.GONE);
         new Handler().postDelayed(hideNotificationAction, 3000);
+
+        if (mListener != null) {
+            mListener.onNotificationShow(alarm);
+        }
     }
 
     /**

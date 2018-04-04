@@ -91,7 +91,7 @@ public class CategorySharedPrefs {
         return mSharedPref.getBoolean(prefkey, defaultValue);
     }
 
-    public @StringRes int getTextAfterDefaultValue() {
+    public @StringRes int getTextBeforeDefaultValue() {
         switch (mCategoryId) {
             case DataHelper.POI_TYPE_CROSSING:
                 return R.string.text_before_default_crossing;

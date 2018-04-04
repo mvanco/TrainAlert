@@ -213,7 +213,7 @@ public class Poi implements IGeoPoint, Parcelable {
     }
 
     private String createMessage(int distance) {
-        String beforeText = sharedPrefs.getString(TEXT_BEFORE_PREF_KEY, "Pozor za ");
+        String beforeText = sharedPrefs.getString(TEXT_BEFORE_PREF_KEY, context.getString(sharedPrefs.getTextBeforeDefaultValue()) + " ");
         if (includeDistance()) {
             String afterText = sharedPrefs.getString(TEXT_AFTER_PREF_KEY, "m");
             return beforeText + distance + afterText;
