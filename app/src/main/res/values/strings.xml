@@ -66,7 +66,19 @@
     <string name="category_speed_limitation_40">Omezení rychlosti 40 km/h</string>
     <string name="category_speed_limitation_50">Omezení rychlosti 50 km/h</string>
     <string name="category_speed_limitation_70">Omezení rychlosti 70 km/h</string>
-    <string name="category_stop_azd">Zastávka</string>
+    <string name="category_stop_azd">Zastávka (načtená ze serveru)</string>
+
+    <string name="text_before_default">Pozor za</string>
+    <string name="text_before_default_crossing">Přejezd za</string>
+    <string name="text_before_default_trainstation">Stanice za</string>
+    <string name="text_before_default_stop">Zastávka za</string>
+    <string name="text_before_default_lights">Návěstidlo za</string>
+    <string name="text_before_default_beforelights">Předvěst za</string>
+    <string name="text_before_default_speed_limitation_20">Rychlostní omezení 20km/h za</string>
+    <string name="text_before_default_speed_limitation_30">Rychlostní omezení 30km/h za</string>
+    <string name="text_before_default_speed_limitation_40">Rychlostní omezení 40km/h za</string>
+    <string name="text_before_default_speed_limitation_50">Rychlostní omezení 50km/h za</string>
+    <string name="text_before_default_speed_limitation_70">Rychlostní omezení 70km/h za</string>
 
     <!-- Preferences -->
     <string name="pref_ringtone_silent">silent</string>

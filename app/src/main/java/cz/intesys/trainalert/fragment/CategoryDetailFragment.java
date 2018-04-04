@@ -2,6 +2,7 @@ package cz.intesys.trainalert.fragment;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -10,13 +11,16 @@ import android.preference.MultiSelectListPreference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
-import android.preference.RingtonePreference;
 import android.preference.SwitchPreference;
 import android.view.MenuItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.activity.CategoryActivity;
 import cz.intesys.trainalert.entity.CategorySharedPrefs;
+import cz.intesys.trainalert.preference.NotificationSoundPreference;
 
 /**
  * This fragment shows data and sync preferences only. It is used when the
@@ -77,10 +81,24 @@ public class CategoryDetailFragment extends PreferenceFragment {
         screen.addPreference(graphicsPref);
         CategoryActivity.bindPreferenceSummaryToValue(graphicsPref);
 
-        RingtonePreference ringtonePref = new RingtonePreference(getActivity());
+        RingtoneManager rm = new RingtoneManager(getActivity());
+        rm.setType(RingtoneManager.TYPE_NOTIFICATION);
+        final Cursor ringtones = rm.getCursor();
+
+        List<String> mEntries = new ArrayList<String>();
+        List<String> mEntryValues = new ArrayList<String>();
+
+        for (ringtones.moveToFirst(); !ringtones.isAfterLast(); ringtones.moveToNext()) {
+            mEntries.add(ringtones.getString(RingtoneManager.TITLE_COLUMN_INDEX));
+            String uri = ringtones.getString(RingtoneManager.URI_COLUMN_INDEX);
+            String index = ringtones.getString(RingtoneManager.ID_COLUMN_INDEX);
+            mEntryValues.add(uri + "/" + index);
+        }
+        NotificationSoundPreference ringtonePref = new NotificationSoundPreference(getActivity());
         ringtonePref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.RINGTONE_PREF_KEY, categoryId));
         ringtonePref.setTitle(R.string.pref_title_ringtone);
-        ringtonePref.setRingtoneType(RingtoneManager.TYPE_NOTIFICATION);
+        ringtonePref.setEntryValues(mEntryValues.toArray(new CharSequence[mEntryValues.size()]));
+        ringtonePref.setEntries(mEntries.toArray(new CharSequence[mEntries.size()]));
         ringtonePref.setDefaultValue(pref.getString(CategorySharedPrefs.RINGTONE_PREF_KEY, CategorySharedPrefs.RINGTONE_DEFAULT_VALUE.toString()));
         screen.addPreference(ringtonePref);
         CategoryActivity.bindPreferenceSummaryToValue(ringtonePref);
@@ -103,7 +121,7 @@ public class CategoryDetailFragment extends PreferenceFragment {
         EditTextPreference textBeforePref = new EditTextPreference(getActivity());
         textBeforePref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.TEXT_BEFORE_PREF_KEY, categoryId));
         textBeforePref.setTitle(R.string.pref_title_before_text);
-        textBeforePref.setDefaultValue(pref.getString(CategorySharedPrefs.TEXT_BEFORE_PREF_KEY, CategorySharedPrefs.TEXT_BEFORE_DEFAULT_VALUE));
+        textBeforePref.setDefaultValue(pref.getString(CategorySharedPrefs.TEXT_BEFORE_PREF_KEY, getResources().getString(pref.getTextAfterDefaultValue()) + " "));
         screen.addPreference(textBeforePref);
 
         SwitchPreference includeDistancePref = new SwitchPreference(getActivity());

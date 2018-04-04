@@ -11,7 +11,6 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.RingtonePreference;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
@@ -23,6 +22,7 @@ import java.util.List;
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.entity.Category;
 import cz.intesys.trainalert.fragment.CategoryDetailFragment;
+import cz.intesys.trainalert.preference.NotificationSoundPreference;
 import cz.intesys.trainalert.repository.DataHelper;
 
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.CATEGORY_KEY;
@@ -41,19 +41,7 @@ public class CategoryActivity extends AppCompatPreferenceActivity {
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();
 
-            if (preference instanceof ListPreference) {
-                // For list preferences, look up the correct display value in
-                // the preference's 'entries' list.
-                ListPreference listPreference = (ListPreference) preference;
-                int index = listPreference.findIndexOfValue(stringValue);
-
-                // Set the summary to reflect the new value.
-                preference.setSummary(
-                        index >= 0
-                                ? listPreference.getEntries()[index]
-                                : null);
-
-            } else if (preference instanceof RingtonePreference) {
+            if (preference instanceof NotificationSoundPreference) {
                 // For ringtone preferences, look up the correct display value
                 // using RingtoneManager.
                 if (TextUtils.isEmpty(stringValue)) {
@@ -74,7 +62,17 @@ public class CategoryActivity extends AppCompatPreferenceActivity {
                         preference.setSummary(name);
                     }
                 }
+            } else if (preference instanceof ListPreference) {
+                // For list preferences, look up the correct display value in
+                // the preference's 'entries' list.
+                ListPreference listPreference = (ListPreference) preference;
+                int index = listPreference.findIndexOfValue(stringValue);
 
+                // Set the summary to reflect the new value.
+                preference.setSummary(
+                        index >= 0
+                                ? listPreference.getEntries()[index]
+                                : null);
             } else {
                 // For all other preferences, set the summary to the value's
                 // simple string representation.

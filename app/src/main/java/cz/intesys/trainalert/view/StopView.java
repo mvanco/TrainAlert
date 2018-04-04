@@ -247,7 +247,7 @@ public class StopView extends FrameLayout {
         int hours = mDelay / 3600;
         int minutes = (mDelay - hours * 3600) / 60;
         int onlyMinutes = mDelay / 60;
-        mBinding.stopViewDelay.setText(String.format("%d", Math.abs(onlyMinutes)));
+        mBinding.stopViewDelay.setText(String.format("%d", onlyMinutes));
         if (onlyMinutes < 0) {
             mBinding.stopViewDelay.setTextColor(ContextCompat.getColor(getContext(), R.color.green));
         } else if (onlyMinutes == 0) {
