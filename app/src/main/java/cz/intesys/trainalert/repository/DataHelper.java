@@ -4,7 +4,6 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.SharedPreferences;
 import android.support.annotation.IntDef;
-import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -23,6 +22,8 @@ import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.entity.TripStatus;
 import cz.intesys.trainalert.utility.Utility;
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 
 import static cz.intesys.trainalert.TaConfig.REPOSITORY;
 
@@ -51,14 +52,11 @@ public class DataHelper implements LifecycleObserver {
     public static final int GRAPHICS_RED_SQUARE = 7;
     public static final int GRAPHICS_YELLOW_GREY_SQARE = 8;
     public static final int GRAPHICS_DEFAULT = GRAPHICS_BLACK_SQUARE;
-
+    public static final String TRIP_NO_TRIP = "";
     private static final String FIRST_RUN_KEY = "first_run";
     private static final String TRAIN_ID_KEY = "train_id";
     private static final String TRIP_ID_KEY = "trip_id";
     private static final String REGISTERED_KEY = "registered";
-
-    public static final String TRIP_NO_TRIP = "";
-
     private static DataHelper sInstance;
     private Repository mRepository;
     private SharedPreferences mSharedPrefs;
@@ -71,7 +69,7 @@ public class DataHelper implements LifecycleObserver {
     private MutableLiveData<List<Poi>> mPoisLiveData;
     private Utility.IntervalPoller mPoisPoller;
 
-    private MutableLiveData<Long> mLatestTimeLiveData;
+    private PublishSubject<Long> mLatestTimeObservable;
 
     private MutableLiveData<TripStatus> mTripStatusLiveData;
     private Utility.IntervalPoller mTripStatusPoller;
@@ -91,7 +89,7 @@ public class DataHelper implements LifecycleObserver {
     private DataHelper() {
         mRepository = REPOSITORY;
         mSharedPrefs = TaApplication.getInstance().getSharedPreferences();
-        mLatestTimeLiveData = new MutableLiveData<>();
+        mLatestTimeObservable = PublishSubject.create();
 
         mLocation = TaConfig.DEFAULT_LOCATION;
         mLocationLiveData = new MutableLiveData<Location>();
@@ -105,9 +103,7 @@ public class DataHelper implements LifecycleObserver {
                 public void onResponse(Location response) {
                     mLocation = response;
                     Calendar cal = Calendar.getInstance();
-                    Log.d("loader2", "latest time: " + cal.getTime().toString());
-                    mLatestTimeLiveData.setValue(cal.getTimeInMillis());
-                    Log.d("loader", "new real location");
+                    mLatestTimeObservable.onNext(cal.getTimeInMillis());
                 }
 
                 @Override
@@ -144,8 +140,8 @@ public class DataHelper implements LifecycleObserver {
         return sInstance;
     }
 
-    public MutableLiveData<Long> getLatestTimeLiveData() {
-        return mLatestTimeLiveData;
+    public Observable<Long> getLatestTimeObservable() {
+        return mLatestTimeObservable;
     }
 
     /**

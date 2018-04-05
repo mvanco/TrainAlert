@@ -32,7 +32,7 @@ public class BaseViewModel extends ViewModel implements LifecycleObserver {
     private MediatorLiveData<Location> mLocation;
     private MediatorLiveData<List<Poi>> mPois;
     private MediatorLiveData<TripStatus> mTripStatusLiveData;
-    private long mLastServerResponse;
+    private long mLastServerResponseTime;
 
     public BaseViewModel() {
         mDataHelper = DataHelper.getInstance();
@@ -42,25 +42,28 @@ public class BaseViewModel extends ViewModel implements LifecycleObserver {
         mLocation.addSource(mDataHelper.getLocationLiveData(), location -> mLocation.setValue(location));
         mPois.addSource(mDataHelper.getPoisLiveData(), pois -> mPois.setValue(pois));
         mTripStatusLiveData.addSource(mDataHelper.getTripStatusLiveData(), tripStatus -> mTripStatusLiveData.setValue(tripStatus));
+        mDataHelper.getLatestTimeObservable().subscribe(date -> mLastServerResponseTime = date);
     }
 
     public MutableLiveData<TripStatus> getTripStatusLiveData() {
         return mTripStatusLiveData;
     }
 
-    public Observable<Boolean> getGpsTimeoutLiveData(LifecycleOwner owner) {
-        mDataHelper.getLatestTimeLiveData().observe(owner, date -> {
-            mLastServerResponse = date;
-        });
-
-        return Utility.createObservableFromLiveData(owner, mDataHelper.getLocationLiveData())
+    public Observable<Boolean> createGpsTimeoutObservable(LifecycleOwner owner) {
+        Observable<Boolean> showLoaderObservable = Utility.createObservableFromLiveData(owner, mDataHelper.getLocationLiveData())
                 .delay(TaConfig.GPS_TIMEOUT_DELAY, TimeUnit.MILLISECONDS)
                 .map(location -> {
                     Calendar delayedTime = Calendar.getInstance();
-                    Log.d("loader2", "latestTIme" + mLastServerResponse + "  delayedTime: " + delayedTime.getTimeInMillis());
-                    Log.d("loader2", "difference " + String.valueOf(delayedTime.getTimeInMillis() - mLastServerResponse));
-                    return (delayedTime.getTimeInMillis() - mLastServerResponse) > Long.valueOf(TaConfig.GPS_TIMEOUT_DELAY);
-                })
+                    Log.d("loader2", "latestTIme" + mLastServerResponseTime + "  delayedTime: " + delayedTime.getTimeInMillis());
+                    Log.d("loader2", "difference " + String.valueOf(delayedTime.getTimeInMillis() - mLastServerResponseTime));
+                    return (delayedTime.getTimeInMillis() - mLastServerResponseTime) > Long.valueOf(TaConfig.GPS_TIMEOUT_DELAY);
+                });
+
+        Observable<Boolean> hideLoaderObservable = Utility.createObservableFromLiveData(owner, mDataHelper.getLocationLiveData())
+                .map(location -> false);
+
+        return Observable.merge(showLoaderObservable, hideLoaderObservable)
+                .distinctUntilChanged()
                 .observeOn(AndroidSchedulers.mainThread());
     }
 

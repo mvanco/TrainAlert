@@ -211,15 +211,16 @@ public class MainFragment extends Fragment {
         mBinding.fragmentMainMapView.getOverlayManager().add(mTrainMarker); // Add train marker.
         mViewModel.getLocationLiveData().observe(this, currentLocation -> {
             handleLocationChange(mTrainMarker, currentLocation);
-            hideGpsUnavailableLoader();
         });
         mViewModel.getPoisLiveData().observe(this, pois -> {
             handlePOIsChange(pois);
         });
 
-        mViewModel.getGpsTimeoutLiveData(this).subscribe((show) -> {
+        mViewModel.createGpsTimeoutObservable(this).subscribe((show) -> {
             if (show) {
                 showGpsUnavailableLoader();
+            } else {
+                hideGpsUnavailableLoader();
             }
         });
 

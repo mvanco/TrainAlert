@@ -55,7 +55,7 @@ public class SimulatedRepository implements Repository {
     }
 
     public static int getRandomServerDelay() {
-        if (SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0] == 0 && SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0] == 0) {
+        if (SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[0] == 0 && SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE[1] == 0) {
             return 0;
         }
 
@@ -69,13 +69,16 @@ public class SimulatedRepository implements Repository {
     public void getCurrentLocation(TaCallback<Location> taCallback) {
         //int randomInt = new Random().nextInt(4);
         //if (randomInt == 2) {
+
+        int randomServerDelay = getRandomServerDelay();
         new Handler().postDelayed(() -> {
             Location location = mExampleRoute.get(mLocationIterator);
             location.setTime(new Date());
             taCallback.onResponse(location);
             Log.d(LOG_POSTGRE, "getCurrentLocation response");
-        }, getRandomServerDelay());
+        }, randomServerDelay);
 
+        Log.d("serverDelayLocation", String.valueOf(randomServerDelay));
 
         // Prepare next location
         if (toTheLeftDirection) {

@@ -14,7 +14,7 @@ public class TaConfig {
     public static final int GET_POIS_INTERVAL = 300000; // GetPois service polling (5min.).
 
     public static final int SERVER_TIMEOUT = 30000; // In miliseconds.
-    public static final int GPS_TIMEOUT_DELAY = 15000;
+    public static final int GPS_TIMEOUT_DELAY = 15000; // Time interval of server inactivity which invoke loader animation
 
     public static final int TRIP_ID_LOADER_DURATION = SERVER_TIMEOUT;
 
@@ -26,7 +26,7 @@ public class TaConfig {
     public static final boolean LOGS = BuildConfig.LOGS;
     public static final int MAP_DEFAULT_ZOOM = 15; //
 
-    public static final int[] SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE = {0, 200}; // [0, 0] or [x, y] where x, y > 0
+    public static final int[] SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE = {50, 500}; // [0, 0] or [x, y] where x, y > 0
     public static final int[] SIMULATED_REPOSITORY_GET_TRIPS_RESPONSE_DELAY_RANGE = {50, 500};
     public static final int[] SIMULATED_REPOSITORY_SET_TRIP_RESPONSE_DELAY_RANGE = {50, 500}; // [0, 0] or [x, y] where x, y > 0
 
