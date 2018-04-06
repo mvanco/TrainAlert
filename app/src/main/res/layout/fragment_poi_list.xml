@@ -24,6 +24,7 @@
             android:layout_marginEnd="@dimen/fabGps_margin"
             android:layout_marginRight="@dimen/fabGps_margin"
             android:src="@android:drawable/ic_input_add"
+            app:layout_behavior="cz.intesys.trainalert.behavior.ScrollAwareFabBehavior"
             app:backgroundTint="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
