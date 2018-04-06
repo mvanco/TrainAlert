@@ -12,6 +12,7 @@ public class TaConfig {
     public static final int TRIP_STATUS_TIME_INTERVAL = 3000; // GetTripStatus service polling.
     public static final int TRIP_TIME_INTERVAL = 5000; // GetNextStops, GetPreviousStops, GetFinalStop services polling.
     public static final int GET_POIS_INTERVAL = 300000; // GetPois service polling (5min.).
+    public static final int MAP_MOVEMENT_INTERVAL = 10000;
 
     public static final int SERVER_TIMEOUT = 30000; // In miliseconds.
     public static final int GPS_TIMEOUT_DELAY = 15000; // Time interval of server inactivity which invoke loader animation

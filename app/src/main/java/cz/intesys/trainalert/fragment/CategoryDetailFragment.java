@@ -77,7 +77,7 @@ public class CategoryDetailFragment extends PreferenceFragment {
         graphicsPref.setTitle(R.string.pref_title_graphics);
         graphicsPref.setEntries(R.array.pref_graphics_titles);
         graphicsPref.setEntryValues(R.array.pref_graphics_values);
-        graphicsPref.setDefaultValue(pref.getString(CategorySharedPrefs.GRAPHICS_PREF_KEY, CategorySharedPrefs.DEFAULT_VALUE));
+        graphicsPref.setDefaultValue(pref.getString(CategorySharedPrefs.GRAPHICS_PREF_KEY, String.valueOf(pref.getGraphicsDefaultValue())));
         screen.addPreference(graphicsPref);
         CategoryActivity.bindPreferenceSummaryToValue(graphicsPref);
 

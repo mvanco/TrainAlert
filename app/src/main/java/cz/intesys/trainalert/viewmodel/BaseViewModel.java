@@ -28,6 +28,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
  * Works with repository
  */
 public class BaseViewModel extends ViewModel implements LifecycleObserver {
+    private Location mCurrentLocation;
     private DataHelper mDataHelper;
     private MediatorLiveData<Location> mLocation;
     private MediatorLiveData<List<Poi>> mPois;
@@ -38,11 +39,20 @@ public class BaseViewModel extends ViewModel implements LifecycleObserver {
         mDataHelper = DataHelper.getInstance();
         mLocation = new MediatorLiveData<>();
         mPois = new MediatorLiveData<>();
+
+        mCurrentLocation = new Location(TaConfig.DEFAULT_LOCATION.getLatitude(), TaConfig.DEFAULT_LOCATION.getLongitude());
         mTripStatusLiveData = new MediatorLiveData<>();
-        mLocation.addSource(mDataHelper.getLocationLiveData(), location -> mLocation.setValue(location));
+        mLocation.addSource(mDataHelper.getLocationLiveData(), location -> {
+            mLocation.setValue(location);
+            mCurrentLocation = location;
+        });
         mPois.addSource(mDataHelper.getPoisLiveData(), pois -> mPois.setValue(pois));
         mTripStatusLiveData.addSource(mDataHelper.getTripStatusLiveData(), tripStatus -> mTripStatusLiveData.setValue(tripStatus));
         mDataHelper.getLatestTimeObservable().subscribe(date -> mLastServerResponseTime = date);
+    }
+
+    public Location getCurrentLocation() {
+        return mCurrentLocation;
     }
 
     public MutableLiveData<TripStatus> getTripStatusLiveData() {

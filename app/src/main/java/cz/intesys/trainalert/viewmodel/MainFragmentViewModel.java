@@ -1,12 +1,17 @@
 package cz.intesys.trainalert.viewmodel;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.entity.Alarm;
 import cz.intesys.trainalert.entity.Poi;
+import cz.intesys.trainalert.utility.Utility;
 
 public class MainFragmentViewModel extends BaseViewModel {
 
@@ -14,10 +19,25 @@ public class MainFragmentViewModel extends BaseViewModel {
     private boolean mShouldSwitchToFreeMode = false;
     private boolean mFreeMode = false;
     private boolean animating = true;
-
+    MutableLiveData<Void> mMapMovementLiveData;
+    private Utility.IntervalPoller mMapMovementPoller;
 
     public MainFragmentViewModel() {
         mDisabledAlarms = new ArrayList<Alarm>();
+        mMapMovementPoller = new Utility.IntervalPoller(TaConfig.MAP_MOVEMENT_INTERVAL, () -> {
+            mMapMovementLiveData.setValue(null);
+        });
+        mMapMovementLiveData = new MutableLiveData<>();
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    public void startLocationPolling() {
+        mMapMovementPoller.startPolling();
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    public void stopLocationPolling() {
+        mMapMovementPoller.stopPolling();
     }
 
     public boolean isAnimating() {
@@ -105,5 +125,9 @@ public class MainFragmentViewModel extends BaseViewModel {
             }
         }
         return false;
+    }
+
+    public MutableLiveData<Void> getMapMovementLiveData() {
+        return mMapMovementLiveData;
     }
 }

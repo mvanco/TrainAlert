@@ -119,4 +119,32 @@ public class CategorySharedPrefs {
                 return R.string.text_before_default;
         }
     }
+
+    public int getGraphicsDefaultValue() {
+        switch (mCategoryId) {
+            case DataHelper.POI_TYPE_CROSSING:
+                return DataHelper.GRAPHICS_YELLOW_GREY_SQARE;
+
+            case DataHelper.POI_TYPE_TRAIN_STATION:
+            case DataHelper.POI_TYPE_STOP:
+                return DataHelper.GRAPHICS_BLUE_CIRCLE;
+
+            case DataHelper.POI_TYPE_LIGHTS:
+            case DataHelper.POI_TYPE_BEFORE_LIGHTS:
+                return DataHelper.GRAPHICS_BLUE_RING;
+
+            case DataHelper.POI_TYPE_SPEED_LIMITATION_20:
+            case DataHelper.POI_TYPE_SPEED_LIMITATION_30:
+            case DataHelper.POI_TYPE_SPEED_LIMITATION_40:
+            case DataHelper.POI_TYPE_SPEED_LIMITATION_50:
+            case DataHelper.POI_TYPE_SPEED_LIMITATION_70:
+                return DataHelper.GRAPHICS_RED_RING;
+
+            case DataHelper.POI_TYPE_STOP_AZD:
+                return DataHelper.GRAPHICS_BLUE_CIRCLE;
+
+            default:
+                return R.string.text_before_default;
+        }
+    }
 }

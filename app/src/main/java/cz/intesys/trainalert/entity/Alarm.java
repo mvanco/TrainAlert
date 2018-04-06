@@ -12,7 +12,6 @@ import javax.inject.Inject;
 import cz.intesys.trainalert.di.CategoryModule;
 import cz.intesys.trainalert.repository.DataHelper;
 
-import static cz.intesys.trainalert.entity.CategorySharedPrefs.GRAPHICS_DEFAULT_VALUE;
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.GRAPHICS_PREF_KEY;
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.RINGTONE_DEFAULT_VALUE;
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.RINGTONE_PREF_KEY;
@@ -48,7 +47,6 @@ public class Alarm implements Parcelable {
     }
 
     protected Alarm(Parcel in) {
-
     }
 
     @Override
@@ -73,7 +71,6 @@ public class Alarm implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
     }
 
     @Override
@@ -94,7 +91,7 @@ public class Alarm implements Parcelable {
     }
 
     public @DataHelper.GraphicsId int getGraphics() {
-        String graphics = sharedPrefs.getString(GRAPHICS_PREF_KEY, GRAPHICS_DEFAULT_VALUE);
+        String graphics = sharedPrefs.getString(GRAPHICS_PREF_KEY, String.valueOf(sharedPrefs.getGraphicsDefaultValue()));
         return Integer.valueOf(graphics);
     }
 
@@ -110,5 +107,4 @@ public class Alarm implements Parcelable {
     public int getDistance() {
         return distance;
     }
-
 }

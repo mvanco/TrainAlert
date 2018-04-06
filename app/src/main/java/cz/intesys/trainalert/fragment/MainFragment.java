@@ -228,6 +228,12 @@ public class MainFragment extends Fragment {
         mViewModel.getTripStatusLiveData().observe(this, trainStatus -> {
             mBinding.fragmentMainSpeedLimitView.setCategory(trainStatus.getSpeedLimit());
         });
+
+        mViewModel.getMapMovementLiveData().observe(this, (empty) -> {
+            if (!mViewModel.isFreeMode()) {
+                setMapPosition(mViewModel.getCurrentLocation().toGeoPoint());
+            }
+        });
     }
 
     private boolean onMapScroll(ScrollEvent event) {
@@ -268,9 +274,7 @@ public class MainFragment extends Fragment {
         } else {
             trainMarker.setPosition(currentLocation.toGeoPoint());
         }
-        if (!mViewModel.isFreeMode()) {
-            setMapPosition(currentLocation.toGeoPoint());
-        }
+
         handleNotification(trainMarker.getPosition());
 
 //        Poi passingPoi = mViewModel.getPassingPoi();
@@ -403,7 +407,7 @@ public class MainFragment extends Fragment {
     private void setMapPosition(GeoPoint newPosition) {
         mViewModel.setFreeMode(false);
         mViewModel.setShouldSwitchToFreeMode(false);
-        mBinding.fragmentMainMapView.getController().animateTo(newPosition);
+        mBinding.fragmentMainMapView.getController().setCenter(newPosition);
     }
 
     private void setFabAsFixed() {
