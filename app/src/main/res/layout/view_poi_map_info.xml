@@ -15,13 +15,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- translationY is counted as (1 - 0.913f) of its height -->
         <ImageView
             android:id="@+id/poiMapInfo_marker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:src="@drawable/ic_show_location"
+            android:translationY="6dp"
+            app:srcCompat="@drawable/ic_show_location"
             app:layout_constraintBottom_toTopOf="@+id/poiMapInfo_horizontalLine"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

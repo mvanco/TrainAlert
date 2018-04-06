@@ -54,7 +54,7 @@
             android:layout_marginBottom="@dimen/fabGps_margin"
             android:layout_marginEnd="@dimen/fabGps_margin"
             android:layout_marginRight="@dimen/fabGps_margin"
-            android:src="@drawable/fab_gps_fixed"
+            app:srcCompat="@drawable/fab_gps_fixed"
             app:backgroundTint="@android:color/white"
             app:layout_constraintBottom_toBottomOf="@id/fragmentPoiMap_mapView"
             app:layout_constraintEnd_toEndOf="@id/fragmentPoiMap_mapView" />

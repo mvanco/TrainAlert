@@ -71,6 +71,10 @@
     <dimen name="nav_icon_height">@dimen/nav_icon_width</dimen>
     <dimen name="drawer_item_textSize">16sp</dimen>
     <dimen name="notification_action_view_textSize">24sp</dimen>
+    <dimen name="current_location_width">84dp</dimen>
+    <dimen name="current_location_height">@dimen/current_location_width</dimen>
+    <dimen name="ic_location_width">68dp</dimen>
+    <dimen name="ic_location_height">@dimen/ic_location_width</dimen>
 
     <item name="activityMain_mainContentRatio" format="float" type="dimen">0.6</item>
     <item name="activityMain_sideContentRatio" format="float" type="dimen">0.4</item>

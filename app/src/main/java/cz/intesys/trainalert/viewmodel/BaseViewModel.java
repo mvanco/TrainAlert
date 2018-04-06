@@ -49,7 +49,34 @@ public class BaseViewModel extends ViewModel implements LifecycleObserver {
         return mTripStatusLiveData;
     }
 
-    public Observable<Boolean> createGpsTimeoutObservable(LifecycleOwner owner) {
+    /**
+     * Create gps timeout observable using debounce operator on server responses events.
+     * Loader is turned on when interval between responses is greater then determined time.
+     *
+     * @param owner
+     * @return
+     */
+    public Observable<Boolean> createGpsTimeoutDebounceObservable(LifecycleOwner owner) {
+        Observable<Boolean> showLoaderObservable = mDataHelper.getLatestTimeObservable()
+                .debounce(TaConfig.GPS_TIMEOUT_DELAY, TimeUnit.MILLISECONDS)
+                .map(location -> true);
+
+        Observable<Boolean> hideLoaderObservable = Utility.createObservableFromLiveData(owner, mDataHelper.getLocationLiveData())
+                .map(location -> false);
+
+        return Observable.merge(showLoaderObservable, hideLoaderObservable)
+                .distinctUntilChanged()
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    /**
+     * Create gps timeout observable using delay operator on server enqueue events.
+     * Loader is turned on if there is some response after determined time.
+     *
+     * @param owner
+     * @return
+     */
+    public Observable<Boolean> createGpsTimeoutDelayObservable(LifecycleOwner owner) {
         Observable<Boolean> showLoaderObservable = Utility.createObservableFromLiveData(owner, mDataHelper.getLocationLiveData())
                 .delay(TaConfig.GPS_TIMEOUT_DELAY, TimeUnit.MILLISECONDS)
                 .map(location -> {

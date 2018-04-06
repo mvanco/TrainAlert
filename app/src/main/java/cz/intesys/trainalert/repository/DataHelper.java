@@ -199,6 +199,11 @@ public class DataHelper implements LifecycleObserver {
         mPoisPoller.stopPolling();
     }
 
+    /**
+     * Live data are changed in specified time points with exactly same interval.
+     *
+     * @return
+     */
     public synchronized MutableLiveData<Location> getLocationLiveData() {
         return mLocationLiveData;
     }

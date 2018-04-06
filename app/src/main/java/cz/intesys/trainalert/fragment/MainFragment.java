@@ -216,7 +216,8 @@ public class MainFragment extends Fragment {
             handlePOIsChange(pois);
         });
 
-        mViewModel.createGpsTimeoutObservable(this).subscribe((show) -> {
+        mViewModel.createGpsTimeoutDelayObservable(this).subscribe((show) -> {
+            Log.d("gpsTimeout", "show:" + show);
             if (show) {
                 showGpsUnavailableLoader();
             } else {
@@ -402,7 +403,7 @@ public class MainFragment extends Fragment {
     private void setMapPosition(GeoPoint newPosition) {
         mViewModel.setFreeMode(false);
         mViewModel.setShouldSwitchToFreeMode(false);
-        mBinding.fragmentMainMapView.getController().setCenter(newPosition);
+        mBinding.fragmentMainMapView.getController().animateTo(newPosition);
     }
 
     private void setFabAsFixed() {
