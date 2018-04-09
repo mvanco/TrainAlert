@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.concurrent.TimeUnit;
 
+import cz.intesys.trainalert.BuildConfig;
 import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.repository.PostgreSqlRepository;
 import okhttp3.Interceptor;
@@ -47,7 +48,7 @@ public class TaClient {
 
     private static Retrofit buildRetrofit() {
         Retrofit.Builder builder = new Retrofit.Builder();
-        builder.baseUrl(TaConfig.REST_BASE_URL);
+        builder.baseUrl(BuildConfig.REST_BASE_URL);
         builder.client(buildClient());
         builder.addConverterFactory(createConverterFactory());
         builder.addCallAdapterFactory(createCallAdapterFactory());
@@ -72,7 +73,7 @@ public class TaClient {
             }
         };
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor(logger);
-        interceptor.setLevel(TaConfig.LOGS ? HttpLoggingInterceptor.Level.BASIC : HttpLoggingInterceptor.Level.NONE);
+        interceptor.setLevel(BuildConfig.LOGS ? HttpLoggingInterceptor.Level.BASIC : HttpLoggingInterceptor.Level.NONE);
         return interceptor;
     }
 

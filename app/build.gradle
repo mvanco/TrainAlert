@@ -22,9 +22,44 @@ android {
         }
     }
 
+    flavorDimensions "client", "server"
+
+    productFlavors {
+        normal {
+            dimension "client"
+            buildConfigField "boolean", "ACTION_BAR_BLOCKED", "true"
+        }
+        unblocked {
+            dimension "client"
+            buildConfigField "boolean", "ACTION_BAR_BLOCKED", "false"
+        }
+
+
+
+        dev {
+            dimension "server"
+            buildConfigField "boolean", "USE_SIMULATED_REPOSITORY", "true"
+            buildConfigField "String", "REST_BASE_URL", "\"-\""
+            buildConfigField "boolean", "USE_OFFLINE_MAPS", "false"
+        }
+        staging {
+            dimension "server"
+            buildConfigField "boolean", "USE_SIMULATED_REPOSITORY", "false"
+            buildConfigField "String", "REST_BASE_URL", "\"http://192.168.16.166:5000\""
+            buildConfigField "boolean", "USE_OFFLINE_MAPS", "false"
+        }
+        production {
+            dimension "server"
+            buildConfigField "boolean", "USE_SIMULATED_REPOSITORY", "false"
+            buildConfigField "String", "REST_BASE_URL", "\"http://192.168.0.10:5000\""
+            buildConfigField "boolean", "USE_OFFLINE_MAPS", "true"
+        }
+    }
+
     dataBinding {
         enabled = true
     }
+
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8

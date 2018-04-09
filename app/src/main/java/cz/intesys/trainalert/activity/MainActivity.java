@@ -37,10 +37,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import cz.intesys.trainalert.BuildConfig;
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.adapter.NavAdapter;
 import cz.intesys.trainalert.databinding.ActivityMainBinding;
 import cz.intesys.trainalert.entity.Alarm;
+import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.fragment.MainFragment;
 import cz.intesys.trainalert.fragment.PasswordDialogFragment;
@@ -56,7 +58,6 @@ import static android.support.v4.widget.DrawerLayout.STATE_IDLE;
 import static android.support.v4.widget.DrawerLayout.STATE_SETTLING;
 import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_NEXT_STOP_COUNT;
 import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_PREVIOUS_STOP_COUNT;
-import static cz.intesys.trainalert.TaConfig.USE_OFFLINE_MAPS;
 import static cz.intesys.trainalert.repository.DataHelper.TRIP_NO_TRIP;
 
 public class MainActivity extends AppCompatActivity implements TripIdDialogFragment.OnFragmentInteractionListener, TripFragment.OnFragmentInteractionListener, PasswordDialogFragment.OnFragmentInteractionListener, MainFragment.OnFragmentInteractionListener {
@@ -93,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new NavAdapter((id) -> onNavigationItemSelected(id)));
 
-        if (!USE_OFFLINE_MAPS) { //
+        if (!BuildConfig.USE_OFFLINE_MAPS) { //
             if (ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
@@ -260,6 +261,24 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.GONE);
     }
 
+    @Override public void onNotificationShow(Alarm alarm) {
+        if (mMenu == null) {
+            return;
+        }
+        MenuItem notificationItem = mMenu.findItem(R.id.menu_notification);
+        TextView tv = ((ConstraintLayout) notificationItem.getActionView()).findViewById(R.id.notification_text);
+        tv.setText(alarm.getMessage());
+    }
+
+    @Override public void onPassedPoi(Poi poi) {
+        if (mMenu == null) {
+            return;
+        }
+        MenuItem notificationItem = mMenu.findItem(R.id.menu_notification);
+        TextView tv = ((ConstraintLayout) notificationItem.getActionView()).findViewById(R.id.notification_text);
+        tv.setText("");
+    }
+
     public void onTimeChanged(Date time) {
         if (mClockTextView != null) {
             Calendar cal = Calendar.getInstance();
@@ -268,15 +287,6 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             int minutes = cal.get(Calendar.MINUTE);
             mClockTextView.setText(Utility.getTwoDigitString(hours) + ":" + Utility.getTwoDigitString(minutes));
         }
-    }
-
-    @Override public void onNotificationShow(Alarm alarm) {
-        if (mMenu == null) {
-            return;
-        }
-        MenuItem notificationItem = mMenu.findItem(R.id.menu_notification);
-        TextView tv = ((ConstraintLayout) notificationItem.getActionView()).findViewById(R.id.notification_text);
-        tv.setText(alarm.getMessage());
     }
 
     /**

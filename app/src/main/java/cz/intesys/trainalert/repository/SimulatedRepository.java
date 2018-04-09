@@ -225,22 +225,22 @@ public class SimulatedRepository implements Repository {
     @Override public void getTripStatus(TaCallback<TripStatus> taCallback) {
         new Handler().postDelayed(() -> {
             Log.d(LOG_POSTGRE, "getTripStatus response");
-            TripStatus ts = new TripStatus(false, false, 0);
+            TripStatus ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_50);
             switch (mTime) {
                 case 0:
-                    ts = new TripStatus(false, true, 0);
+                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_20);
                     break;
                 case 1:
-                    ts = new TripStatus(false, true, 0);
+                    ts = new TripStatus(true, true, POI_TYPE_SPEED_LIMITATION_20);
                     break;
                 case 2:
-                    ts = new TripStatus(false, true, 0);
+                    ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40);
                     break;
                 case 3:
-                    ts = new TripStatus(false, true, 0);
+                    ts = new TripStatus(true, false, POI_TYPE_SPEED_LIMITATION_50);
                     break;
                 case 4:
-                    ts = new TripStatus(false, true, 0);
+                    ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_50);
                     break;
             }
             taCallback.onResponse(ts);
@@ -304,14 +304,14 @@ public class SimulatedRepository implements Repository {
         try {
             switch (i) {
                 case 0:
-                    res.setErrorCode(ResponseApi.ECODE_OK);
-                    res.setData(new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop"));
-                    return res;
                 case 1:
                 case 2:
 //                    return new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop");
                 case 3:
                 case 4:
+                    res.setErrorCode(ResponseApi.ECODE_OK);
+                    res.setData(new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop"));
+                    return res;
                 case 5:
                     res.setErrorCode(ResponseApi.ECODE_NO_TRIP_REGISTERED);
                     res.setData(new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop"));

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import cz.intesys.trainalert.BuildConfig;
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.TaApplication;
 import cz.intesys.trainalert.TaConfig;
@@ -341,7 +342,7 @@ public class DataHelper implements LifecycleObserver {
     }
 
     public boolean isRegistered() {
-        return mSharedPrefs.getBoolean(REGISTERED_KEY, false);
+        return !BuildConfig.ACTION_BAR_BLOCKED || mSharedPrefs.getBoolean(REGISTERED_KEY, false);
     }
 
     public void getPreviousStops(int count, TaCallback<List<Stop>> taCallback) {

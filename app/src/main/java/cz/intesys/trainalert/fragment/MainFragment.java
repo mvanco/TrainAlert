@@ -43,6 +43,7 @@ import org.osmdroid.views.overlay.OverlayItem;
 
 import java.util.List;
 
+import cz.intesys.trainalert.BuildConfig;
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.animation.GeoPointInterpolator;
@@ -56,8 +57,6 @@ import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 import static cz.intesys.trainalert.TaConfig.GPS_TIME_INTERVAL;
 import static cz.intesys.trainalert.TaConfig.MAP_DEFAULT_ZOOM;
 import static cz.intesys.trainalert.TaConfig.OSMDROID_DEBUGGING;
-import static cz.intesys.trainalert.TaConfig.REST_BASE_URL;
-import static cz.intesys.trainalert.TaConfig.USE_OFFLINE_MAPS;
 import static cz.intesys.trainalert.utility.Utility.convertToDegrees;
 import static cz.intesys.trainalert.utility.Utility.getMarkerRotation;
 
@@ -70,6 +69,8 @@ public class MainFragment extends Fragment {
 
     public interface OnFragmentInteractionListener {
         void onNotificationShow(Alarm alarm);
+
+        void onPassedPoi(Poi poi);
     }
 
     public static MainFragment newInstance() {
@@ -147,14 +148,14 @@ public class MainFragment extends Fragment {
     private void initMap(Context context) {
         Configuration.getInstance().load(getActivity(), PreferenceManager.getDefaultSharedPreferences(getActivity())); // Load configuration.
 
-        if (USE_OFFLINE_MAPS) {
+        if (BuildConfig.USE_OFFLINE_MAPS) {
             OnlineTileSourceBase tileSourceBase = new OnlineTileSourceBase(
                     "osm",
                     8,
                     16,
                     256,
                     ".png",
-                    new String[]{REST_BASE_URL}
+                    new String[]{BuildConfig.REST_BASE_URL}
             ) {
                 @Override public String getTileURLString(MapTile aTile) {
                     return getBaseUrl() + "/osm/tiles/" + aTile.getZoomLevel() + "/" + aTile.getX() + "/" + aTile.getY() + mImageFilenameEnding;
@@ -277,12 +278,10 @@ public class MainFragment extends Fragment {
 
         handleNotification(trainMarker.getPosition());
 
-//        Poi passingPoi = mViewModel.getPassingPoi();
-//        if (passingPoi != null) {
-//            if (passingPoi.getCategory() > POI_TYPE_SPEED_LIMITATION_20 && passingPoi.getCategory() < POI_TYPE_SPEED_LIMITATION_70) {
-//            setSpeedLimit(passingPoi.getCategory());
-//            }
-//        }
+        Poi passingPoi = mViewModel.getPassingPoi();
+        if (passingPoi != null) {
+            mListener.onPassedPoi(passingPoi);
+        }
     }
 
     private void animateMarkerTo(final MapView map, final Marker marker, final GeoPoint finalPosition, final GeoPointInterpolator GeoPointInterpolator) {

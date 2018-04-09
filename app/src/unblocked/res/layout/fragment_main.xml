@@ -40,10 +40,10 @@
             android:layout_marginEnd="@dimen/fabGps_margin"
             android:layout_marginRight="@dimen/fabGps_margin"
             android:onClick="onFabClicked"
-            app:srcCompat="@drawable/fab_gps_fixed"
             app:backgroundTint="@android:color/white"
             app:layout_constraintBottom_toBottomOf="@+id/fragmentMain_mapView"
-            app:layout_constraintEnd_toEndOf="@+id/fragmentMain_mapView" />
+            app:layout_constraintEnd_toEndOf="@+id/fragmentMain_mapView"
+            app:srcCompat="@drawable/fab_gps_fixed" />
 
         <ImageView
             android:id="@+id/fragmentMain_compass"
@@ -71,6 +71,19 @@
             android:id="@+id/fragmentMain_progressBarInclude"
             layout="@layout/progress_bar"
             android:visibility="invisible" />
+
+        <TextView
+            android:id="@+id/fragmentMain_unblockedSign"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:text="U"
+            app:layout_constraintBottom_toBottomOf="@+id/fragmentMain_fab"
+            app:layout_constraintEnd_toStartOf="@+id/fragmentMain_fab"
+            app:layout_constraintTop_toTopOf="@+id/fragmentMain_fab" />
 
     </android.support.constraint.ConstraintLayout>
 
