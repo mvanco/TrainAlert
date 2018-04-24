@@ -160,10 +160,12 @@ public class SimulatedRepository implements Repository {
 
     @Override public void setTrip(String id, TaCallback<Void> taCallback) {
         new Handler().postDelayed(() -> {
+            mTime = -1; // Reset simulation.
             taCallback.onResponse(null);
             Log.d(LOG_POSTGRE, "setTrip response");
         }, getCustomRandomServerDelay(SIMULATED_REPOSITORY_SET_TRIP_RESPONSE_DELAY_RANGE));
         Log.d(LOG_POSTGRE, "setTrip enqueued");
+
     }
 
     @Override public void getPreviousStops(int id, TaCallback<List<Stop>> taCallback) {
@@ -253,17 +255,18 @@ public class SimulatedRepository implements Repository {
         try {
             switch (i) {
                 case 0:
+                    stops.add(new Stop("0", "Sinutec", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "on_request"));
                     break;
                 case 1:
-                    stops.add(new Stop("0", "Nasledujici 1", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "on_request"));
+                    stops.add(new Stop("0", "Libčeves", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "on_request"));
                     break;
                 case 2:
-                    stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "stop"));
+                    stops.add(new Stop("0", "Třebívlice", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "stop"));
                     break;
                 case 3:
-                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "stop"));
+                    stops.add(new Stop("0", "Podsedlice", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "stop"));
                     break;
-                case 4:
+                case 5:
                     // Empty stops
                     break;
             }
@@ -279,16 +282,21 @@ public class SimulatedRepository implements Repository {
         try {
             switch (i) {
                 case 0:
-                    stops.add(new Stop("0", "Nasledujici 2", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "on_request"));
-                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), -60, false, "on_request"));
+                    stops.add(new Stop("0", "Libčeves", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "on_request"));
+                    stops.add(new Stop("0", "Třebívlice", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "on_request"));
+                    stops.add(new Stop("0", "Podsedlice", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), -60, false, "on_request"));
                     break;
                 case 1:
-                    stops.add(new Stop("0", "Nasledujici 3", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "stop"));
+                    stops.add(new Stop("0", "Třebívlice", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "on_request"));
+                    stops.add(new Stop("0", "Podsedlice", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), -60, false, "on_request"));
                     break;
                 case 2:
-                    // Empty stops
+                    stops.add(new Stop("0", "Podsedlice", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 0, false, "stop"));
                     break;
                 case 3:
+                    // Empty stops
+                    break;
+                case 4:
                     // Empty stops
                     break;
             }
@@ -308,14 +316,15 @@ public class SimulatedRepository implements Repository {
                 case 2:
 //                    return new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop");
                 case 3:
-                case 4:
                     res.setErrorCode(ResponseApi.ECODE_OK);
-                    res.setData(new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop"));
+                    res.setData(new Stop("0", "Lovosice", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop"));
+                    return res;
+                case 4:
+                    res.setErrorCode(ResponseApi.ECODE_NO_TRIP_REGISTERED);
+                    res.setData(new Stop("0", "Lovosice", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop"));
                     return res;
                 case 5:
-                    res.setErrorCode(ResponseApi.ECODE_NO_TRIP_REGISTERED);
-                    res.setData(new Stop("0", "Finalni", TaConfig.BASIC_DATE_FORMAT.parse("2018-03-02T11:11:00"), 300, true, "final_stop"));
-                    return res;
+
             }
         } catch (ParseException e) {
             e.printStackTrace();

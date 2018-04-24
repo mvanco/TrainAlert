@@ -1,23 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/activityMain_fragmentContainer"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="@dimen/activityMain_mainContentRatio" />
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:id="@+id/activityMain_fragmentContainer"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <FrameLayout
+                android:id="@+id/activityMain_sideContainerSpace"
+                android:layout_width="@dimen/activityMain_sideContainer_width"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
         <FrameLayout
             android:id="@+id/activityMain_sideContainer"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/activityMain_sideContainer_width"
             android:layout_height="match_parent"
-            android:layout_weight="@dimen/activityMain_sideContentRatio"
-            android:visibility="gone" />
+            android:background="#ffffff"
+            android:translationX="400dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@+id/linearLayout"
+            tools:visibility="visible" />
 
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
+
 </layout>

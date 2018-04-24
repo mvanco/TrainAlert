@@ -51,12 +51,25 @@ import cz.intesys.trainalert.databinding.FragmentMainBinding;
 import cz.intesys.trainalert.entity.Alarm;
 import cz.intesys.trainalert.entity.Location;
 import cz.intesys.trainalert.entity.Poi;
+import cz.intesys.trainalert.repository.DataHelper;
+import cz.intesys.trainalert.utility.MediaPlayerQueue;
 import cz.intesys.trainalert.utility.Utility;
 import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 
 import static cz.intesys.trainalert.TaConfig.GPS_TIME_INTERVAL;
 import static cz.intesys.trainalert.TaConfig.MAP_DEFAULT_ZOOM;
 import static cz.intesys.trainalert.TaConfig.OSMDROID_DEBUGGING;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_BEFORE_LIGHTS;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_CROSSING;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_LIGHTS;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_20;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_30;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_40;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_50;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_70;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_STOP;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_STOP_AZD;
+import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_TRAIN_STATION;
 import static cz.intesys.trainalert.utility.Utility.convertToDegrees;
 import static cz.intesys.trainalert.utility.Utility.getMarkerRotation;
 
@@ -102,6 +115,7 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         mBinding = FragmentMainBinding.inflate(inflater, container, false);
         mBinding.fragmentMainFab.setOnClickListener(view -> onFabClick());
+        mBinding.fragmentMainCompass.setOnClickListener(view -> onCompassClick());
         return mBinding.getRoot();
     }
 
@@ -200,6 +214,17 @@ public class MainFragment extends Fragment {
     private void onFabClick() {
         setMapPosition(mViewModel.getLocation().toGeoPoint());
         setFabAsFixed();
+    }
+
+    private void onCompassClick() {
+        MediaPlayerQueue mpq = MediaPlayerQueue.create(getActivity());
+        mpq.addToQueue(R.raw.speed_limitation);
+        mpq.addToQueue(R.raw.fifty);
+        mpq.addToQueue(R.raw.kilometres_per_hour);
+        mpq.addToQueue(R.raw.in);
+        mpq.addToQueue(R.raw.three_hundred);
+        mpq.addToQueue(R.raw.meters);
+        mpq.play();
     }
 
     /**
@@ -350,7 +375,10 @@ public class MainFragment extends Fragment {
         mBinding.fragmentMainSignView.setText(alarm.getMessage());
         mBinding.fragmentMainSignView.setGraphics(alarm.getGraphics());
 
-        Utility.playSound(alarm.getRingtone(), getActivity());
+        //Utility.playSound(alarm.getRingtone(), getActivity());
+        playVoiceNavigation(alarm);
+
+
         if (alarm.shouldVibrate()) {
             Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -367,6 +395,111 @@ public class MainFragment extends Fragment {
         if (mListener != null) {
             mListener.onNotificationShow(alarm);
         }
+    }
+
+    private void playVoiceNavigation(Alarm alarm) {
+        MediaPlayerQueue mpq = MediaPlayerQueue.create(getActivity());
+        String message = new String();
+
+        switch (alarm.getPoi().getCategory()) {
+            case POI_TYPE_CROSSING:
+                message += "crossing";
+                mpq.addToQueue(R.raw.crossing);
+                break;
+            case POI_TYPE_TRAIN_STATION:
+                message += "train station";
+                mpq.addToQueue(R.raw.train_station);
+                break;
+            case POI_TYPE_STOP:
+                message += "stop";
+                mpq.addToQueue(R.raw.stop);
+                break;
+            case POI_TYPE_LIGHTS:
+                message += "lights";
+                mpq.addToQueue(R.raw.lights);
+                break;
+            case POI_TYPE_BEFORE_LIGHTS:
+                message += "before_crossing";
+                mpq.addToQueue(R.raw.before_lights);
+                break;
+            case POI_TYPE_SPEED_LIMITATION_20:
+            case POI_TYPE_SPEED_LIMITATION_30:
+            case POI_TYPE_SPEED_LIMITATION_40:
+            case POI_TYPE_SPEED_LIMITATION_50:
+            case POI_TYPE_SPEED_LIMITATION_70:
+                message += "speed_limitation";
+                mpq.addToQueue(R.raw.speed_limitation);
+                break;
+            case POI_TYPE_STOP_AZD:
+                message += "stop";
+                mpq.addToQueue(R.raw.stop);
+                break;
+        }
+
+        switch (alarm.getPoi().getCategory()) {
+            case POI_TYPE_SPEED_LIMITATION_20:
+                message += " 20";
+                mpq.addToQueue(R.raw.twenty);
+                break;
+            case POI_TYPE_SPEED_LIMITATION_30:
+                message += " 30";
+                mpq.addToQueue(R.raw.thirty);
+                break;
+            case POI_TYPE_SPEED_LIMITATION_40:
+                message += " 40";
+                mpq.addToQueue(R.raw.forty);
+                break;
+            case POI_TYPE_SPEED_LIMITATION_50:
+                message += " 50";
+                mpq.addToQueue(R.raw.fifty);
+                break;
+            case POI_TYPE_SPEED_LIMITATION_70:
+                message += " 70";
+                mpq.addToQueue(R.raw.seventy);
+                break;
+        }
+
+        if (DataHelper.getInstance().isSpeedLimitCategory(alarm.getPoi().getCategory())) {
+            mpq.addToQueue(R.raw.kilometres_per_hour);
+            message += " kilometres_per_hour";
+        }
+
+        mpq.addToQueue(R.raw.in);
+        message += " in";
+
+        switch (alarm.getDistance()) {
+            case 50:
+                message += " fifty";
+                mpq.addToQueue(R.raw.fifty);
+                break;
+            case 70:
+                message += " seventy";
+                mpq.addToQueue(R.raw.seventy);
+                break;
+            case 100:
+                message += " hundred";
+                mpq.addToQueue(R.raw.hundred);
+                break;
+            case 120:
+                message += " hundred_twenty";
+                mpq.addToQueue(R.raw.hundred_twenty);
+                break;
+            case 150:
+                message += " hyndred_fifty";
+                mpq.addToQueue(R.raw.hundred_fifty);
+                break;
+            case 300:
+                message += " three_hundred";
+                mpq.addToQueue(R.raw.three_hundred);
+                break;
+        }
+
+        mpq.addToQueue(R.raw.meters);
+        message += " meters";
+
+        Log.d("playerqueue", "MediaPlayerQueue: " + message);
+
+        mpq.play();
     }
 
     /**

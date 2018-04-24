@@ -25,6 +25,7 @@ public class TripFragmentViewModel extends BaseViewModel {
     private MediatorLiveData<Boolean> shouldStop;
     private int mPreviousStopCount;
     private int mNextStopCount;
+    private boolean mEnded;
 
     public TripFragmentViewModel(int previousStopCount, int nextStopCount) {
         super();
@@ -34,10 +35,14 @@ public class TripFragmentViewModel extends BaseViewModel {
         shouldStop = new MediatorLiveData<>();
         mPreviousStopCount = previousStopCount;
         mNextStopCount = nextStopCount;
+        mEnded = false;
+
         mTripPoller = new Utility.IntervalPoller(TaConfig.TRIP_TIME_INTERVAL, () -> {
             DataHelper.getInstance().getPreviousStops(mPreviousStopCount, new TaCallback<List<Stop>>() {
                 @Override public void onResponse(List<Stop> response) {
-                    previousStops.setValue(response);
+                    if (!mEnded) {
+                        previousStops.setValue(response);
+                    }
                 }
 
                 @Override public void onFailure(Throwable t) {
@@ -45,7 +50,9 @@ public class TripFragmentViewModel extends BaseViewModel {
             });
             DataHelper.getInstance().getNextStops(mNextStopCount, new TaCallback<List<Stop>>() {
                 @Override public void onResponse(List<Stop> response) {
-                    nextStops.setValue(response);
+                    if (!mEnded) {
+                        nextStops.setValue(response);
+                    }
                 }
 
                 @Override public void onFailure(Throwable t) {
@@ -53,7 +60,9 @@ public class TripFragmentViewModel extends BaseViewModel {
             });
             DataHelper.getInstance().getFinalStop(new TaCallback<ResponseApi<Stop>>() {
                 @Override public void onResponse(ResponseApi<Stop> response) {
-                    finalStop.setValue(response);
+                    if (!mEnded) {
+                        finalStop.setValue(response);
+                    }
                 }
 
                 @Override public void onFailure(Throwable t) {
@@ -70,6 +79,10 @@ public class TripFragmentViewModel extends BaseViewModel {
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     public void stopLocationPolling() {
         mTripPoller.stopPolling();
+    }
+
+    public void setEnded(boolean ended) {
+        mEnded = ended;
     }
 
     public MediatorLiveData<List<Stop>> getPreviousStopsLiveData() {

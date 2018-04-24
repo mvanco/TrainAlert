@@ -165,9 +165,10 @@ public class TripFragment extends Fragment {
         }
         new Handler().postDelayed(() -> {
             if (mListener != null) {
-                mListener.onTripFinished();
+                mListener.onTripFinished(); // Fragment cannot remove itself. It just notifies parent activity.
             }
         }, FinishAnimationView.ANIMATION_DURATION + TaConfig.TRIP_FRAGMENT_TIME_PADDING);
+        mViewModel.setEnded(true);
     }
 
     private void hideFinishAnimationView() {

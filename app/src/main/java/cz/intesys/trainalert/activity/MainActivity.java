@@ -17,6 +17,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.animation.FastOutLinearInInterpolator;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -164,10 +166,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         showTripIdSelectionIconLoader();
         DataHelper.getInstance().setTrip(tripId, new TaCallback<Void>() {
             @Override public void onResponse(Void response) {
-                mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.VISIBLE);
-                Fragment fragment = TripFragment.newInstance(TRIP_FRAGMENT_PREVIOUS_STOP_COUNT, TRIP_FRAGMENT_NEXT_STOP_COUNT);
-                getSupportFragmentManager().beginTransaction().replace(R.id.activityMain_sideContainer, fragment, TRIP_FRAGMENT_TAG).commit();
-                getSupportFragmentManager().executePendingTransactions();
+                showSideBar();
                 hideTripIdSelectionIconLoader();
                 mMenu.findItem(R.id.menu_trip_selection).setIcon(R.drawable.ic_trip_selection);
             }
@@ -176,6 +175,27 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                 hideTripIdSelectionIconLoader();
             }
         });
+    }
+
+    @Override public void onTripFinished() {
+        DataHelper.getInstance().unregisterTrip();
+        initTripIdSelectionIconLoader();
+
+
+        mBinding.activityMainInclude.activityMainSideContainerSpace.setVisibility(View.GONE);
+
+        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.side_bar_animator_reversed);
+        set.setTarget(mBinding.activityMainInclude.activityMainSideContainer);
+        set.setInterpolator(new LinearOutSlowInInterpolator());
+        set.start();
+
+        new Handler().postDelayed(() -> {
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(TRIP_FRAGMENT_TAG);
+            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+            getSupportFragmentManager().executePendingTransactions();
+            mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.GONE);
+            mBinding.activityMainInclude.activityMainSideContainerSpace.setVisibility(View.GONE);
+        }, 2000);
     }
 
     @Override public void onBusinessTripSelected() {
@@ -252,13 +272,8 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         }, FinishAnimationView.ANIMATION_DURATION);
     }
 
-    @Override public void onTripFinished() {
-        DataHelper.getInstance().unregisterTrip();
-        initTripIdSelectionIconLoader();
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(TRIP_FRAGMENT_TAG);
-        getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-        getSupportFragmentManager().executePendingTransactions();
-        mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.GONE);
+    @Override public void onBackPressed() {
+        // Suppress shutting the application down using back button.
     }
 
     @Override public void onNotificationShow(Alarm alarm) {
@@ -422,5 +437,20 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             mToggle.onDrawerStateChanged(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
             mToggle.syncState();
         }
+    }
+
+    private void showSideBar() {
+        Fragment fragment = TripFragment.newInstance(TRIP_FRAGMENT_PREVIOUS_STOP_COUNT, TRIP_FRAGMENT_NEXT_STOP_COUNT);
+        getSupportFragmentManager().beginTransaction().replace(R.id.activityMain_sideContainer, fragment, TRIP_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().executePendingTransactions();
+        mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.VISIBLE);
+        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.side_bar_animator);
+        set.setTarget(mBinding.activityMainInclude.activityMainSideContainer);
+        set.setInterpolator(new FastOutLinearInInterpolator());
+        set.start();
+
+        new Handler().postDelayed(() -> {
+            mBinding.activityMainInclude.activityMainSideContainerSpace.setVisibility(View.VISIBLE);
+        }, 2000);
     }
 }
