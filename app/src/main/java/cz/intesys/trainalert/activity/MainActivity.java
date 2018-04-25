@@ -53,7 +53,6 @@ import cz.intesys.trainalert.fragment.TripIdDialogFragment;
 import cz.intesys.trainalert.fragment.TripIdManuallyDialogFragment;
 import cz.intesys.trainalert.repository.DataHelper;
 import cz.intesys.trainalert.utility.Utility;
-import cz.intesys.trainalert.view.FinishAnimationView;
 import cz.intesys.trainalert.viewmodel.MainActivityViewModel;
 
 import static android.support.v4.widget.DrawerLayout.STATE_IDLE;
@@ -181,8 +180,10 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         DataHelper.getInstance().unregisterTrip();
         initTripIdSelectionIconLoader();
 
-
         mBinding.activityMainInclude.activityMainSideContainerSpace.setVisibility(View.GONE);
+
+        MainFragment mainFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
+        mainFragment.setAnimating(false);
 
         AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.side_bar_animator_reversed);
         set.setTarget(mBinding.activityMainInclude.activityMainSideContainer);
@@ -190,12 +191,13 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         set.start();
 
         new Handler().postDelayed(() -> {
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(TRIP_FRAGMENT_TAG);
-            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+            Fragment tripFragment = getSupportFragmentManager().findFragmentByTag(TRIP_FRAGMENT_TAG);
+            getSupportFragmentManager().beginTransaction().remove(tripFragment).commit();
             getSupportFragmentManager().executePendingTransactions();
             mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.GONE);
             mBinding.activityMainInclude.activityMainSideContainerSpace.setVisibility(View.GONE);
-        }, 2000);
+            mainFragment.setAnimating(true);
+        }, set.getChildAnimations().get(0).getDuration());
     }
 
     @Override public void onBusinessTripSelected() {
@@ -267,9 +269,6 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         if (fragment != null) {
             fragment.setAnimating(false);
         }
-        new Handler().postDelayed(() -> {
-            fragment.setAnimating(true);
-        }, FinishAnimationView.ANIMATION_DURATION);
     }
 
     @Override public void onBackPressed() {
@@ -440,6 +439,9 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     }
 
     private void showSideBar() {
+        MainFragment mainFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
+        mainFragment.setAnimating(false);
+
         Fragment fragment = TripFragment.newInstance(TRIP_FRAGMENT_PREVIOUS_STOP_COUNT, TRIP_FRAGMENT_NEXT_STOP_COUNT);
         getSupportFragmentManager().beginTransaction().replace(R.id.activityMain_sideContainer, fragment, TRIP_FRAGMENT_TAG).commit();
         getSupportFragmentManager().executePendingTransactions();
@@ -451,6 +453,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
         new Handler().postDelayed(() -> {
             mBinding.activityMainInclude.activityMainSideContainerSpace.setVisibility(View.VISIBLE);
-        }, 2000);
+            mainFragment.setAnimating(true);
+        }, set.getChildAnimations().get(0).getDuration());
     }
 }

@@ -15,12 +15,12 @@ import cz.intesys.trainalert.utility.Utility;
 
 public class MainFragmentViewModel extends BaseViewModel {
 
+    MutableLiveData<Void> mMapMovementLiveData;
     private List<Alarm> mDisabledAlarms;
-    private boolean mShouldSwitchToFreeMode = false;
     private boolean mFreeMode = false;
     private boolean animating = true;
-    MutableLiveData<Void> mMapMovementLiveData;
     private Utility.IntervalPoller mMapMovementPoller;
+    private boolean mBlockedSwitchingToFreeMode;
 
     public MainFragmentViewModel() {
         mDisabledAlarms = new ArrayList<Alarm>();
@@ -40,6 +40,14 @@ public class MainFragmentViewModel extends BaseViewModel {
         mMapMovementPoller.stopPolling();
     }
 
+    public boolean isBlockedSwitchingToFreeMode() {
+        return mBlockedSwitchingToFreeMode;
+    }
+
+    public void setBlockedSwitchingToFreeMode(boolean blockedSwitchingToFreeMode) {
+        mBlockedSwitchingToFreeMode = blockedSwitchingToFreeMode;
+    }
+
     public boolean isAnimating() {
         return animating;
     }
@@ -54,14 +62,6 @@ public class MainFragmentViewModel extends BaseViewModel {
 
     public void setFreeMode(boolean freeMode) {
         mFreeMode = freeMode;
-    }
-
-    public boolean isShouldSwitchToFreeMode() {
-        return mShouldSwitchToFreeMode;
-    }
-
-    public void setShouldSwitchToFreeMode(boolean shouldSwitchToFreeMode) {
-        mShouldSwitchToFreeMode = shouldSwitchToFreeMode;
     }
 
     public List<Alarm> getDisabledAlarms() {
@@ -118,6 +118,10 @@ public class MainFragmentViewModel extends BaseViewModel {
         return null;
     }
 
+    public MutableLiveData<Void> getMapMovementLiveData() {
+        return mMapMovementLiveData;
+    }
+
     private boolean isDisabled(Alarm alarm) {
         for (Alarm disabledAlarm : mDisabledAlarms) {
             if (disabledAlarm.equals(alarm)) {
@@ -125,9 +129,5 @@ public class MainFragmentViewModel extends BaseViewModel {
             }
         }
         return false;
-    }
-
-    public MutableLiveData<Void> getMapMovementLiveData() {
-        return mMapMovementLiveData;
     }
 }

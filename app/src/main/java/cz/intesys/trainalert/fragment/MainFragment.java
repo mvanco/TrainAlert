@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import org.osmdroid.api.IGeoPoint;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.config.IConfigurationProvider;
@@ -56,7 +55,7 @@ import cz.intesys.trainalert.utility.MediaPlayerQueue;
 import cz.intesys.trainalert.utility.Utility;
 import cz.intesys.trainalert.viewmodel.MainFragmentViewModel;
 
-import static cz.intesys.trainalert.TaConfig.GPS_TIME_INTERVAL;
+import static cz.intesys.trainalert.TaConfig.LOCATION_UPDATE_ANIMATION;
 import static cz.intesys.trainalert.TaConfig.MAP_DEFAULT_ZOOM;
 import static cz.intesys.trainalert.TaConfig.OSMDROID_DEBUGGING;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_BEFORE_LIGHTS;
@@ -147,6 +146,7 @@ public class MainFragment extends Fragment {
 
     public void setAnimating(boolean shouldAnimating) {
         mViewModel.setAnimating(shouldAnimating);
+        mBinding.fragmentMainSpeedLimitView.setAnimationEnabled(shouldAnimating);
     }
 
     private void showGpsUnavailableLoader() {
@@ -212,6 +212,7 @@ public class MainFragment extends Fragment {
     }
 
     private void onFabClick() {
+        mViewModel.setFreeMode(false);
         setMapPosition(mViewModel.getLocation().toGeoPoint());
         setFabAsFixed();
     }
@@ -267,13 +268,17 @@ public class MainFragment extends Fragment {
             return true;
         }
 
-        IGeoPoint centerPoint = event.getSource().getMapCenter();
-        if (mViewModel.isShouldSwitchToFreeMode()) {
-            setFabAsNotFixed(); // Only after second confirmation of free movement, it is in real "free mode".
+        if (!mViewModel.isBlockedSwitchingToFreeMode()) {
+            setFabAsNotFixed();
             mViewModel.setFreeMode(true);
-        } else {
-            mViewModel.setShouldSwitchToFreeMode(true);
         }
+
+//        if (mViewModel.isShouldSwitchToFreeMode()) {
+//            setFabAsNotFixed(); // Only after second confirmation of free movement, it is in real "free mode".
+//            mViewModel.setFreeMode(true);
+//        } else {
+//            mViewModel.setShouldSwitchToFreeMode(true);
+//        }
         return true;
     }
 
@@ -330,7 +335,7 @@ public class MainFragment extends Fragment {
         });
         valueAnimator.setFloatValues(0, 1); // Ignored.
         valueAnimator.setRepeatCount(0);
-        valueAnimator.setDuration(GPS_TIME_INTERVAL);
+        valueAnimator.setDuration(LOCATION_UPDATE_ANIMATION);
         valueAnimator.start();
     }
 
@@ -533,13 +538,20 @@ public class MainFragment extends Fragment {
     /**
      * Set map position programmatically and ensures correct handling of "free mode" (with blocking of setting free mode).
      * Warning: This function should be used every time {@link IMapController} setCenter() method is about to be called.
+     * <p>
+     * Called only in fixed mode, should preserve fixed mode.
      *
      * @param newPosition
      */
     private void setMapPosition(GeoPoint newPosition) {
-        mViewModel.setFreeMode(false);
-        mViewModel.setShouldSwitchToFreeMode(false);
-        mBinding.fragmentMainMapView.getController().setCenter(newPosition);
+        mViewModel.setBlockedSwitchingToFreeMode(true);
+        mBinding.fragmentMainMapView.getController().animateTo(newPosition);
+
+        new Handler().postDelayed(() -> {
+            mViewModel.setBlockedSwitchingToFreeMode(false);
+        }, TaConfig.OSMDROID_ANIMATION_DURATION + 50); // +50ms is to be completely sure animation is finised.
+
+
     }
 
     private void setFabAsFixed() {

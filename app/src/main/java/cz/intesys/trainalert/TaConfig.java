@@ -9,11 +9,17 @@ import cz.intesys.trainalert.repository.Repository;
 import cz.intesys.trainalert.repository.SimulatedRepository;
 
 public class TaConfig {
-    public static final int GPS_TIME_INTERVAL = 7000; // Time between two gps coordinates measurements in milliseconds, GetLocation service polling.
+    /**
+     * {@link BuildConfig.GPS_TIME_INTERVAL} Time between two gps coordinates measurements in milliseconds, GetLocation service polling.
+     **/
     public static final int TRIP_STATUS_TIME_INTERVAL = 3000; // GetTripStatus service polling.
     public static final int TRIP_TIME_INTERVAL = 5000; // GetNextStops, GetPreviousStops, GetFinalStop services polling.
     public static final int GET_POIS_INTERVAL = 300000; // GetPois service polling (5min.).
     public static final int MAP_MOVEMENT_INTERVAL = 10000;
+
+    public static final int OSMDROID_ANIMATION_DURATION = 1000; // This is taken from osmdroid library, cannot change
+
+    public static final int LOCATION_UPDATE_ANIMATION = BuildConfig.GPS_TIME_INTERVAL;
 
     public static final int SERVER_TIMEOUT = 30000; // In miliseconds.
     public static final int GPS_TIMEOUT_DELAY = 15000; // Time interval of server inactivity which invoke loader animation

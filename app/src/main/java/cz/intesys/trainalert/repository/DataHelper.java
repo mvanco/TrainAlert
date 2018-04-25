@@ -94,7 +94,7 @@ public class DataHelper implements LifecycleObserver {
 
         mLocation = TaConfig.DEFAULT_LOCATION;
         mLocationLiveData = new MutableLiveData<Location>();
-        mLocationPoller = new Utility.IntervalPoller(TaConfig.GPS_TIME_INTERVAL, () -> {
+        mLocationPoller = new Utility.IntervalPoller(BuildConfig.GPS_TIME_INTERVAL, () -> {
             if (!mLocation.equals(mLocationLiveData.getValue())) {
                 mLocationLiveData.setValue(mLocation);
             }

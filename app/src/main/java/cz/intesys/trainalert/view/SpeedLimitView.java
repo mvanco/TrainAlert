@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -23,12 +24,11 @@ import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITAT
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITATION_70;
 
 public class SpeedLimitView extends FrameLayout {
-    private final boolean ANIMATION_ENABLED = true;
-
+    private boolean mAnimationEnabled = true;
     private String mText;
     private @DataHelper.CategoryId int mCategoryId;
-
     private ViewSpeedLimitBinding mBinding;
+    private AnimatorSet mAnimSet;
 
     public SpeedLimitView(@NonNull Context context) {
         super(context);
@@ -48,6 +48,18 @@ public class SpeedLimitView extends FrameLayout {
     public SpeedLimitView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(attrs, defStyleAttr, defStyleRes);
+    }
+
+    public boolean isAnimationEnabled() {
+        return mAnimationEnabled;
+    }
+
+    public void setAnimationEnabled(boolean animationEnabled) {
+        if (mAnimationEnabled == true && animationEnabled == false && mAnimSet != null) {
+            mAnimSet.cancel();
+            Log.d("cancelinganim", "true");
+        }
+        mAnimationEnabled = animationEnabled;
     }
 
     public void setText(String text) {
@@ -96,8 +108,8 @@ public class SpeedLimitView extends FrameLayout {
         boolean shouldShowAnimation = getCategoryId() != categoryId;
         mCategoryId = categoryId;
 
-        if (ANIMATION_ENABLED && shouldShowAnimation) {
-            AnimatorSet mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.speed_limit_view_animator);
+        if (mAnimationEnabled && shouldShowAnimation) {
+            mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.speed_limit_view_animator);
             mAnimSet.setTarget(this);
             mAnimSet.start();
         }
