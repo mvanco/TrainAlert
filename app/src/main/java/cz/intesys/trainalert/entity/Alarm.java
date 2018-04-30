@@ -17,6 +17,8 @@ import static cz.intesys.trainalert.entity.CategorySharedPrefs.RINGTONE_DEFAULT_
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.RINGTONE_PREF_KEY;
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.VIBRATE_DEFAULT_VALUE;
 import static cz.intesys.trainalert.entity.CategorySharedPrefs.VIBRATE_PREF_KEY;
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.VOICE_NAVIGATION_DEFAULT_VALUE;
+import static cz.intesys.trainalert.entity.CategorySharedPrefs.VOICE_NAVIGATION_PREF_KEY;
 
 public class Alarm implements Parcelable {
     public static final Creator<Alarm> CREATOR = new Creator<Alarm>() {
@@ -106,5 +108,9 @@ public class Alarm implements Parcelable {
 
     public int getDistance() {
         return distance;
+    }
+
+    public boolean useVoiceNavigation() {
+        return !sharedPrefs.getBoolean(VOICE_NAVIGATION_PREF_KEY, VOICE_NAVIGATION_DEFAULT_VALUE);
     }
 }

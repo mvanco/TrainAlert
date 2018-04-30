@@ -20,6 +20,7 @@ public class CategorySharedPrefs {
     public static final String COLOUR_PREF_KEY = "colour";
     public static final String GRAPHICS_PREF_KEY = "graphics";
     public static final String RINGTONE_PREF_KEY = "ringtone";
+    public static final String VOICE_NAVIGATION_PREF_KEY = "voice_navigation";
     public static final String VIBRATE_PREF_KEY = "vibrate";
     public static final String DISTANCES_PREF_KEY = "distances";
     public static final String TEXT_BEFORE_PREF_KEY = "text_before";
@@ -31,6 +32,7 @@ public class CategorySharedPrefs {
     public static final boolean VIBRATE_DEFAULT_VALUE = false;
     public static final HashSet DISTANCE_DEFAULT_VALUE = new HashSet(Arrays.asList("300"));
     public static final boolean INCLUDE_DISTANCE_DEFAULT_VALUE = true;
+    public static final boolean VOICE_NAVIGATION_DEFAULT_VALUE = false;
     public static final String TEXT_AFTER_DEFAULT_VALUE = "m";
 
     public static final String DEFAULT_VALUE = "0";
@@ -40,7 +42,7 @@ public class CategorySharedPrefs {
     private SharedPreferences mSharedPref;
 
     @Retention (RetentionPolicy.SOURCE)
-    @StringDef ( {COLOUR_PREF_KEY, GRAPHICS_PREF_KEY, RINGTONE_PREF_KEY, VIBRATE_PREF_KEY, DISTANCES_PREF_KEY, TEXT_BEFORE_PREF_KEY, INCLUDE_DISTANCE_PREF_KEY, TEXT_AFTER_PREF_KEY})
+    @StringDef({COLOUR_PREF_KEY, GRAPHICS_PREF_KEY, RINGTONE_PREF_KEY, VOICE_NAVIGATION_PREF_KEY, VIBRATE_PREF_KEY, DISTANCES_PREF_KEY, TEXT_BEFORE_PREF_KEY, INCLUDE_DISTANCE_PREF_KEY, TEXT_AFTER_PREF_KEY})
     public @interface CategoryPrefKey {
     }
 

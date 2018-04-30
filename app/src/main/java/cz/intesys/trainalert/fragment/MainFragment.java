@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
@@ -382,13 +383,15 @@ public class MainFragment extends Fragment {
                 .alpha(1f)
                 .scaleX(1f)
                 .scaleY(1f)
-                .setInterpolator(new AccelerateInterpolator())
+                .setInterpolator(new DecelerateInterpolator())
                 .setDuration(TaConfig.SHOW_ANIMATION_DURATION)
                 .setListener(null);
 
-        //Utility.playSound(alarm.getRingtone(), getActivity());
-        playVoiceNavigation(alarm);
-
+        if (alarm.useVoiceNavigation()) {
+            playVoiceNavigation(alarm);
+        } else {
+            Utility.playSound(alarm.getRingtone(), getActivity());
+        }
 
         if (alarm.shouldVibrate()) {
             Vibrator vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);

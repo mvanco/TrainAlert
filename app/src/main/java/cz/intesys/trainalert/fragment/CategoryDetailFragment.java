@@ -81,6 +81,12 @@ public class CategoryDetailFragment extends PreferenceFragment {
         screen.addPreference(graphicsPref);
         CategoryActivity.bindPreferenceSummaryToValue(graphicsPref);
 
+        SwitchPreference voiceNavigationPref = new SwitchPreference(getActivity());
+        voiceNavigationPref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.VOICE_NAVIGATION_PREF_KEY, categoryId));
+        voiceNavigationPref.setTitle(R.string.pref_title_voice_navigation);
+        voiceNavigationPref.setDefaultValue(pref.getBoolean(CategorySharedPrefs.VOICE_NAVIGATION_PREF_KEY, CategorySharedPrefs.VOICE_NAVIGATION_DEFAULT_VALUE));
+        screen.addPreference(voiceNavigationPref);
+
         RingtoneManager rm = new RingtoneManager(getActivity());
         rm.setType(RingtoneManager.TYPE_NOTIFICATION);
         final Cursor ringtones = rm.getCursor();
@@ -101,6 +107,7 @@ public class CategoryDetailFragment extends PreferenceFragment {
         ringtonePref.setEntries(mEntries.toArray(new CharSequence[mEntries.size()]));
         ringtonePref.setDefaultValue(pref.getString(CategorySharedPrefs.RINGTONE_PREF_KEY, CategorySharedPrefs.RINGTONE_DEFAULT_VALUE.toString()));
         screen.addPreference(ringtonePref);
+        ringtonePref.setDependency(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.VOICE_NAVIGATION_PREF_KEY, categoryId));
         CategoryActivity.bindPreferenceSummaryToValue(ringtonePref);
 
         SwitchPreference switchPref = new SwitchPreference(getActivity());
