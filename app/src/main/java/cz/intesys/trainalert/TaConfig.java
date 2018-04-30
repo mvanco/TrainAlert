@@ -18,6 +18,8 @@ public class TaConfig {
     public static final int MAP_MOVEMENT_INTERVAL = 10000;
 
     public static final int OSMDROID_ANIMATION_DURATION = 1000; // This is taken from osmdroid library, cannot change
+    public static final int SHOW_ANIMATION_DURATION = 225;
+    public static final int HIDE_ANIMATION_DURATION = 195;
 
     public static final int LOCATION_UPDATE_ANIMATION = BuildConfig.GPS_TIME_INTERVAL;
 

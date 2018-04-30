@@ -1,5 +1,7 @@
 package cz.intesys.trainalert.fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -16,6 +18,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
@@ -369,8 +372,19 @@ public class MainFragment extends Fragment {
 
     private void showTravelNotification(Alarm alarm) {
         mBinding.fragmentMainSignView.setVisibility(View.VISIBLE);
+        mBinding.fragmentMainSignView.setAlpha(0f);
+        mBinding.fragmentMainSignView.setScaleX(0.5f);
+        mBinding.fragmentMainSignView.setScaleY(0.5f);
         mBinding.fragmentMainSignView.setText(alarm.getMessage());
         mBinding.fragmentMainSignView.setGraphics(alarm.getGraphics());
+
+        mBinding.fragmentMainSignView.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setInterpolator(new AccelerateInterpolator())
+                .setDuration(TaConfig.SHOW_ANIMATION_DURATION)
+                .setListener(null);
 
         //Utility.playSound(alarm.getRingtone(), getActivity());
         playVoiceNavigation(alarm);
@@ -386,7 +400,19 @@ public class MainFragment extends Fragment {
             }
         }
 
-        Runnable hideNotificationAction = () -> mBinding.fragmentMainSignView.setVisibility(View.GONE);
+        Runnable hideNotificationAction = () -> {
+            mBinding.fragmentMainSignView.animate()
+                    .alpha(0f)
+                    .scaleX(0.5f)
+                    .scaleY(0.5f)
+                    .setInterpolator(new AccelerateInterpolator())
+                    .setDuration(TaConfig.HIDE_ANIMATION_DURATION)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override public void onAnimationEnd(Animator animation) {
+                            mBinding.fragmentMainSignView.setVisibility(View.GONE);
+                        }
+                    });
+        };
         new Handler().postDelayed(hideNotificationAction, 3000);
 
         if (mListener != null) {
