@@ -82,7 +82,6 @@ public class MainFragment extends Fragment {
     private MainFragmentViewModel mViewModel;
     private Marker mTrainMarker;
     private OnFragmentInteractionListener mListener;
-    private VoiceNavigation mVoiceNavigation;
 
     public interface OnFragmentInteractionListener {
         void onNotificationShow(Alarm alarm);
@@ -139,7 +138,7 @@ public class MainFragment extends Fragment {
         super.onPause();
         setAnimating(false);
         if (mViewModel != null) {
-            mVoiceNavigation.cancel();
+            VoiceNavigation.getInstance(getActivity()).cancel();
         }
     }
 
@@ -424,29 +423,29 @@ public class MainFragment extends Fragment {
     }
 
     private void playVoiceNavigation(Alarm alarm) {
-        mVoiceNavigation = VoiceNavigation.getInstance(getActivity());
+        VoiceNavigation voiceNavigation = VoiceNavigation.getInstance(getActivity());
         String message = new String();
 
         switch (alarm.getPoi().getCategory()) {
             case POI_TYPE_CROSSING:
                 message += "crossing";
-                mVoiceNavigation.addToQueue(R.raw.crossing);
+                voiceNavigation.addToQueue(R.raw.crossing);
                 break;
             case POI_TYPE_TRAIN_STATION:
                 message += "train station";
-                mVoiceNavigation.addToQueue(R.raw.train_station);
+                voiceNavigation.addToQueue(R.raw.train_station);
                 break;
             case POI_TYPE_STOP:
                 message += "stop";
-                mVoiceNavigation.addToQueue(R.raw.stop);
+                voiceNavigation.addToQueue(R.raw.stop);
                 break;
             case POI_TYPE_LIGHTS:
                 message += "lights";
-                mVoiceNavigation.addToQueue(R.raw.lights);
+                voiceNavigation.addToQueue(R.raw.lights);
                 break;
             case POI_TYPE_BEFORE_LIGHTS:
                 message += "before_crossing";
-                mVoiceNavigation.addToQueue(R.raw.before_lights);
+                voiceNavigation.addToQueue(R.raw.before_lights);
                 break;
             case POI_TYPE_SPEED_LIMITATION_20:
             case POI_TYPE_SPEED_LIMITATION_30:
@@ -454,78 +453,78 @@ public class MainFragment extends Fragment {
             case POI_TYPE_SPEED_LIMITATION_50:
             case POI_TYPE_SPEED_LIMITATION_70:
                 message += "speed_limitation";
-                mVoiceNavigation.addToQueue(R.raw.speed_limitation);
+                voiceNavigation.addToQueue(R.raw.speed_limitation);
                 break;
             case POI_TYPE_STOP_AZD:
                 message += "stop";
-                mVoiceNavigation.addToQueue(R.raw.stop);
+                voiceNavigation.addToQueue(R.raw.stop);
                 break;
         }
 
         switch (alarm.getPoi().getCategory()) {
             case POI_TYPE_SPEED_LIMITATION_20:
                 message += " 20";
-                mVoiceNavigation.addToQueue(R.raw.twenty);
+                voiceNavigation.addToQueue(R.raw.twenty);
                 break;
             case POI_TYPE_SPEED_LIMITATION_30:
                 message += " 30";
-                mVoiceNavigation.addToQueue(R.raw.thirty);
+                voiceNavigation.addToQueue(R.raw.thirty);
                 break;
             case POI_TYPE_SPEED_LIMITATION_40:
                 message += " 40";
-                mVoiceNavigation.addToQueue(R.raw.forty);
+                voiceNavigation.addToQueue(R.raw.forty);
                 break;
             case POI_TYPE_SPEED_LIMITATION_50:
                 message += " 50";
-                mVoiceNavigation.addToQueue(R.raw.fifty);
+                voiceNavigation.addToQueue(R.raw.fifty);
                 break;
             case POI_TYPE_SPEED_LIMITATION_70:
                 message += " 70";
-                mVoiceNavigation.addToQueue(R.raw.seventy);
+                voiceNavigation.addToQueue(R.raw.seventy);
                 break;
         }
 
         if (DataHelper.getInstance().isSpeedLimitCategory(alarm.getPoi().getCategory())) {
-            mVoiceNavigation.addToQueue(R.raw.kilometres_per_hour);
+            voiceNavigation.addToQueue(R.raw.kilometres_per_hour);
             message += " kilometres_per_hour";
         }
 
-        mVoiceNavigation.addToQueue(R.raw.in);
+        voiceNavigation.addToQueue(R.raw.in);
         message += " in";
 
         switch (alarm.getDistance()) {
             case 50:
                 message += " fifty";
-                mVoiceNavigation.addToQueue(R.raw.fifty);
+                voiceNavigation.addToQueue(R.raw.fifty);
                 break;
             case 70:
                 message += " seventy";
-                mVoiceNavigation.addToQueue(R.raw.seventy);
+                voiceNavigation.addToQueue(R.raw.seventy);
                 break;
             case 100:
                 message += " hundred";
-                mVoiceNavigation.addToQueue(R.raw.hundred);
+                voiceNavigation.addToQueue(R.raw.hundred);
                 break;
             case 120:
                 message += " hundred_twenty";
-                mVoiceNavigation.addToQueue(R.raw.hundred_twenty);
+                voiceNavigation.addToQueue(R.raw.hundred_twenty);
                 break;
             case 150:
                 message += " hyndred_fifty";
-                mVoiceNavigation.addToQueue(R.raw.hundred_fifty);
+                voiceNavigation.addToQueue(R.raw.hundred_fifty);
                 break;
             case 300:
                 message += " three_hundred";
-                mVoiceNavigation.addToQueue(R.raw.three_hundred);
+                voiceNavigation.addToQueue(R.raw.three_hundred);
                 break;
         }
 
-        mVoiceNavigation.addToQueue(R.raw.meters);
+        voiceNavigation.addToQueue(R.raw.meters);
         message += " meters";
 
         Log.d("playerqueue", "MediaPlayerQueue: " + message);
 
-        mVoiceNavigation.play();
+        voiceNavigation.play();
     }
 
     /**

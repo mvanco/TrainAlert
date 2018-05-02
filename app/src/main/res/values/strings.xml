@@ -94,6 +94,7 @@
     <string name="pref_title_distances">Vzdálenosti</string>
 
     <string name="pref_summary_distances">Nastav vzdálenosti, které vyvolávají upozornění</string>
+    <string name="message_application_termination">TrainAlert aplikace bude kvůli nedostatečným oprávněním ukončena.</string>
 
     <string-array name="pref_graphics_titles">
         <item>Černý čtverec</item>

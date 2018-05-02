@@ -16,11 +16,13 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -84,32 +86,28 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (!BuildConfig.USE_OFFLINE_MAPS
+                && (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_DENIED)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+        }
+
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
         getLifecycle().addObserver(mViewModel);
-        getSupportFragmentManager().beginTransaction().add(R.id.activityMain_fragmentContainer, MainFragment.newInstance(), MAIN_FRAGMENT_TAG).commit();
-        getSupportFragmentManager().executePendingTransactions();
-        setupActionBar();
-        RecyclerView recyclerView = mBinding.activityMainNavigationView.findViewById(R.id.activityMain_recyclerView);
-        recyclerView.hasFixedSize();
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new NavAdapter((id) -> onNavigationItemSelected(id)));
 
-        if (!BuildConfig.USE_OFFLINE_MAPS) { //
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED
-                    ) {
-                ActivityCompat.requestPermissions(
-                        this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE
-                );
-            }
+        if (BuildConfig.USE_OFFLINE_MAPS
+                || (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED)) {
+            getSupportFragmentManager().beginTransaction().add(R.id.activityMain_fragmentContainer, MainFragment.newInstance(), MAIN_FRAGMENT_TAG).commit();
+            getSupportFragmentManager().executePendingTransactions();
         }
 
+        setupActionBar();
+        setupNavigationBar();
         mViewModel.getLocationLiveData().observe(this, (location) -> onTimeChanged(location.getTime()));
-
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.ic_trip_selection_animator);
     }
@@ -150,11 +148,22 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
-                    getSupportFragmentManager().beginTransaction()
-                            .remove(fragment)
-                            .add(R.id.activityMain_fragmentContainer, MainFragment.newInstance(), MAIN_FRAGMENT_TAG)
-                            .commit();
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                    if (fragment != null) {
+                        transaction.remove(fragment);
+                    }
+
+                    transaction.add(R.id.activityMain_fragmentContainer, MainFragment.newInstance(), MAIN_FRAGMENT_TAG).commit();
+
                     getSupportFragmentManager().executePendingTransactions();
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(R.string.message_application_termination);
+                    builder.setPositiveButton(R.string.button_confirm, (dialog, which) -> {
+                        this.finish();
+                    });
+                    builder.create().show();
                 }
                 return;
         }
@@ -301,6 +310,13 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             int minutes = cal.get(Calendar.MINUTE);
             mClockTextView.setText(Utility.getTwoDigitString(hours) + ":" + Utility.getTwoDigitString(minutes));
         }
+    }
+
+    private void setupNavigationBar() {
+        RecyclerView recyclerView = mBinding.activityMainNavigationView.findViewById(R.id.activityMain_recyclerView);
+        recyclerView.hasFixedSize();
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new NavAdapter((id) -> onNavigationItemSelected(id)));
     }
 
     /**
