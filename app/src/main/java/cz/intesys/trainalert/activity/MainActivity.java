@@ -406,7 +406,6 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         mBinding.activityMainDrawerLayout.setScrimColor(Color.TRANSPARENT);
         mToggle.syncState();
 
-        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
         mBinding.activityMainDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
@@ -430,6 +429,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
             @Override
             public void onDrawerStateChanged(int newState) {
+                MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
                 if (newState == STATE_SETTLING) { // Animation is in progress.
                     fragment.setAnimating(false); // Stop animation in fragment to allow finer animation of drawer.
                 } else if (newState == STATE_IDLE) { // Animation is not in progress.
