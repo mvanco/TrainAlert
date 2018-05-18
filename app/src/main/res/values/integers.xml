@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer name="show_animation_duration">225</integer>
+    <integer name="hide_animation_duration">195</integer>
+
+</resources>

@@ -2,7 +2,7 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
 
     <objectAnimator
-        android:duration="195"
+        android:duration="@integer/hide_animation_duration"
         android:propertyName="translationX"
         android:repeatCount="0"
         android:valueFrom="0dp"

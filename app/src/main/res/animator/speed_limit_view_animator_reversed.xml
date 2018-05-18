@@ -3,16 +3,16 @@
     android:ordering="together">
 
     <objectAnimator
-        android:duration="@integer/show_animation_duration"
+        android:duration="@integer/hide_animation_duration"
         android:propertyName="translationY"
         android:repeatCount="0"
-        android:valueFrom="120dp"
-        android:valueTo="0dp" />
+        android:valueFrom="0dp"
+        android:valueTo="120dp" />
 
     <objectAnimator
-        android:duration="@integer/show_animation_duration"
+        android:duration="@integer/hide_animation_duration"
         android:propertyName="alpha"
         android:repeatCount="0"
-        android:valueFrom="0f"
-        android:valueTo="1f" />
+        android:valueFrom="1f"
+        android:valueTo="0f" />
 </set>

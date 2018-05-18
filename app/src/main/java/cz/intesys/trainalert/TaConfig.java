@@ -8,18 +8,15 @@ import cz.intesys.trainalert.repository.PostgreSqlRepository;
 import cz.intesys.trainalert.repository.Repository;
 import cz.intesys.trainalert.repository.SimulatedRepository;
 
+import cz.intesys.trainalert.R;
+
 public class TaConfig {
-    /**
-     * {@link BuildConfig.GPS_TIME_INTERVAL} Time between two gps coordinates measurements in milliseconds, GetLocation service polling.
-     **/
     public static final int TRIP_STATUS_TIME_INTERVAL = 3000; // GetTripStatus service polling.
     public static final int TRIP_TIME_INTERVAL = 5000; // GetNextStops, GetPreviousStops, GetFinalStop services polling.
     public static final int GET_POIS_INTERVAL = 300000; // GetPois service polling (5min.).
     public static final int MAP_MOVEMENT_INTERVAL = 10000;
 
     public static final int OSMDROID_ANIMATION_DURATION = 1000; // This is taken from osmdroid library, cannot change
-    public static final int SHOW_ANIMATION_DURATION = 225;
-    public static final int HIDE_ANIMATION_DURATION = 195;
 
     public static final int LOCATION_UPDATE_ANIMATION = BuildConfig.GPS_TIME_INTERVAL;
 

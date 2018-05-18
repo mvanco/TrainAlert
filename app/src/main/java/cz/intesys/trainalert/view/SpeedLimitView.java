@@ -4,6 +4,7 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -98,17 +99,30 @@ public class SpeedLimitView extends FrameLayout {
             mBinding.getRoot().setVisibility(View.VISIBLE);
             this.setVisibility(View.VISIBLE);
         } else {
-            mBinding.getRoot().setVisibility(View.INVISIBLE);
-            this.setVisibility(View.INVISIBLE);
+            if (this.getVisibility() == View.VISIBLE) {
+                if (mAnimationEnabled) {
+                    mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.speed_limit_view_animator_reversed);
+                    mAnimSet.setTarget(this);
+                    mAnimSet.start();
+                    new Handler().postDelayed(() -> {
+                        mBinding.getRoot().setVisibility(View.INVISIBLE);
+                        this.setVisibility(View.INVISIBLE);
+                    }, mAnimSet.getDuration());
+                }
+                else {
+                    mBinding.getRoot().setVisibility(View.INVISIBLE);
+                    this.setVisibility(View.INVISIBLE);
+                }
+            }
         }
 
         invalidate();
         requestLayout();
 
-        boolean shouldShowAnimation = getCategoryId() != categoryId;
+        boolean differentLimitation = getCategoryId() != categoryId;
         mCategoryId = categoryId;
 
-        if (mAnimationEnabled && shouldShowAnimation) {
+        if (mAnimationEnabled && differentLimitation) {
             mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.speed_limit_view_animator);
             mAnimSet.setTarget(this);
             mAnimSet.start();

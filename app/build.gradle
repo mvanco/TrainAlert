@@ -1,5 +1,14 @@
 apply plugin: 'com.android.application'
 
+/**
+ * LOGS (boolean) - If logs should be printed.
+ * ACTION_BAR_BLOCKED (boolean) - If action bar should be password protected.
+ * USE_SIMULATED_REPOSITORY (boolean) - If repository is mocked for testing.
+ * REST_BASE_URL (String) - URL address of application server for this application.
+ * USE_OFFLINE_MAPS (boolean) - If application should obtain map tiles from custom offline server.
+ * GPS_TIME_INTERVAL (int) - Time between two gps coordinates measurements in milliseconds, GetLocation service polling.
+ */
+
 android {
     signingConfigs {
         config {

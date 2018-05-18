@@ -383,7 +383,7 @@ public class MainFragment extends Fragment {
                 .scaleX(1f)
                 .scaleY(1f)
                 .setInterpolator(new DecelerateInterpolator())
-                .setDuration(TaConfig.SHOW_ANIMATION_DURATION)
+                .setDuration(getResources().getInteger(R.integer.show_animation_duration))
                 .setListener(null);
 
         if (alarm.useVoiceNavigation()) {
@@ -408,7 +408,7 @@ public class MainFragment extends Fragment {
                     .scaleX(0.5f)
                     .scaleY(0.5f)
                     .setInterpolator(new AccelerateInterpolator())
-                    .setDuration(TaConfig.HIDE_ANIMATION_DURATION)
+                    .setDuration(getResources().getInteger(R.integer.hide_animation_duration))
                     .setListener(new AnimatorListenerAdapter() {
                         @Override public void onAnimationEnd(Animator animation) {
                             mBinding.fragmentMainSignView.setVisibility(View.GONE);

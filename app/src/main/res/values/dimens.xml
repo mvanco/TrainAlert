@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <dimen name="alarm_stroke_width">2dp</dimen>
     <dimen name="alarm_whitePadding_width">6dp</dimen>
     <dimen name="alarm_outerBorder_width">24dp</dimen>
