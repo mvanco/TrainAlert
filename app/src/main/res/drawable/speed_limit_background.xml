@@ -9,21 +9,21 @@
         </shape>
     </item>
     <item
-        android:bottom="@dimen/speed_view_whitePadding_width"
+        android:bottom="@dimen/speed_limit_view_whitePadding_width"
         android:gravity="center"
-        android:left="@dimen/speed_view_whitePadding_width"
-        android:right="@dimen/speed_view_whitePadding_width"
-        android:top="@dimen/speed_view_whitePadding_width">
+        android:left="@dimen/speed_limit_view_whitePadding_width"
+        android:right="@dimen/speed_limit_view_whitePadding_width"
+        android:top="@dimen/speed_limit_view_whitePadding_width">
         <shape android:shape="oval">
             <solid android:color="@color/red" />
         </shape>
     </item>
     <item
-        android:bottom="@dimen/speed_view_outerBorder_width"
+        android:bottom="@dimen/speed_limit_view_outerBorder_width"
         android:gravity="center"
-        android:left="@dimen/speed_view_outerBorder_width"
-        android:right="@dimen/speed_view_outerBorder_width"
-        android:top="@dimen/speed_view_outerBorder_width">
+        android:left="@dimen/speed_limit_view_outerBorder_width"
+        android:right="@dimen/speed_limit_view_outerBorder_width"
+        android:top="@dimen/speed_limit_view_outerBorder_width">
         <shape android:shape="oval">
             <solid android:color="#ffffff" />
             <stroke

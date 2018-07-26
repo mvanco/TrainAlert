@@ -76,7 +76,6 @@ public class MediaPlayerQueue implements MediaPlayer.OnCompletionListener {
             mMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
             mMediaPlayer.prepare();
             mMediaPlayer.start();
-
         } catch (IOException e) {
             e.printStackTrace();
         }

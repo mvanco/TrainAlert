@@ -20,6 +20,12 @@ public class LocationApi {
     @Expose
     private Date time;
 
+    @Expose
+    private boolean interpolated;
+
+    @Expose
+    private int speed;
+
     public long getId() {
         return id;
     }
@@ -50,5 +56,21 @@ public class LocationApi {
 
     public void setTime(Date time) {
         this.time = time;
+    }
+
+    public boolean isInterpolated() {
+        return interpolated;
+    }
+
+    public void setInterpolated(boolean interpolated) {
+        this.interpolated = interpolated;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 }

@@ -13,19 +13,23 @@ public class Location implements IGeoPoint {
     private Double longitude;
     private Date time;
     private int metaIndex; // TODO: Remove this when not simulated.
+    private boolean interpolated = false;  // If there are real coordinates or interpolated.
+    private int speed;  // Current speed.
 
     public Location(LocationApi locationApi) {
-        this(locationApi.getLatitude(), locationApi.getLongitude(), locationApi.getTime());
+        this(locationApi.getLatitude(), locationApi.getLongitude(), locationApi.getTime(), locationApi.isInterpolated(), locationApi.getSpeed());
     }
 
     public Location(Double latitude, Double longitude) {
-        this(latitude, longitude, new Date());
+        this(latitude, longitude, new Date(), false, 0);
     }
 
-    public Location(Double latitude, Double longitude, Date time) {
+    public Location(Double latitude, Double longitude, Date time, boolean interpolated, int speed) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.time = time;
+        this.interpolated = interpolated;
+        this.speed = speed;
     }
 
     @Override
@@ -87,5 +91,21 @@ public class Location implements IGeoPoint {
     public GeoPoint toGeoPoint() {
         GeoPoint gp = new GeoPoint(latitude, longitude);
         return gp;
+    }
+
+    public boolean isInterpolated() {
+        return interpolated;
+    }
+
+    public void setInterpolated(boolean interpolated) {
+        this.interpolated = interpolated;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 }

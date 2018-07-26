@@ -233,6 +233,7 @@ public class MainFragment extends Fragment {
         mBinding.fragmentMainMapView.getOverlayManager().add(mTrainMarker); // Add train marker.
         mViewModel.getLocationLiveData().observe(this, currentLocation -> {
             handleLocationChange(mTrainMarker, currentLocation);
+            mBinding.fragmentMainSpeedView.setSpeed(currentLocation.getSpeed());
         });
         mViewModel.getPoisLiveData().observe(this, pois -> {
             handlePOIsChange(pois);
@@ -295,6 +296,13 @@ public class MainFragment extends Fragment {
 
     private void handleLocationChange(Marker trainMarker, Location currentLocation) {
         Log.d("handler", "executing repetitious code from to position " + currentLocation.getLatitude() + ", " + currentLocation.getLongitude());
+        if (currentLocation.isInterpolated()) {
+            mTrainMarker.setIcon(getResources().getDrawable(R.drawable.ic_current_location_red));
+        }
+        else {
+            mTrainMarker.setIcon(getResources().getDrawable(R.drawable.ic_current_location));
+        }
+
         if (mViewModel.isAnimating()) {
             animateMarkerTo(mBinding.fragmentMainMapView, trainMarker, currentLocation.toGeoPoint(), new GeoPointInterpolator.Linear());
         } else {

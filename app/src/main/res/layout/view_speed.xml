@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+
+    <FrameLayout
+        android:id="@+id/speed_container"
+        android:layout_width="@dimen/speedLimitView_width"
+        android:layout_height="@dimen/speedLimitView_height">
+
+        <ImageView
+            android:id="@+id/speed_sign"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/speed_background"
+            android:contentDescription="@string/fragment_main_image_view_desc" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/speed_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="50"
+                android:textSize="@dimen/speed_view_text_size"
+                tools:text="50" />
+
+            <TextView
+                android:id="@+id/speed_unit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="km/h"
+                android:textSize="@dimen/speed_view_unit_text_size"
+                tools:text="km/h" />
+
+        </LinearLayout>
+    </FrameLayout>
+</layout>

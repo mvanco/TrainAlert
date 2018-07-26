@@ -8,10 +8,13 @@
     <dimen name="alarm_textView_margin">48dp</dimen>
     <dimen name="alarm_roundRadius">4dp</dimen>
 
-    <dimen name="speed_view_whitePadding_width">2dp</dimen>
-    <dimen name="speed_view_outerBorder_width">10dp</dimen>
-    <dimen name="speed_view_text_size">48sp</dimen>
+    <dimen name="speed_limit_view_whitePadding_width">2dp</dimen>
+    <dimen name="speed_limit_view_outerBorder_width">10dp</dimen>
+    <dimen name="speed_limit_view_text_size">48sp</dimen>
 
+    <dimen name="speed_view_whitePadding_width">2dp</dimen>
+    <dimen name="speed_view_text_size">48sp</dimen>
+    <dimen name="speed_view_unit_text_size">18sp</dimen>
 
     <dimen name="drawable_timePoint_borderWidth">2.5dp</dimen>
     <dimen name="drawable_timePoint_borderWidth_bold">5dp</dimen>

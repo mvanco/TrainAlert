@@ -74,6 +74,41 @@ public class SimulatedRepository implements Repository {
         new Handler().postDelayed(() -> {
             Location location = mExampleRoute.get(mLocationIterator);
             location.setTime(new Date());
+
+            switch (mLocationIterator) {
+                case 3:
+                case 5:
+                case 10:
+                case 11:
+                case 13:
+                    location.setInterpolated(true);
+                    break;
+                default:
+                    location.setInterpolated(false);
+                    break;
+            }
+
+            switch (mLocationIterator) {
+                case 3:
+                    location.setSpeed(70);
+                    break;
+                case 5:
+                    location.setSpeed(50);
+                    break;
+                case 10:
+                    location.setSpeed(80);
+                    break;
+                case 11:
+                    location.setSpeed(100);
+                    break;
+                case 13:
+                    location.setSpeed(10);
+                    break;
+                default:
+                    location.setSpeed(0);
+                    break;
+            }
+
             taCallback.onResponse(location);
             Log.d(LOG_POSTGRE, "getCurrentLocation response");
         }, randomServerDelay);

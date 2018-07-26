@@ -3,9 +3,9 @@ package cz.intesys.trainalert.entity;
 import cz.intesys.trainalert.api.TripStatusApi;
 
 public class TripStatus {
-    boolean pressed;
-    boolean canPass;
-    int speedLimit;
+    boolean pressed;  // If "stop button" of next stop is pressed.
+    boolean canPass;  // Train can pass the next stop.
+    int speedLimit;  // Current speed limit on he railway.
 
     public TripStatus(TripStatusApi tripStatusApi) {
         this.pressed = tripStatusApi.isPressed();
