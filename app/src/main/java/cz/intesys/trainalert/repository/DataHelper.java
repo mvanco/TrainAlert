@@ -87,6 +87,9 @@ public class DataHelper implements LifecycleObserver {
     public @interface GraphicsId {
     }
 
+    public static final String TRIP_ID_BUSINESS_TRIP_0 = "Sluzebni_jizda_0";
+    public static final String TRIP_ID_BUSINESS_TRIP_1 = "Sluzebni_jizda_1";
+
     private DataHelper() {
         mRepository = REPOSITORY;
         mSharedPrefs = TaApplication.getInstance().getSharedPreferences();

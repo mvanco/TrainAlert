@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.repository.DataHelper;
 
 public class TripIdDialogFragment extends DialogFragment {
 
@@ -19,7 +20,7 @@ public class TripIdDialogFragment extends DialogFragment {
 
     public interface OnFragmentInteractionListener extends TripIdManuallyDialogFragment.OnFragmentInteractionListener {
         // void onTripSelected(int tripId); This is already in TripIdManuallyDialogFragment interaction listener.
-        void onBusinessTripSelected();
+        void onBusinessTripSelected(String tripId);
 
         void onTripManuallySelected();
     }
@@ -42,11 +43,14 @@ public class TripIdDialogFragment extends DialogFragment {
         for (String item : getArguments().getStringArrayList(TRIPS_KEY)) {
             items.add(item);
         }
-        items.add(getContext().getResources().getString(R.string.fragment_trip_id_business_trip));
+        items.add(getContext().getResources().getString(R.string.fragment_trip_id_business_trip_0));
+        items.add(getContext().getResources().getString(R.string.fragment_trip_id_business_trip_1));
         items.add(getContext().getResources().getString(R.string.fragment_trip_id_manual_selection));
         builder.setItems(items.toArray(new String[items.size()]), (dialog, which) -> {
-            if (which == items.size() - 2) { // Business trip.
-                mListener.onBusinessTripSelected();
+            if (which == items.size() - 3) { // Business trip 1.
+                mListener.onBusinessTripSelected(DataHelper.TRIP_ID_BUSINESS_TRIP_0);
+            } else if (which == items.size() - 2) { // Business trip 2.
+                mListener.onBusinessTripSelected(DataHelper.TRIP_ID_BUSINESS_TRIP_1);
             } else if (which == items.size() - 1) { // Manual selection.
                 mListener.onTripManuallySelected();
             } else {

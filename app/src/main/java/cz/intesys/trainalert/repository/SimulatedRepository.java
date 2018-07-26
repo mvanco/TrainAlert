@@ -227,13 +227,13 @@ public class SimulatedRepository implements Repository {
     @Override public void getTripStatus(TaCallback<TripStatus> taCallback) {
         new Handler().postDelayed(() -> {
             Log.d(LOG_POSTGRE, "getTripStatus response");
-            TripStatus ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_50);
+            TripStatus ts = new TripStatus(false, false, 0);
             switch (mTime) {
                 case 0:
                     ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_20);
                     break;
                 case 1:
-                    ts = new TripStatus(true, true, POI_TYPE_SPEED_LIMITATION_20);
+                    ts = new TripStatus(true, true, 0);
                     break;
                 case 2:
                     ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40);

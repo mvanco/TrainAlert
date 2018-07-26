@@ -209,7 +209,20 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         }, set.getChildAnimations().get(0).getDuration());
     }
 
-    @Override public void onBusinessTripSelected() {
+    @Override public void onBusinessTripSelected(String tripId) {
+        showTripIdSelectionIconLoader();
+        DataHelper.getInstance().setTrip(tripId, new TaCallback<Void>() {
+            @Override public void onResponse(Void response) {
+                Toast.makeText(MainActivity.this, R.string.message_business_trip_set, Toast.LENGTH_SHORT).show();
+                hideTripIdSelectionIconLoader();
+            }
+
+            @Override public void onFailure(Throwable t) {
+                hideTripIdSelectionIconLoader();
+            }
+        });
+
+
         mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.GONE);
     }
 

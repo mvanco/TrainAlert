@@ -18,7 +18,7 @@ public class TripIdManuallyDialogFragment extends DialogFragment {
 
 
     public interface OnFragmentInteractionListener {
-        void onTripSelected(String trainId);
+        void onTripSelected(String tripId);
     }
 
     public static TripIdManuallyDialogFragment newInstance() {

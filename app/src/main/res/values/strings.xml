@@ -12,7 +12,8 @@
     <string name="menu_clock">Hodiny</string>
 
     <!-- Dialog fragments -->
-    <string name="fragment_trip_id_business_trip">Služební jízda</string>
+    <string name="fragment_trip_id_business_trip_0">Služební jízda (do Mostu)</string>
+    <string name="fragment_trip_id_business_trip_1">Služební jízda (do Lovosic)</string>
     <string name="fragment_trip_id_manual_selection">Ruční zadání</string>
 
     <!-- TripFragment -->
@@ -45,6 +46,7 @@
     <string name="message_new_poi_edited">Bod zájmu byl editován</string>
     <string name="message_destination_reached">Přijel jsi do cílové stanice\n%s</string>
     <string name="message_successful_logout">Byl jste úspěšně odhlášen</string>
+    <string name="message_business_trip_set">Služební jízda byla započatá</string>
 
     <!-- Error Messages -->
     <string name="error_wrong_password">Bylo zadáno špatné heslo</string>
