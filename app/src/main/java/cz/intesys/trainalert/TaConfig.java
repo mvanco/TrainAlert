@@ -40,7 +40,6 @@ public class TaConfig {
     public static final int TRIP_FRAGMENT_PREVIOUS_STOP_COUNT = 1;
     public static final int TRIP_FRAGMENT_NEXT_STOP_COUNT = 2;
 
-
     public static final int ADMINISTRATOR_PASSWORD = 2003;
 
     public static final int[] SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE = {50, 500}; // [0, 0] or [x, y] where x, y > 0
@@ -49,4 +48,5 @@ public class TaConfig {
 
     public static final long UPDATE_INTERVAL = 5;
     public static final TimeUnit UPDATE_INTERVAL_UNIT = TimeUnit.MINUTES;
+    public static final int VOICE_NAVIGATION_TIME_PADDING = -100;  // in ms, can be negative
 }

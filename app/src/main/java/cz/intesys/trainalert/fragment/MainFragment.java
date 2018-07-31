@@ -175,7 +175,7 @@ public class MainFragment extends Fragment {
                     16,
                     256,
                     ".png",
-                    new String[]{BuildConfig.REST_BASE_URL}
+                    new String[]{BuildConfig.OFFLINE_MAPS_BASE_URL}
             ) {
                 @Override public String getTileURLString(MapTile aTile) {
                     return getBaseUrl() + "/osm/tiles/" + aTile.getZoomLevel() + "/" + aTile.getX() + "/" + aTile.getY() + mImageFilenameEnding;
@@ -411,6 +411,9 @@ public class MainFragment extends Fragment {
         }
 
         Runnable hideNotificationAction = () -> {
+            if (!isAdded()) {
+                return;
+            }
             mBinding.fragmentMainSignView.animate()
                     .alpha(0f)
                     .scaleX(0.5f)

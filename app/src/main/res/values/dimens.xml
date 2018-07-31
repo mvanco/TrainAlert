@@ -12,9 +12,13 @@
     <dimen name="speed_limit_view_outerBorder_width">10dp</dimen>
     <dimen name="speed_limit_view_text_size">48sp</dimen>
 
-    <dimen name="speed_view_whitePadding_width">2dp</dimen>
-    <dimen name="speed_view_text_size">48sp</dimen>
-    <dimen name="speed_view_unit_text_size">18sp</dimen>
+    <dimen name="speedView_width">100dp</dimen>
+    <dimen name="speedView_height">@dimen/speedView_width</dimen>
+    <dimen name="speedView_whitePadding_width">5dp</dimen>
+    <dimen name="speedView_textSize">48sp</dimen>
+    <dimen name="speedView_unit_textSize">18sp</dimen>
+    <dimen name="speedView_unit_marginTop">-10dp</dimen>
+    <dimen name="speedView_text_marginTop">5dp</dimen>
 
     <dimen name="drawable_timePoint_borderWidth">2.5dp</dimen>
     <dimen name="drawable_timePoint_borderWidth_bold">5dp</dimen>
@@ -62,6 +66,7 @@
     <dimen name="action_icon_height">@dimen/action_icon_width</dimen>
     <dimen name="speedLimitView_width">100dp</dimen>
     <dimen name="speedLimitView_height">@dimen/speedLimitView_width</dimen>
+    <dimen name="speedLimitView_padding">15dp</dimen>
     <dimen name="activityMain_clock_textSize">38sp</dimen>
     <dimen name="stopView_bigHand_width">32dp</dimen>
     <dimen name="stopView_bigHand_height">@dimen/stopView_bigHand_width</dimen>

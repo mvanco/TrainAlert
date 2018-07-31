@@ -9,11 +9,11 @@
         </shape>
     </item>
     <item
-        android:bottom="@dimen/speed_view_whitePadding_width"
+        android:bottom="@dimen/speedView_whitePadding_width"
         android:gravity="center"
-        android:left="@dimen/speed_view_whitePadding_width"
-        android:right="@dimen/speed_view_whitePadding_width"
-        android:top="@dimen/speed_view_whitePadding_width">
+        android:left="@dimen/speedView_whitePadding_width"
+        android:right="@dimen/speedView_whitePadding_width"
+        android:top="@dimen/speedView_whitePadding_width">
         <shape android:shape="oval">
             <solid android:color="@color/grey" />
         </shape>

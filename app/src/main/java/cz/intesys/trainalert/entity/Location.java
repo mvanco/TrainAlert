@@ -21,15 +21,15 @@ public class Location implements IGeoPoint {
     }
 
     public Location(Double latitude, Double longitude) {
-        this(latitude, longitude, new Date(), false, 0);
+        this(latitude, longitude, new Date(), false, 0.0);
     }
 
-    public Location(Double latitude, Double longitude, Date time, boolean interpolated, int speed) {
+    public Location(Double latitude, Double longitude, Date time, boolean interpolated, double speed) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.time = time;
         this.interpolated = interpolated;
-        this.speed = speed;
+        this.speed = (int) Math.round(speed);
     }
 
     @Override

@@ -57,6 +57,7 @@ android {
             dimension "server"
             buildConfigField "boolean", "USE_SIMULATED_REPOSITORY", "true"
             buildConfigField "String", "REST_BASE_URL", "\"-\""
+            buildConfigField "String", "OFFLINE_MAPS_BASE_URL", "\"-\""
             buildConfigField "boolean", "USE_OFFLINE_MAPS", "false"
             buildConfigField "int", "GPS_TIME_INTERVAL", "7000"
         }
@@ -64,6 +65,7 @@ android {
             dimension "server"
             buildConfigField "boolean", "USE_SIMULATED_REPOSITORY", "false"
             buildConfigField "String", "REST_BASE_URL", "\"http://192.168.16.36:3001\""
+            buildConfigField "String", "OFFLINE_MAPS_BASE_URL", "\"http://tile.intesys.cz\""
             buildConfigField "boolean", "USE_OFFLINE_MAPS", "false"
             buildConfigField "int", "GPS_TIME_INTERVAL", "2000"
         }
@@ -71,6 +73,7 @@ android {
             dimension "server"
             buildConfigField "boolean", "USE_SIMULATED_REPOSITORY", "false"
             buildConfigField "String", "REST_BASE_URL", "\"http://192.168.0.10:5000\""
+            buildConfigField "String", "OFFLINE_MAPS_BASE_URL", "\"http://192.168.0.10:5000\""
             buildConfigField "boolean", "USE_OFFLINE_MAPS", "true"
             buildConfigField "int", "GPS_TIME_INTERVAL", "2000"
         }

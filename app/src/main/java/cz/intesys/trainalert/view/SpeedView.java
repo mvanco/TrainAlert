@@ -81,15 +81,13 @@ public class SpeedView extends FrameLayout {
         invalidate();
         requestLayout();
 
-
-        boolean differentLimitation = mSpeed != speed;
-        mSpeed = speed;
-
-        if (mAnimationEnabled && differentLimitation) {
+        if (mAnimationEnabled && mSpeed != 0) {  // Animation is shown only when previous speed was zero and icon has been hidden.
             mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.speed_limit_view_animator);
             mAnimSet.setTarget(this);
             mAnimSet.start();
         }
+
+        mSpeed = speed;
     }
 
     /**

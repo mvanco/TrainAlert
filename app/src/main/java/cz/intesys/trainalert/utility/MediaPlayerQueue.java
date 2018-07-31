@@ -4,31 +4,30 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Handler;
 import android.support.annotation.RawRes;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.intesys.trainalert.TaConfig;
+
 public class MediaPlayerQueue implements MediaPlayer.OnCompletionListener {
 
     Context mContext;
     List<Integer> mSoundResources;
-    MediaPlayer mMediaPlayer;
+    ArrayList<MediaPlayer> mMediaPlayerList;  // Detect already playing sounds in this MediaPlayerQueue
     OnInteractionListener mListener;
 
     public interface OnInteractionListener {
-        void onCompletion(MediaPlayer mp);
+        void onCompletion(MediaPlayer mp);  // When last sound in queue has been finished.
     }
 
     private MediaPlayerQueue(Context context) {
         mContext = context;
         mSoundResources = new ArrayList<>();
-        mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.reset();
-        MediaPlayer mMediaPlayer = new MediaPlayer();
-        mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        mMediaPlayer.setOnCompletionListener(this);
+        mMediaPlayerList = new ArrayList<>();
     }
 
     public static MediaPlayerQueue create(Context context) {
@@ -36,15 +35,19 @@ public class MediaPlayerQueue implements MediaPlayer.OnCompletionListener {
     }
 
     @Override public void onCompletion(MediaPlayer mp) {
-        if (!mSoundResources.isEmpty()) {
-            mMediaPlayer.reset(); // Enables initialization.
-            playNextFile();
-        } else {
+        if (!mMediaPlayerList.isEmpty()) {
+            mMediaPlayerList.remove(0).release();
+        }
+
+        if (mMediaPlayerList.isEmpty()) {
             if (mListener != null) {
                 mListener.onCompletion(mp);
             }
-            cancel();
         }
+    }
+
+    private boolean isPlaying() {
+        return !mMediaPlayerList.isEmpty() && mMediaPlayerList.get(0).isPlaying();
     }
 
     public void setOnInteractionListener(OnInteractionListener listener) {
@@ -56,26 +59,46 @@ public class MediaPlayerQueue implements MediaPlayer.OnCompletionListener {
     }
 
     public void clearQueue() {
-        if (!mMediaPlayer.isPlaying()) {
+        if (!isPlaying()) {
             mSoundResources.clear();
         }
     }
 
     public void play() {
-        playNextFile();
+        onPlayNextFile();
     }
 
     public void cancel() {
-        mMediaPlayer.release();
+        for (MediaPlayer mp : mMediaPlayerList) {
+            mp.release();
+        }
     }
 
-    private void playNextFile() {
+    /**
+     * Play next sound from queue, queue cannot be empty!
+     */
+    private void onPlayNextFile() {
+        if (mSoundResources.isEmpty()) {
+            return;
+        }
         try {
-            mMediaPlayer.setOnCompletionListener(this);
+            MediaPlayer mediaPlayer = new MediaPlayer();
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mediaPlayer.setOnCompletionListener(this);
             AssetFileDescriptor afd = mContext.getResources().openRawResourceFd(mSoundResources.get(0));
-            mMediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-            mMediaPlayer.prepare();
-            mMediaPlayer.start();
+            mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            mediaPlayer.prepare();
+            mediaPlayer.start();
+            mMediaPlayerList.add(mediaPlayer);
+            new Handler().postDelayed(
+                    () -> {
+                        if (!mSoundResources.isEmpty()) {
+//                            mediaPlayer.reset(); // Enables initialization.
+                            onPlayNextFile();
+                        }
+                    },
+                    mediaPlayer.getDuration() + TaConfig.VOICE_NAVIGATION_TIME_PADDING
+            );
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -24,7 +24,7 @@ public class LocationApi {
     private boolean interpolated;
 
     @Expose
-    private int speed;
+    private double speed;
 
     public long getId() {
         return id;
@@ -66,11 +66,11 @@ public class LocationApi {
         this.interpolated = interpolated;
     }
 
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
-    public void setSpeed(int speed) {
+    public void setSpeed(double speed) {
         this.speed = speed;
     }
 }

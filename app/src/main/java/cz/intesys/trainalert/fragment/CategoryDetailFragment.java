@@ -84,6 +84,7 @@ public class CategoryDetailFragment extends PreferenceFragment {
         SwitchPreference voiceNavigationPref = new SwitchPreference(getActivity());
         voiceNavigationPref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.VOICE_NAVIGATION_PREF_KEY, categoryId));
         voiceNavigationPref.setTitle(R.string.pref_title_voice_navigation);
+        voiceNavigationPref.setSummary(R.string.pref_summary_voice_navigation);
         voiceNavigationPref.setDefaultValue(pref.getBoolean(CategorySharedPrefs.VOICE_NAVIGATION_PREF_KEY, CategorySharedPrefs.VOICE_NAVIGATION_DEFAULT_VALUE));
         screen.addPreference(voiceNavigationPref);
 
@@ -110,11 +111,11 @@ public class CategoryDetailFragment extends PreferenceFragment {
         ringtonePref.setDependency(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.VOICE_NAVIGATION_PREF_KEY, categoryId));
         CategoryActivity.bindPreferenceSummaryToValue(ringtonePref);
 
-        SwitchPreference switchPref = new SwitchPreference(getActivity());
-        switchPref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.VIBRATE_PREF_KEY, categoryId));
-        switchPref.setTitle(R.string.pref_title_vibrate);
-        switchPref.setDefaultValue(pref.getBoolean(CategorySharedPrefs.VIBRATE_PREF_KEY, CategorySharedPrefs.VIBRATE_DEFAULT_VALUE));
-        screen.addPreference(switchPref);
+//        SwitchPreference switchPref = new SwitchPreference(getActivity());
+//        switchPref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.VIBRATE_PREF_KEY, categoryId));
+//        switchPref.setTitle(R.string.pref_title_vibrate);
+//        switchPref.setDefaultValue(pref.getBoolean(CategorySharedPrefs.VIBRATE_PREF_KEY, CategorySharedPrefs.VIBRATE_DEFAULT_VALUE));
+//        screen.addPreference(switchPref);
 
         MultiSelectListPreference distancesPref = new MultiSelectListPreference(getActivity());
         distancesPref.setKey(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.DISTANCES_PREF_KEY, categoryId));
