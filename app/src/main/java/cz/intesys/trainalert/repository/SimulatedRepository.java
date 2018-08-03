@@ -89,20 +89,20 @@ public class SimulatedRepository implements Repository {
             }
 
             switch (mLocationIterator) {
-                case 3:
+                case 1:
                     location.setSpeed(70);
                     break;
-                case 5:
+                case 2:
                     location.setSpeed(50);
                     break;
-                case 10:
-                    location.setSpeed(80);
+                case 3:
+                    location.setSpeed(0);
                     break;
-                case 11:
+                case 4:
                     location.setSpeed(100);
                     break;
-                case 13:
-                    location.setSpeed(10);
+                case 5:
+                    location.setSpeed(100);
                     break;
                 default:
                     location.setSpeed(0);

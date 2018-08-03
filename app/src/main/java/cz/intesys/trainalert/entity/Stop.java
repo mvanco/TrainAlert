@@ -17,7 +17,7 @@ public class Stop {
         this.name = stopApi.getName();
         this.arrival = stopApi.getArrival();
         this.delay = stopApi.getDelay();
-        this.pressed = stopApi.isPressed() && StopApi.TYPE_ON_DEMAND.contains(stopApi.getType());
+        this.pressed = stopApi.isPressed() && StopApi.TYPE_ON_DEMAND.equals(stopApi.getType());
         this.type = stopApi.getType();
     }
 

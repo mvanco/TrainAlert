@@ -11,6 +11,7 @@ import java.util.List;
 
 import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.api.ResponseApi;
+import cz.intesys.trainalert.api.StopApi;
 import cz.intesys.trainalert.entity.Stop;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.repository.DataHelper;
@@ -26,6 +27,7 @@ public class TripFragmentViewModel extends BaseViewModel {
     private int mPreviousStopCount;
     private int mNextStopCount;
     private boolean mEnded;
+    private Stop mNextStop;
 
     public TripFragmentViewModel(int previousStopCount, int nextStopCount) {
         super();
@@ -39,33 +41,44 @@ public class TripFragmentViewModel extends BaseViewModel {
 
         mTripPoller = new Utility.IntervalPoller(TaConfig.TRIP_TIME_INTERVAL, () -> {
             DataHelper.getInstance().getPreviousStops(mPreviousStopCount, new TaCallback<List<Stop>>() {
-                @Override public void onResponse(List<Stop> response) {
+                @Override
+                public void onResponse(List<Stop> response) {
                     if (!mEnded) {
                         previousStops.setValue(response);
                     }
                 }
 
-                @Override public void onFailure(Throwable t) {
+                @Override
+                public void onFailure(Throwable t) {
                 }
             });
             DataHelper.getInstance().getNextStops(mNextStopCount, new TaCallback<List<Stop>>() {
-                @Override public void onResponse(List<Stop> response) {
+                @Override
+                public void onResponse(List<Stop> response) {
                     if (!mEnded) {
                         nextStops.setValue(response);
+                        if (!response.isEmpty()) {
+                            mNextStop = response.get(0);
+                        } else {
+                            mNextStop = null;  // Means next stop is final stop.
+                        }
                     }
                 }
 
-                @Override public void onFailure(Throwable t) {
+                @Override
+                public void onFailure(Throwable t) {
                 }
             });
             DataHelper.getInstance().getFinalStop(new TaCallback<ResponseApi<Stop>>() {
-                @Override public void onResponse(ResponseApi<Stop> response) {
+                @Override
+                public void onResponse(ResponseApi<Stop> response) {
                     if (!mEnded) {
                         finalStop.setValue(response);
                     }
                 }
 
-                @Override public void onFailure(Throwable t) {
+                @Override
+                public void onFailure(Throwable t) {
                 }
             });
         });
@@ -97,6 +110,10 @@ public class TripFragmentViewModel extends BaseViewModel {
         return finalStop;
     }
 
+    public boolean isNextStopOnDemand() {
+        return mNextStop != null && StopApi.TYPE_ON_DEMAND.contains(mNextStop.getType());
+    }
+
     public static class ViewModelFactory extends ViewModelProvider.NewInstanceFactory {
         private int mPreviousStopCount;
         private int mNextStopCount;
@@ -106,7 +123,9 @@ public class TripFragmentViewModel extends BaseViewModel {
             mNextStopCount = nextStopCount;
         }
 
-        @NonNull @Override public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
+        @NonNull
+        @Override
+        public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             return (T) new TripFragmentViewModel(mPreviousStopCount, mNextStopCount);
         }
     }

@@ -56,37 +56,44 @@ public class SpeedView extends FrameLayout {
     }
 
     public void setSpeed(int speed) {
-        mBinding.speedText.setText(String.valueOf(speed));
+        AnimationType animType;
 
-        if (speed != 0) {
-            mBinding.getRoot().setVisibility(View.VISIBLE);
+        if (mSpeed == 0 && speed == 0) {
+            animType = AnimationType.HIDDEN;
+        } else if (mSpeed == 0 && speed != 0) {
+            animType = AnimationType.SHOW;
+        } else if (mSpeed != 0 && speed != 0) {
+            animType = AnimationType.VISIBLE;
+        } else {  // mSpeed != 0 && speed == 0
+            animType = AnimationType.HIDE;
+        }
+
+        if (animType == AnimationType.SHOW || animType == AnimationType.VISIBLE) {
+            mBinding.speedText.setText(String.valueOf(speed));
+        }
+
+        if (animType == AnimationType.SHOW) {
+            if (mAnimationEnabled) {
+                mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.speed_limit_view_animator);
+                mAnimSet.setTarget(this);
+                mAnimSet.start();
+            }
             this.setVisibility(View.VISIBLE);
-        } else {  // Hide icon with or without animation.
-            if (this.getVisibility() == View.VISIBLE) {
-                if (mAnimationEnabled) {
-                    mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.speed_limit_view_animator_reversed);
-                    mAnimSet.setTarget(this);
-                    mAnimSet.start();
-                    new Handler().postDelayed(() -> {
-                        mBinding.getRoot().setVisibility(View.INVISIBLE);
-                        this.setVisibility(View.INVISIBLE);
-                    }, mAnimSet.getDuration());
-                } else {
-                    mBinding.getRoot().setVisibility(View.INVISIBLE);
+        } else if (animType == AnimationType.HIDE) {
+            if (mAnimationEnabled) {
+                mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.speed_limit_view_animator_reversed);
+                mAnimSet.setTarget(this);
+                mAnimSet.start();
+                new Handler().postDelayed(() -> {
                     this.setVisibility(View.INVISIBLE);
-                }
+                }, getResources().getInteger(R.integer.hide_animation_duration));
+            } else {
+                this.setVisibility(View.INVISIBLE);
             }
         }
 
         invalidate();
         requestLayout();
-
-        if (mAnimationEnabled && mSpeed != 0) {  // Animation is shown only when previous speed was zero and icon has been hidden.
-            mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(getContext(), R.animator.speed_limit_view_animator);
-            mAnimSet.setTarget(this);
-            mAnimSet.start();
-        }
-
         mSpeed = speed;
     }
 
@@ -102,4 +109,6 @@ public class SpeedView extends FrameLayout {
     private void initLayout() {
         mBinding = ViewSpeedBinding.inflate(LayoutInflater.from(getContext()), this, true);
     }
+
+    enum AnimationType {HIDDEN, SHOW, VISIBLE, HIDE}
 }

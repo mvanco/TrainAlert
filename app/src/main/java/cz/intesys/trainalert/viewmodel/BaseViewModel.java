@@ -25,7 +25,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 /**
- * Works with repository
+ * Abstraction upon {@link DataHelper} class. Works with data in context of activity/fragment lifecycle. Start/stop polling of services on resume/pause.
  */
 public class BaseViewModel extends ViewModel implements LifecycleObserver {
     private Location mCurrentLocation;
@@ -133,7 +133,6 @@ public class BaseViewModel extends ViewModel implements LifecycleObserver {
     public List<Poi> getPois() {
         return mDataHelper.getPois();
     }
-
 
     public boolean areLoadedPois() {
         return mDataHelper.getPoisLiveData().getValue() != null;

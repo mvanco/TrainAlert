@@ -178,7 +178,7 @@ public class TripFragment extends Fragment {
     }
 
     private void setTripHeader(boolean pressed, boolean canPass) {
-        if (canPass) {
+        if (canPass && mViewModel.isNextStopOnDemand()) {
             mBinding.fragmentTripGreenBackground.setVisibility(View.VISIBLE);
             mBinding.fragmentTripGoAhead.setVisibility(View.VISIBLE);
             mBinding.fragmentTripRightArrow.setVisibility(View.VISIBLE);

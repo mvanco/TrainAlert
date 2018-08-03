@@ -28,6 +28,9 @@ import io.reactivex.subjects.PublishSubject;
 
 import static cz.intesys.trainalert.TaConfig.REPOSITORY;
 
+/**
+ * Abstraction upon repository mainly. Ensures reloading (sending additional repository service when needed).
+ */
 public class DataHelper implements LifecycleObserver {
 
     public static final int POI_TYPE_CROSSING = 0; // Přejezd
@@ -119,7 +122,7 @@ public class DataHelper implements LifecycleObserver {
 
         mTripStatusLiveData = new MutableLiveData<>();
         mTripStatusPoller = new Utility.IntervalPoller(TaConfig.TRIP_STATUS_TIME_INTERVAL, () -> {
-            DataHelper.getInstance().getTripStatus(new TaCallback<TripStatus>() {
+            mRepository.getTripStatus(new TaCallback<TripStatus>() {
                 @Override public void onResponse(TripStatus response) {
                     mTripStatusLiveData.setValue(response);
                 }
@@ -297,7 +300,7 @@ public class DataHelper implements LifecycleObserver {
     }
 
     public void setTrip(String id, TaCallback<Void> taCallback) {
-        REPOSITORY.setTrip(id, new TaCallback<Void>() {
+        mRepository.setTrip(id, new TaCallback<Void>() {
             @Override public void onResponse(Void response) {
                 mSharedPrefs.edit().putString(TRIP_ID_KEY, id).commit();
                 taCallback.onResponse(null);
@@ -349,26 +352,22 @@ public class DataHelper implements LifecycleObserver {
     }
 
     public void getPreviousStops(int count, TaCallback<List<Stop>> taCallback) {
-        REPOSITORY.getPreviousStops(count, taCallback);
+        mRepository.getPreviousStops(count, taCallback);
     }
 
     public void getNextStops(int count, TaCallback<List<Stop>> taCallback) {
-        REPOSITORY.getNextStops(count, taCallback);
+        mRepository.getNextStops(count, taCallback);
     }
 
     public void getFinalStop(TaCallback<ResponseApi<Stop>> taCallback) {
-        REPOSITORY.getFinalStop(taCallback);
-    }
-
-    public void getTripStatus(TaCallback<TripStatus> taCallback) {
-        REPOSITORY.getTripStatus(taCallback);
+        mRepository.getFinalStop(taCallback);
     }
 
     public void getTrainId(TaCallback<String> taCallback) {
         String trainId = mSharedPrefs.getString(TRAIN_ID_KEY, "");
         if (trainId == null || trainId.isEmpty()) {
 
-            REPOSITORY.getTrainId(new TaCallback<String>() {
+            mRepository.getTrainId(new TaCallback<String>() {
                 @Override public void onResponse(String response) {
                     taCallback.onResponse(response);
                 }

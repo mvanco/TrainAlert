@@ -250,6 +250,7 @@ public class MainFragment extends Fragment {
 
         mViewModel.getTripStatusLiveData().observe(this, trainStatus -> {
             mBinding.fragmentMainSpeedLimitView.setCategory(trainStatus.getSpeedLimit());
+
         });
 
         mViewModel.getMapMovementLiveData().observe(this, (empty) -> {
