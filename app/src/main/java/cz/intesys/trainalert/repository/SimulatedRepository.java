@@ -202,7 +202,7 @@ public class SimulatedRepository implements Repository {
     }
 
     @Override public void setTrip(String id, TaCallback<Void> taCallback) {
-        new Handler().postDelayed(() -> {
+         new Handler().postDelayed(() -> {
             mTime = -1; // Reset simulation.
             taCallback.onResponse(null);
             Log.d(LOG_POSTGRE, "setTrip response");

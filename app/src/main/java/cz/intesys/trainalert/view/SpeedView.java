@@ -17,6 +17,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
 import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.databinding.ViewSpeedBinding;
 import cz.intesys.trainalert.repository.DataHelper;
 
@@ -64,6 +65,10 @@ public class SpeedView extends FrameLayout {
     }
 
     public void setSpeedAndLimit(int speed, int speedLimit) {
+        if (TaConfig.SPEED_VIEW_DISABLED) {
+            return;
+        }
+
         AnimationType animType;
 
         if (mSpeed == 0 && speed == 0) {

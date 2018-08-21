@@ -295,7 +295,7 @@ public class StopView extends FrameLayout {
         if (mButtonPressed) {
             mBinding.stopViewHand.setImageResource(R.drawable.ic_hand);
         } else {
-            mBinding.stopViewHand.setImageResource(R.drawable.ic_hand_white);
+            mBinding.stopViewHand.setImageResource(R.drawable.ic_hand_white_small);
         }
 
         invalidate();

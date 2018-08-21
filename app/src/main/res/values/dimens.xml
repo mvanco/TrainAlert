@@ -54,10 +54,16 @@
 
     <dimen name="fragmentPoiMap">300dp</dimen>
     <dimen name="dialog_train_id_left_margin">20dp</dimen>
-    <dimen name="stopFragment_name_textSize">18dp</dimen>
+
+    <dimen name="stopView_stop_textSize">24sp</dimen>
+    <dimen name="stopView_other_textSize">20sp</dimen>
     <dimen name="stopView_height">85dp</dimen>
     <dimen name="stopView_height_train">60dp</dimen>
     <dimen name="stopView_lineHeight">2dp</dimen>
+    <dimen name="stopView_bigHand_width">32dp</dimen>
+    <dimen name="stopView_bigHand_height">@dimen/stopView_bigHand_width</dimen>
+    <dimen name="stopView_hand_width">24dp</dimen>
+    <dimen name="stopView_hand_height">@dimen/stopView_hand_width</dimen>
 
     <dimen name="fragmentTrip_cellPaddingBottom">3dp</dimen>
     <dimen name="fragmentTrip_cellPaddingRight">3dp</dimen>
@@ -68,10 +74,6 @@
     <dimen name="speedLimitView_height">@dimen/speedLimitView_width</dimen>
     <dimen name="speedLimitView_padding">15dp</dimen>
     <dimen name="activityMain_clock_textSize">38sp</dimen>
-    <dimen name="stopView_bigHand_width">32dp</dimen>
-    <dimen name="stopView_bigHand_height">@dimen/stopView_bigHand_width</dimen>
-    <dimen name="stopView_hand_width">24dp</dimen>
-    <dimen name="stopView_hand_height">@dimen/stopView_hand_width</dimen>
     <dimen name="progress_bar_width">250dp</dimen>
     <dimen name="progress_bar_height">@dimen/progress_bar_width</dimen>
     <dimen name="header_hand_width">64dp</dimen>

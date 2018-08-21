@@ -49,4 +49,6 @@ public class TaConfig {
     public static final long UPDATE_INTERVAL = 5;
     public static final TimeUnit UPDATE_INTERVAL_UNIT = TimeUnit.MINUTES;
     public static final int VOICE_NAVIGATION_TIME_PADDING = -100;  // in ms, can be negative
+
+    public static boolean SPEED_VIEW_DISABLED = true;
 }

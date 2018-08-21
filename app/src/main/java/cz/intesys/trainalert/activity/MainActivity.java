@@ -507,7 +507,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         mainFragment.setAnimating(false);
 
         Fragment fragment = TripFragment.newInstance(TRIP_FRAGMENT_PREVIOUS_STOP_COUNT, TRIP_FRAGMENT_NEXT_STOP_COUNT);
-        getSupportFragmentManager().beginTransaction().replace(R.id.activityMain_sideContainer, fragment, TRIP_FRAGMENT_TAG).commit();
+         getSupportFragmentManager().beginTransaction().replace(R.id.activityMain_sideContainer, fragment, TRIP_FRAGMENT_TAG).commit();
         getSupportFragmentManager().executePendingTransactions();
         mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.VISIBLE);
         AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.side_bar_animator);
