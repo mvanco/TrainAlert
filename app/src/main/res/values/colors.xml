@@ -21,4 +21,12 @@
     <color name="trip_go_ahead">@color/green</color>
 
     <color name="ic_trip_selection_loader">#9e9e9e</color>
+
+    // TRAIN MARKER COLORS
+    <color name="trainMarker_realLocation">#d2000000</color>
+    <color name="trainMarker_interpolatedLocation">#a5000000</color>
+
+    // TEXT COLORS (800 material design colors)
+    <color name="text_grey">#424242</color>
+
 </resources>

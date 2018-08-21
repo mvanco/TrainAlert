@@ -90,7 +90,7 @@ public class SimulatedRepository implements Repository {
 
             switch (mLocationIterator) {
                 case 1:
-                    location.setSpeed(70);
+                    location.setSpeed(40);
                     break;
                 case 2:
                     location.setSpeed(50);
@@ -99,13 +99,13 @@ public class SimulatedRepository implements Repository {
                     location.setSpeed(0);
                     break;
                 case 4:
-                    location.setSpeed(100);
+                    location.setSpeed(50);
                     break;
                 case 5:
-                    location.setSpeed(100);
+                    location.setSpeed(50);
                     break;
                 default:
-                    location.setSpeed(0);
+                    location.setSpeed(40);
                     break;
             }
 
@@ -135,13 +135,21 @@ public class SimulatedRepository implements Repository {
         //}
     }
 
+    boolean isEven = false;
+
     @Override
     public void getPois(TaCallback<List<Poi>> taCallback) {
         new Handler().postDelayed(() -> {
-            taCallback.onResponse(mPois);
+            if (isEven) {
+                taCallback.onResponse(mPois);
+            }
+            else {
+                taCallback.onResponse(new ArrayList<Poi>());
+            }
             Log.d(LOG_POSTGRE, "getPois response");
         }, getRandomServerDelay());
         Log.d(LOG_POSTGRE, "getPois enqueued");
+        isEven = !isEven;
     }
 
     @Override
@@ -265,24 +273,36 @@ public class SimulatedRepository implements Repository {
             TripStatus ts = new TripStatus(false, false, 0);
             switch (mTime) {
                 case 0:
-                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_20);
+                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_40);
                     break;
                 case 1:
-                    ts = new TripStatus(true, true, 0);
+                    ts = new TripStatus(true, true, POI_TYPE_SPEED_LIMITATION_40);
                     break;
                 case 2:
                     ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40);
                     break;
                 case 3:
-                    ts = new TripStatus(true, false, POI_TYPE_SPEED_LIMITATION_50);
+                    ts = new TripStatus(true, false, POI_TYPE_SPEED_LIMITATION_40);
                     break;
                 case 4:
-                    ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_50);
+                    ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40);
+                    break;
+                default:
+                    ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40);
                     break;
             }
             taCallback.onResponse(ts);
         }, getRandomServerDelay());
         Log.d(LOG_POSTGRE, "getTripStatus enqueued");
+    }
+
+    @Override
+    public void getActiveTrip(TaCallback<String> taCallback) {
+        new Handler().postDelayed(() -> {
+            Log.d(LOG_POSTGRE, "getActiveTrip response");
+            taCallback.onResponse("a18355");
+        }, 5000);
+        Log.d(LOG_POSTGRE, "getActiveTrip enqueued");
     }
 
     private List<Stop> getPreviousStops(int i) {

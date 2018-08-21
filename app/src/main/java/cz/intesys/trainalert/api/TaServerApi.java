@@ -48,4 +48,7 @@ public interface TaServerApi {
 
     @GET("/Trip/GetTripStatus")
     Call<ResponseApi<TripStatusApi>> getTripStatus();
+
+    @GET("/Trip/GetActiveTrip")
+    Call<ResponseApi<ActiveTripApi>> getActiveTrip();
 }

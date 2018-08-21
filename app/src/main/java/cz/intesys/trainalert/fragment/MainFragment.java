@@ -233,7 +233,7 @@ public class MainFragment extends Fragment {
         mBinding.fragmentMainMapView.getOverlayManager().add(mTrainMarker); // Add train marker.
         mViewModel.getLocationLiveData().observe(this, currentLocation -> {
             handleLocationChange(mTrainMarker, currentLocation);
-            mBinding.fragmentMainSpeedView.setSpeed(currentLocation.getSpeed());
+            mBinding.fragmentMainSpeedView.setSpeedAndLimit(currentLocation.getSpeed(), mViewModel.getSpeedLimit());
         });
         mViewModel.getPoisLiveData().observe(this, pois -> {
             handlePOIsChange(pois);
@@ -249,8 +249,8 @@ public class MainFragment extends Fragment {
         });
 
         mViewModel.getTripStatusLiveData().observe(this, trainStatus -> {
-            mBinding.fragmentMainSpeedLimitView.setCategory(trainStatus.getSpeedLimit());
-
+            mViewModel.setSpeedLimit(trainStatus.getSpeedLimit());
+            mBinding.fragmentMainSpeedLimitView.setCategoryId(trainStatus.getSpeedLimit());
         });
 
         mViewModel.getMapMovementLiveData().observe(this, (empty) -> {

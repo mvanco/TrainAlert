@@ -29,7 +29,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
  */
 public class BaseViewModel extends ViewModel implements LifecycleObserver {
     private Location mCurrentLocation;
-    private DataHelper mDataHelper;
+    protected DataHelper mDataHelper;
     private MediatorLiveData<Location> mLocation;
     private MediatorLiveData<List<Poi>> mPois;
     private MediatorLiveData<TripStatus> mTripStatusLiveData;

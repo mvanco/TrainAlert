@@ -71,7 +71,7 @@ public class SpeedLimitView extends FrameLayout {
         requestLayout();
     }
 
-    public void setCategory(@DataHelper.CategoryId int categoryId) {
+    public void setCategoryId(@DataHelper.CategoryId int categoryId) {
         switch (categoryId) {
             case POI_TYPE_SPEED_LIMITATION_20:
                 mText = "20";

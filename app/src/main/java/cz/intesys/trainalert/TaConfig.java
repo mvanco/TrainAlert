@@ -11,7 +11,7 @@ import cz.intesys.trainalert.repository.SimulatedRepository;
 import cz.intesys.trainalert.R;
 
 public class TaConfig {
-    public static final int TRIP_STATUS_TIME_INTERVAL = 3000; // GetTripStatus service polling.
+    public static final int TRIP_STATUS_TIME_INTERVAL = 1000; // GetTripStatus service polling.
     public static final int TRIP_TIME_INTERVAL = 5000; // GetNextStops, GetPreviousStops, GetFinalStop services polling.
     public static final int GET_POIS_INTERVAL = 300000; // GetPois service polling (5min.).
     public static final int MAP_MOVEMENT_INTERVAL = 10000;
@@ -44,7 +44,7 @@ public class TaConfig {
 
     public static final int[] SIMULATED_REPOSITORY_RESPONSE_DELAY_RANGE = {50, 500}; // [0, 0] or [x, y] where x, y > 0
     public static final int[] SIMULATED_REPOSITORY_GET_TRIPS_RESPONSE_DELAY_RANGE = {50, 500};
-    public static final int[] SIMULATED_REPOSITORY_SET_TRIP_RESPONSE_DELAY_RANGE = {50, 500}; // [0, 0] or [x, y] where x, y > 0
+    public static final int[] SIMULATED_REPOSITORY_SET_TRIP_RESPONSE_DELAY_RANGE = {5000, 6000}; // [0, 0] or [x, y] where x, y > 0
 
     public static final long UPDATE_INTERVAL = 5;
     public static final TimeUnit UPDATE_INTERVAL_UNIT = TimeUnit.MINUTES;

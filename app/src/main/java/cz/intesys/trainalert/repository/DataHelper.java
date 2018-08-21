@@ -46,6 +46,8 @@ public class DataHelper implements LifecycleObserver {
     public static final int POI_TYPE_STOP_AZD = 10; // Železniční zastávka z AŽD
     public static final int POI_TYPE_DEFUALT = POI_TYPE_CROSSING;
 
+    public static final int SPEED_LIMIT_NO_LIMIT = 999;
+
     public static final int GRAPHICS_BLACK_SQUARE = 0;
     public static final int GRAPHICS_BLUE_CIRCLE = 1;
     public static final int GRAPHICS_BLUE_RING = 2;
@@ -388,7 +390,7 @@ public class DataHelper implements LifecycleObserver {
         mSharedPrefs.edit().putString(TRAIN_ID_KEY, id).commit();
     }
 
-    private void reloadPois() {
+    public void reloadPois() {
         mRepository.getPois(new TaCallback<List<Poi>>() {
             @Override
             public void onResponse(List<Poi> response) {
@@ -404,5 +406,26 @@ public class DataHelper implements LifecycleObserver {
 
             }
         });
+    }
+
+    public void getActiveTrip(TaCallback<String> taCallback) {
+        mRepository.getActiveTrip(taCallback);
+    }
+
+    public int getSpeedFromCategory(@CategoryId int categoryId) {
+        switch (categoryId) {
+            case POI_TYPE_SPEED_LIMITATION_20:
+                return 20;
+            case POI_TYPE_SPEED_LIMITATION_30:
+                return 30;
+            case POI_TYPE_SPEED_LIMITATION_40:
+                return 40;
+            case POI_TYPE_SPEED_LIMITATION_50:
+                return 50;
+            case POI_TYPE_SPEED_LIMITATION_70:
+                return 70;
+            default:
+                return -1;
+        }
     }
 }

@@ -11,6 +11,7 @@ import java.util.List;
 import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.entity.Alarm;
 import cz.intesys.trainalert.entity.Poi;
+import cz.intesys.trainalert.repository.DataHelper;
 import cz.intesys.trainalert.utility.Utility;
 
 public class MainFragmentViewModel extends BaseViewModel {
@@ -21,6 +22,7 @@ public class MainFragmentViewModel extends BaseViewModel {
     private boolean animating = true;
     private Utility.IntervalPoller mMapMovementPoller;
     private boolean mBlockedSwitchingToFreeMode;
+    private int mSpeedLimit = DataHelper.SPEED_LIMIT_NO_LIMIT;
 
     public MainFragmentViewModel() {
         mDisabledAlarms = new ArrayList<Alarm>();
@@ -129,5 +131,13 @@ public class MainFragmentViewModel extends BaseViewModel {
             }
         }
         return false;
+    }
+
+    public void setSpeedLimit(@DataHelper.CategoryId int categoryId) {
+        mSpeedLimit = mDataHelper.getSpeedFromCategory(categoryId);
+    }
+
+    public int getSpeedLimit() {
+        return mSpeedLimit;
     }
 }

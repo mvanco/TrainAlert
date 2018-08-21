@@ -5,6 +5,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.intesys.trainalert.api.ActiveTripApi;
 import cz.intesys.trainalert.api.LocationApi;
 import cz.intesys.trainalert.api.PoiApi;
 import cz.intesys.trainalert.api.PoisApi;
@@ -381,6 +382,31 @@ public class PostgreSqlRepository implements Repository {
             }
         });
         Log.d(LOG_POSTGRE, "getTripStatus enqueued");
+    }
+
+    @Override
+    public void getActiveTrip(TaCallback<String> taCallback) {
+        Call<ResponseApi<ActiveTripApi>> call = mApiService.getActiveTrip();
+        call.enqueue(new Callback<ResponseApi<ActiveTripApi>>() {
+            @Override
+            public void onResponse(Call<ResponseApi<ActiveTripApi>> call, Response<ResponseApi<ActiveTripApi>> response) {
+                if (response.body() != null
+                        && response.body().getErrorCode() == ResponseApi.ECODE_OK
+                        && response.body().getData() != null) {
+                    taCallback.onResponse(response.body().getData().getTrip());
+                    Log.d(LOG_POSTGRE, "getActiveTrip response");
+                } else {
+                    taCallback.onFailure(new Throwable());
+                    Log.d(LOG_POSTGRE, "getActiveTrip failure");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseApi<ActiveTripApi>> call, Throwable t) {
+                taCallback.onFailure(new Throwable(t));
+                Log.d(LOG_POSTGRE, "getActiveTrip failure");
+            }
+        });
     }
 
 }

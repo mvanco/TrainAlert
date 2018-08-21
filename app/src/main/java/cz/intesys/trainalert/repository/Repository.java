@@ -33,4 +33,6 @@ public interface Repository {
     void getTrainId(TaCallback<String> taCallback);
 
     void getTripStatus(TaCallback<TripStatus> taCallback);
+
+    void getActiveTrip(TaCallback<String> taCallback);
 }

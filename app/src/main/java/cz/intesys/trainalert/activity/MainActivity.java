@@ -26,6 +26,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -140,6 +141,30 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         if (tripIdManuallyDialogFragment != null && tripIdManuallyDialogFragment.getDialog() != null && tripIdManuallyDialogFragment.getDialog().isShowing()) {
             tripIdManuallyDialogFragment.dismiss();
         }
+
+        DataHelper.getInstance().getActiveTrip(new TaCallback<String>() {
+            @Override
+            public void onResponse(String response) {
+                showTripIdSelectionIconLoader();
+                DataHelper.getInstance().setTrip(response, new TaCallback<Void>() {
+                    @Override public void onResponse(Void response) {
+                        showSideBar();
+                        hideTripIdSelectionIconLoader();
+                        mViewModel.reloadPois();
+                        Log.d("reloadingPois", ".");
+                    }
+
+                    @Override public void onFailure(Throwable t) {
+                        hideTripIdSelectionIconLoader();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                // Nothing to do here.
+            }
+        });
     }
 
     @Override
@@ -176,7 +201,8 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             @Override public void onResponse(Void response) {
                 showSideBar();
                 hideTripIdSelectionIconLoader();
-                mMenu.findItem(R.id.menu_trip_selection).setIcon(R.drawable.ic_trip_selection);
+                mViewModel.reloadPois();
+                Log.d("reloadingPois", ".");
             }
 
             @Override public void onFailure(Throwable t) {
@@ -363,6 +389,9 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         });
     }
 
+    /**
+     * Animates button for trip selection.
+     */
     private void showTripIdSelectionIconLoader() {
         MenuItem item = mMenu.findItem(R.id.menu_trip_selection);
         mAnimSet.setTarget(item.getActionView());
@@ -371,6 +400,9 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         item.setEnabled(false); // Suppress click animation.
     }
 
+    /**
+     * Stop animation of button for trip selection.
+     */
     private void hideTripIdSelectionIconLoader() {
         initTripIdSelectionIconLoader();
     }
@@ -467,6 +499,9 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         }
     }
 
+    /**
+     * Show right side bar with trip list.
+     */
     private void showSideBar() {
         MainFragment mainFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
         mainFragment.setAnimating(false);

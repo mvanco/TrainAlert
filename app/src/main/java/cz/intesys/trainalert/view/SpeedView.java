@@ -12,16 +12,20 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.databinding.ViewSpeedBinding;
+import cz.intesys.trainalert.repository.DataHelper;
 
 public class SpeedView extends FrameLayout {
     private boolean mAnimationEnabled = true;
     private int mSpeed;
     private ViewSpeedBinding mBinding;
     private AnimatorSet mAnimSet;
+    private boolean mExceededSpeed;
 
     public SpeedView(@NonNull Context context) {
         super(context);
@@ -56,6 +60,10 @@ public class SpeedView extends FrameLayout {
     }
 
     public void setSpeed(int speed) {
+        setSpeedAndLimit(speed, DataHelper.SPEED_LIMIT_NO_LIMIT);
+    }
+
+    public void setSpeedAndLimit(int speed, int speedLimit) {
         AnimationType animType;
 
         if (mSpeed == 0 && speed == 0) {
@@ -68,8 +76,39 @@ public class SpeedView extends FrameLayout {
             animType = AnimationType.HIDE;
         }
 
+        boolean exceededSpeed = speed > speedLimit;
+
         if (animType == AnimationType.SHOW || animType == AnimationType.VISIBLE) {
             mBinding.speedText.setText(String.valueOf(speed));
+
+            if (exceededSpeed) {
+                mBinding.speedSign.setBackgroundResource(R.drawable.speed_background_red);
+                mBinding.speedText.setTextColor(getResources().getColor(android.R.color.white));
+                mBinding.speedUnitText.setTextColor(getResources().getColor(android.R.color.white));
+            }
+            else {
+                mBinding.speedSign.setBackgroundResource(R.drawable.speed_background);
+                mBinding.speedText.setTextColor(getResources().getColor(R.color.text_grey));
+                mBinding.speedUnitText.setTextColor(getResources().getColor(R.color.text_grey));
+            }
+
+            if (animType == AnimationType.VISIBLE && mExceededSpeed == false && exceededSpeed == true) {
+                this.animate()
+                        .scaleX(1.2f)
+                        .scaleY(1.2f)
+                        .setInterpolator(new DecelerateInterpolator())
+                        .setDuration(getResources().getInteger(R.integer.show_animation_duration) / 2)
+                        .setListener(null);
+
+                new Handler().postDelayed(() -> {
+                    this.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setInterpolator(new AccelerateInterpolator())
+                            .setDuration(getResources().getInteger(R.integer.show_animation_duration) / 2)
+                            .setListener(null);
+                }, getResources().getInteger(R.integer.show_animation_duration) / 2);
+            }
         }
 
         if (animType == AnimationType.SHOW) {
@@ -95,6 +134,7 @@ public class SpeedView extends FrameLayout {
         invalidate();
         requestLayout();
         mSpeed = speed;
+        mExceededSpeed = exceededSpeed;
     }
 
     /**

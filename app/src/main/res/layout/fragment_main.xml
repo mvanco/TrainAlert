@@ -79,8 +79,6 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:visibility="visible" />
 
-
-
         <include
             android:id="@+id/fragmentMain_progressBarInclude"
             layout="@layout/progress_bar"
