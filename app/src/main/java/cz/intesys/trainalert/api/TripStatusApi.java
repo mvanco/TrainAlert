@@ -12,6 +12,9 @@ public class TripStatusApi {
     @Expose
     int speedLimit; // From original "speedLimit" attribute.
 
+    @Expose
+    String atStop;
+
     public boolean isPressed() {
         return pressed;
     }
@@ -34,5 +37,13 @@ public class TripStatusApi {
 
     public void setSpeedLimit(int speedLimit) {
         this.speedLimit = speedLimit;
+    }
+
+    public String getAtStop() {
+        return atStop;
+    }
+
+    public void setAtStop(String atStop) {
+        this.atStop = atStop;
     }
 }

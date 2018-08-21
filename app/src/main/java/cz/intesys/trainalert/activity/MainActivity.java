@@ -323,13 +323,13 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         // Suppress shutting the application down using back button.
     }
 
-    @Override public void onNotificationShow(Alarm alarm) {
+    @Override public void onActionBarNotificationShow(String alarmMessage) {
         if (mMenu == null) {
             return;
         }
         MenuItem notificationItem = mMenu.findItem(R.id.menu_notification);
         TextView tv = ((ConstraintLayout) notificationItem.getActionView()).findViewById(R.id.notification_text);
-        tv.setText(alarm.getMessage());
+        tv.setText(alarmMessage);
     }
 
     @Override public void onPassedPoi(Poi poi) {

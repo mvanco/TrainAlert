@@ -270,25 +270,25 @@ public class SimulatedRepository implements Repository {
     @Override public void getTripStatus(TaCallback<TripStatus> taCallback) {
         new Handler().postDelayed(() -> {
             Log.d(LOG_POSTGRE, "getTripStatus response");
-            TripStatus ts = new TripStatus(false, false, 0);
+            TripStatus ts = new TripStatus(false, false, 0, null);
             switch (mTime) {
                 case 0:
-                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_40);
+                    ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_40, null);
                     break;
                 case 1:
-                    ts = new TripStatus(true, true, POI_TYPE_SPEED_LIMITATION_40);
+                    ts = new TripStatus(true, true, POI_TYPE_SPEED_LIMITATION_40, null);
                     break;
                 case 2:
-                    ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40);
+                    ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40, null);
                     break;
                 case 3:
-                    ts = new TripStatus(true, false, POI_TYPE_SPEED_LIMITATION_40);
+                    ts = new TripStatus(true, false, POI_TYPE_SPEED_LIMITATION_40, null);
                     break;
                 case 4:
-                    ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40);
+                    ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40, "Lovosice");
                     break;
                 default:
-                    ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40);
+                    ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40, null);
                     break;
             }
             taCallback.onResponse(ts);

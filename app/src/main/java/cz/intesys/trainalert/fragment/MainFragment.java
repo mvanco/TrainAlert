@@ -84,7 +84,7 @@ public class MainFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     public interface OnFragmentInteractionListener {
-        void onNotificationShow(Alarm alarm);
+        void onActionBarNotificationShow(String alarmMessage);
 
         void onPassedPoi(Poi poi);
     }
@@ -248,9 +248,12 @@ public class MainFragment extends Fragment {
             }
         });
 
-        mViewModel.getTripStatusLiveData().observe(this, trainStatus -> {
-            mViewModel.setSpeedLimit(trainStatus.getSpeedLimit());
-            mBinding.fragmentMainSpeedLimitView.setCategoryId(trainStatus.getSpeedLimit());
+        mViewModel.getTripStatusLiveData().observe(this, tripStatus -> {
+            mViewModel.setSpeedLimit(tripStatus.getSpeedLimit());
+            mBinding.fragmentMainSpeedLimitView.setCategoryId(tripStatus.getSpeedLimit());
+            if (tripStatus.getAtStop() != null && mListener != null) {
+                mListener.onActionBarNotificationShow("Nacházíš se ve stanici " + tripStatus.getAtStop());
+            }
         });
 
         mViewModel.getMapMovementLiveData().observe(this, (empty) -> {
@@ -430,7 +433,7 @@ public class MainFragment extends Fragment {
         new Handler().postDelayed(hideNotificationAction, 3000);
 
         if (mListener != null) {
-            mListener.onNotificationShow(alarm);
+            mListener.onActionBarNotificationShow(alarm.getMessage());
         }
     }
 
