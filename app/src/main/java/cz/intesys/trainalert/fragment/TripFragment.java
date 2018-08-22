@@ -129,7 +129,7 @@ public class TripFragment extends Fragment {
             @Override public void onFailure(Throwable t) {
             }
         });
-        mBinding.tripId.setText(String.valueOf(DataHelper.getInstance().getTripId()));
+        mBinding.tripId.setText(String.valueOf(DataHelper.getInstance().getTrip()));
 
 //        mViewModel.getTrainStatusLiveData().observe(this, trainStatus -> {
 //            setTripHeader(trainStatus.isPressed(), trainStatus.isCanPass());

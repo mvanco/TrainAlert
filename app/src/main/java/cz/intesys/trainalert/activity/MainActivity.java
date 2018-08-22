@@ -46,7 +46,6 @@ import cz.intesys.trainalert.BuildConfig;
 import cz.intesys.trainalert.R;
 import cz.intesys.trainalert.adapter.NavAdapter;
 import cz.intesys.trainalert.databinding.ActivityMainBinding;
-import cz.intesys.trainalert.entity.Alarm;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.fragment.MainFragment;
@@ -111,6 +110,10 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         mViewModel.getLocationLiveData().observe(this, (location) -> onTimeChanged(location.getTime()));
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.ic_trip_selection_animator);
+
+        mViewModel.getAutoRegisterLiveData().observe(this, (empty) -> {
+            autoRegister();
+        });
     }
 
     @Override protected void onStart() {
@@ -141,30 +144,6 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         if (tripIdManuallyDialogFragment != null && tripIdManuallyDialogFragment.getDialog() != null && tripIdManuallyDialogFragment.getDialog().isShowing()) {
             tripIdManuallyDialogFragment.dismiss();
         }
-
-        DataHelper.getInstance().getActiveTrip(new TaCallback<String>() {
-            @Override
-            public void onResponse(String response) {
-                showTripIdSelectionIconLoader();
-                DataHelper.getInstance().setTrip(response, new TaCallback<Void>() {
-                    @Override public void onResponse(Void response) {
-                        showSideBar();
-                        hideTripIdSelectionIconLoader();
-                        mViewModel.reloadPois();
-                        Log.d("reloadingPois", ".");
-                    }
-
-                    @Override public void onFailure(Throwable t) {
-                        hideTripIdSelectionIconLoader();
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                // Nothing to do here.
-            }
-        });
     }
 
     @Override
@@ -379,7 +358,9 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                 }
 
                 mTripDialogFragment = TripIdDialogFragment.newInstance(response);
-                mTripDialogFragment.show(getSupportFragmentManager(), TRIP_ID_DIALOG_FRAGMENT_TAG);
+                if (getSupportFragmentManager().isStateSaved() == false) {
+                    mTripDialogFragment.show(getSupportFragmentManager(), TRIP_ID_DIALOG_FRAGMENT_TAG);
+                }
                 hideTripIdSelectionIconLoader();
             }
 
@@ -418,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         item.getActionView().setRotation(0f);
         item.getActionView().setAlpha(1f);
 
-        if (TRIP_NO_TRIP.equals(DataHelper.getInstance().getTripId())) {
+        if (TRIP_NO_TRIP.equals(DataHelper.getInstance().getTrip())) {
             ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_trip_selection_red);
             //Toast.makeText(this, R.string.activity_main_unsuccessful_trip_selection, Toast.LENGTH_SHORT).show();
         } else {
@@ -507,7 +488,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         mainFragment.setAnimating(false);
 
         Fragment fragment = TripFragment.newInstance(TRIP_FRAGMENT_PREVIOUS_STOP_COUNT, TRIP_FRAGMENT_NEXT_STOP_COUNT);
-         getSupportFragmentManager().beginTransaction().replace(R.id.activityMain_sideContainer, fragment, TRIP_FRAGMENT_TAG).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.activityMain_sideContainer, fragment, TRIP_FRAGMENT_TAG).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.VISIBLE);
         AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.side_bar_animator);
@@ -519,5 +500,38 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             mBinding.activityMainInclude.activityMainSideContainerSpace.setVisibility(View.VISIBLE);
             mainFragment.setAnimating(true);
         }, set.getChildAnimations().get(0).getDuration());
+    }
+
+    /**
+     * Auto-register in case there is active trip. In other case do nothing.
+     */
+    private void autoRegister() {
+        DataHelper.getInstance().getActiveTrip(new TaCallback<String>() {
+            @Override
+            public void onResponse(String trip) {
+                if (trip != null && trip.equals(DataHelper.getInstance().getTrip())) {
+                    return;  // Do not show side bar again.
+                }
+
+                showTripIdSelectionIconLoader();
+                DataHelper.getInstance().setTrip(trip, new TaCallback<Void>() {
+                    @Override public void onResponse(Void response) {
+                        showSideBar();
+                        hideTripIdSelectionIconLoader();
+                        mViewModel.reloadPois();
+                        Log.d("reloadingPois", ".");
+                    }
+
+                    @Override public void onFailure(Throwable t) {
+                        hideTripIdSelectionIconLoader();
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                // Nothing to do here.
+            }
+        });
     }
 }

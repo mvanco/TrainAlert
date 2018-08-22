@@ -282,10 +282,10 @@ public class SimulatedRepository implements Repository {
                     ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40, null);
                     break;
                 case 3:
-                    ts = new TripStatus(true, false, POI_TYPE_SPEED_LIMITATION_40, null);
+                    ts = new TripStatus(true, false, POI_TYPE_SPEED_LIMITATION_40, "Lovosice");
                     break;
                 case 4:
-                    ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40, "Lovosice");
+                    ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_50, "Lovosice");
                     break;
                 default:
                     ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40, null);

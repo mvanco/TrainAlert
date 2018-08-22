@@ -251,8 +251,17 @@ public class MainFragment extends Fragment {
         mViewModel.getTripStatusLiveData().observe(this, tripStatus -> {
             mViewModel.setSpeedLimit(tripStatus.getSpeedLimit());
             mBinding.fragmentMainSpeedLimitView.setCategoryId(tripStatus.getSpeedLimit());
-            if (tripStatus.getAtStop() != null && mListener != null) {
-                mListener.onActionBarNotificationShow("Nacházíš se ve stanici " + tripStatus.getAtStop());
+        });
+
+        mViewModel.createAtStopNotificationObservable(this).subscribe((notification) -> {
+            if (mListener != null) {
+                if (notification != null) {
+                    String message = getResources().getString(R.string.action_bar_notification_at_stop) + " " + notification;
+                    mListener.onActionBarNotificationShow(message);
+                }
+                else {
+                    mListener.onActionBarNotificationShow("");
+                }
             }
         });
 

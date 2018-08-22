@@ -4,6 +4,7 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.SharedPreferences;
 import android.support.annotation.IntDef;
+import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -322,7 +323,7 @@ public class DataHelper implements LifecycleObserver {
 //        mSharedPrefs.edit().putString(TRIP_ID_KEY, TRIP_NO_TRIP).commit();
     }
 
-    public String getTripId() {
+    public String getTrip() {
         return mSharedPrefs.getString(TRIP_ID_KEY, TRIP_NO_TRIP);
     }
 

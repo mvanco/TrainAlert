@@ -87,6 +87,10 @@
 
     <string name="speed_view_unit">km/h</string>
 
+    <!-- ActionBar notifications -->
+    <string name="action_bar_notification_at_stop">Nacházíš se ve stanici</string>
+
+
     <!-- Preferences -->
     <string name="pref_ringtone_silent">silent</string>
 

@@ -1,6 +1,8 @@
 package cz.intesys.trainalert.viewmodel;
 
 import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.util.Log;
@@ -11,8 +13,11 @@ import java.util.List;
 import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.entity.Alarm;
 import cz.intesys.trainalert.entity.Poi;
+import cz.intesys.trainalert.entity.TripStatus;
 import cz.intesys.trainalert.repository.DataHelper;
 import cz.intesys.trainalert.utility.Utility;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
 
 public class MainFragmentViewModel extends BaseViewModel {
 
@@ -30,6 +35,13 @@ public class MainFragmentViewModel extends BaseViewModel {
             mMapMovementLiveData.setValue(null);
         });
         mMapMovementLiveData = new MutableLiveData<>();
+    }
+
+    public Observable<String> createAtStopNotificationObservable(LifecycleOwner owner) {
+        Observable<String> atStopNotificationObservable = Utility.createObservableFromLiveData(owner, mDataHelper.getTripStatusLiveData())
+                .map(tripStatus -> (tripStatus != null && tripStatus.getAtStop() != null) ? tripStatus.getAtStop() : "")
+                .distinctUntilChanged();
+        return atStopNotificationObservable;
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
