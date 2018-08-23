@@ -37,6 +37,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/button_save"
             android:textAllCaps="false"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/poiMapInfo_horizontalLine" />
@@ -72,6 +73,8 @@
             <EditText
                 android:id="@+id/poiMapInfo_title"
                 android:layout_width="wrap_content"
+                android:maxLines="1"
+                android:inputType="text"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@{viewModel.poi.title}"

@@ -180,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             @Override public void onResponse(Void response) {
                 showSideBar();
                 hideTripIdSelectionIconLoader();
+                setSideBarHandleVisibility();  // Make handle visible.
                 mViewModel.reloadPois();
                 Log.d("reloadingPois", ".");
             }
@@ -192,26 +193,9 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
     @Override public void onTripFinished() {
         DataHelper.getInstance().unregisterTrip();
-        initTripIdSelectionIconLoader();
-
-        mBinding.activityMainInclude.activityMainSideContainerSpace.setVisibility(View.GONE);
-
-        MainFragment mainFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
-        mainFragment.setAnimating(false);
-
-        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.side_bar_animator_reversed);
-        set.setTarget(mBinding.activityMainInclude.activityMainSideContainer);
-        set.setInterpolator(new LinearOutSlowInInterpolator());
-        set.start();
-
-        new Handler().postDelayed(() -> {
-            Fragment tripFragment = getSupportFragmentManager().findFragmentByTag(TRIP_FRAGMENT_TAG);
-            getSupportFragmentManager().beginTransaction().remove(tripFragment).commit();
-            getSupportFragmentManager().executePendingTransactions();
-            mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.GONE);
-            mBinding.activityMainInclude.activityMainSideContainerSpace.setVisibility(View.GONE);
-            mainFragment.setAnimating(true);
-        }, set.getChildAnimations().get(0).getDuration());
+        initTripIdSelectionIconLoader();  // Disable animation.
+        setSideBarHandleVisibility();  // Sets to invisible
+        hideSideBar();
     }
 
     @Override public void onBusinessTripSelected(String tripId) {
@@ -320,6 +304,19 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         tv.setText("");
     }
 
+    @Override
+    public void onToggleSideBar() {
+        Fragment tripFragment = getSupportFragmentManager().findFragmentByTag(TRIP_FRAGMENT_TAG);
+        if (tripFragment == null) {  // Not shown side bar.
+            if (DataHelper.getInstance().getTrip() != TRIP_NO_TRIP) {
+                showSideBar();
+            }
+        }
+        else {
+            hideSideBar();
+        }
+    }
+
     public void onTimeChanged(Date time) {
         if (mClockTextView != null) {
             Calendar cal = Calendar.getInstance();
@@ -401,12 +398,22 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
         if (TRIP_NO_TRIP.equals(DataHelper.getInstance().getTrip())) {
             ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_trip_selection_red);
+
             //Toast.makeText(this, R.string.activity_main_unsuccessful_trip_selection, Toast.LENGTH_SHORT).show();
         } else {
             ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_trip_selection);
         }
         mTripSelectionIconEnabled = true;
         item.setEnabled(true);
+    }
+
+    private void setSideBarHandleVisibility() {
+        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
+        if (TRIP_NO_TRIP.equals(DataHelper.getInstance().getTrip())) {
+            fragment.showSideBarHandle(false);
+        } else {
+            fragment.showSideBarHandle(true);
+        }
     }
 
     private void onNavigationItemSelected(@StringRes int id) {
@@ -503,6 +510,30 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     }
 
     /**
+     * Hide right side bar with trip list.
+     */
+    private void hideSideBar() {
+        mBinding.activityMainInclude.activityMainSideContainerSpace.setVisibility(View.GONE);
+
+        MainFragment mainFragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
+        mainFragment.setAnimating(false);
+
+        AnimatorSet set = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.side_bar_animator_reversed);
+        set.setTarget(mBinding.activityMainInclude.activityMainSideContainer);
+        set.setInterpolator(new LinearOutSlowInInterpolator());
+        set.start();
+
+        new Handler().postDelayed(() -> {
+            Fragment tripFragment = getSupportFragmentManager().findFragmentByTag(TRIP_FRAGMENT_TAG);
+            getSupportFragmentManager().beginTransaction().remove(tripFragment).commit();
+            getSupportFragmentManager().executePendingTransactions();
+            mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.GONE);
+            mBinding.activityMainInclude.activityMainSideContainerSpace.setVisibility(View.GONE);
+            mainFragment.setAnimating(true);
+        }, set.getChildAnimations().get(0).getDuration());
+    }
+
+    /**
      * Auto-register in case there is active trip. In other case do nothing.
      */
     private void autoRegister() {
@@ -518,6 +549,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                     @Override public void onResponse(Void response) {
                         showSideBar();
                         hideTripIdSelectionIconLoader();
+                        setSideBarHandleVisibility();
                         mViewModel.reloadPois();
                         Log.d("reloadingPois", ".");
                     }

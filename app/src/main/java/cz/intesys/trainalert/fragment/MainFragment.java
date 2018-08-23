@@ -87,6 +87,8 @@ public class MainFragment extends Fragment {
         void onActionBarNotificationShow(String alarmMessage);
 
         void onPassedPoi(Poi poi);
+
+        void onToggleSideBar();
     }
 
     public static MainFragment newInstance() {
@@ -118,6 +120,9 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
         mBinding = FragmentMainBinding.inflate(inflater, container, false);
         mBinding.fragmentMainFab.setOnClickListener(view -> onFabClick());
+        mBinding.fragmentMainHandle.setOnClickListener(view -> {
+            mListener.onToggleSideBar();
+        });
         return mBinding.getRoot();
     }
 
@@ -255,7 +260,7 @@ public class MainFragment extends Fragment {
 
         mViewModel.createAtStopNotificationObservable(this).subscribe((notification) -> {
             if (mListener != null) {
-                if (notification != null) {
+                if (notification != null && !notification.isEmpty()) {
                     String message = getResources().getString(R.string.action_bar_notification_at_stop) + " " + notification;
                     mListener.onActionBarNotificationShow(message);
                 }
@@ -604,5 +609,14 @@ public class MainFragment extends Fragment {
 
     private void setFabAsNotFixed() {
         mBinding.fragmentMainFab.setImageResource(R.drawable.fab_gps_not_fixed);
+    }
+
+    public void showSideBarHandle(boolean show) {
+        if (show) {
+            mBinding.fragmentMainHandle.setVisibility(View.VISIBLE);
+        }
+        else {
+            mBinding.fragmentMainHandle.setVisibility(View.GONE);
+        }
     }
 }

@@ -14,6 +14,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
 import org.osmdroid.api.IGeoPoint;
@@ -112,14 +113,6 @@ public class PoiMapFragment extends Fragment {
 
         // Click events. TODO: Make part of UI using data binding.
         mBinding.fragmentPoiMapFab.setOnClickListener((view) -> onFabClick());
-        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoConfirmButton.setOnClickListener(view -> {
-            if (mViewModel.getMode() == MODE_ADD_POI) {
-                mListener.onPoiAdded(mViewModel.getWorkingPoi());
-            } else if (mViewModel.getMode() == MODE_EDIT_POI) {
-                mListener.onPoiEdited(mViewModel.getWorkingPoi().getId(), mViewModel.getWorkingPoi());
-            }
-        });
-
 
         if (mViewModel.getMode() == MODE_NONE) {
             mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoIcon.setVisibility(View.GONE);
@@ -153,10 +146,12 @@ public class PoiMapFragment extends Fragment {
             }
         };
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.addTextChangedListener(tw);
-        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setOnClickListener(v -> {
-            if (mViewModel.getMode() == MODE_ADD_POI) {
-                mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setText("");
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                mViewModel.getMode();
+                onConfirmClicked();
             }
+            return false;
         });
 
         return mBinding.getRoot();
@@ -186,7 +181,7 @@ public class PoiMapFragment extends Fragment {
 
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoIcon.setVisibility(View.VISIBLE);
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setVisibility(View.VISIBLE);
-        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoConfirmButton.setVisibility(View.VISIBLE);
+        // mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoConfirmButton.setVisibility(View.VISIBLE);
 
         mViewModel.setPoiId(poi.getId());
 
@@ -203,7 +198,7 @@ public class PoiMapFragment extends Fragment {
 
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoIcon.setVisibility(View.VISIBLE);
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setVisibility(View.VISIBLE);
-        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoConfirmButton.setVisibility(View.VISIBLE);
+        // mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoConfirmButton.setVisibility(View.VISIBLE);
 
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoMarker.setImageResource(R.drawable.ic_add_location);
     }
@@ -241,8 +236,8 @@ public class PoiMapFragment extends Fragment {
 
     public void setCategory(int categoryId) {
         mViewModel.setPoiCategory(categoryId);
+        onConfirmClicked();
     }
-
 
     private void showNotification(@StringRes int text) {
         Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
@@ -333,6 +328,14 @@ public class PoiMapFragment extends Fragment {
             mBinding.fragmentPoiMapMapView.getController().setCenter(mViewModel.getLocation());
             mBinding.fragmentPoiMapFab.setImageResource(R.drawable.fab_gps_fixed);
             mViewModel.setInFreeMode(false);
+        }
+    }
+
+    private void onConfirmClicked() {
+        if (mViewModel.getMode() == MODE_ADD_POI) {
+            mListener.onPoiAdded(mViewModel.getWorkingPoi());
+        } else if (mViewModel.getMode() == MODE_EDIT_POI) {
+            mListener.onPoiEdited(mViewModel.getWorkingPoi().getId(), mViewModel.getWorkingPoi());
         }
     }
 }

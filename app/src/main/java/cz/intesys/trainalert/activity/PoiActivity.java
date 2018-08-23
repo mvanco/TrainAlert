@@ -73,7 +73,7 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
         mViewModel.addPoi(poi, new TaCallback() { // TODO: Use viewmodel on this activity probably.
             @Override
             public void onResponse(Object response) {
-                getPoiMapFragment().showNewPoiAddedNotification();
+                // getPoiMapFragment().showNewPoiAddedNotification();
             }
 
             @Override
@@ -87,7 +87,7 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
         mViewModel.editPoi(id, poi, new TaCallback<Poi>() {
             @Override
             public void onResponse(Poi response) {
-                getPoiMapFragment().showNewPoiEditedNotification();
+                // getPoiMapFragment().showNewPoiEditedNotification();
             }
 
             @Override

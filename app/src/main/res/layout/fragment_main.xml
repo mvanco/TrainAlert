@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data></data>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/fragmentMain_mapContainer"
@@ -66,7 +67,8 @@
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:visibility="visible" />
+            tools:visibility="visible"
+            android:layout_marginLeft="20dp" />
 
         <cz.intesys.trainalert.view.SpeedView
             android:id="@+id/fragmentMain_speedView"
@@ -77,12 +79,23 @@
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            tools:visibility="visible" />
+            tools:visibility="visible"
+            android:layout_marginLeft="100dp" />
 
         <include
             android:id="@+id/fragmentMain_progressBarInclude"
             layout="@layout/progress_bar"
             android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/fragmentMain_handle"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/handle" />
 
     </android.support.constraint.ConstraintLayout>
 

@@ -32,7 +32,7 @@
 
         <activity
             android:name=".activity.PoiActivity"
-            android:windowSoftInputMode="adjustPan">
+            android:windowSoftInputMode="adjustNothing">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cz.intesys.trainalert.activity.MainActivity" />

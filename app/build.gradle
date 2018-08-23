@@ -51,8 +51,6 @@ android {
             buildConfigField "boolean", "ACTION_BAR_BLOCKED", "false"
         }
 
-
-
         dev {
             dimension "server"
             buildConfigField "boolean", "USE_SIMULATED_REPOSITORY", "true"
