@@ -111,9 +111,16 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.ic_trip_selection_animator);
 
-        mViewModel.getAutoRegisterLiveData().observe(this, (empty) -> {
-            autoRegister();
-        });
+        int delay = 0;
+        if (DataHelper.getInstance().isFirstRun()) {
+            delay = 5000;
+        }
+        new Handler().postDelayed(() ->  {
+            mViewModel.getAutoRegisterLiveData().observe(this, (empty) -> {
+                autoRegister();
+            });
+        }, delay);
+
     }
 
     @Override protected void onStart() {
@@ -371,6 +378,9 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
      * Animates button for trip selection.
      */
     private void showTripIdSelectionIconLoader() {
+        if (mMenu == null) {
+            return;
+        }
         MenuItem item = mMenu.findItem(R.id.menu_trip_selection);
         mAnimSet.setTarget(item.getActionView());
         mAnimSet.start();

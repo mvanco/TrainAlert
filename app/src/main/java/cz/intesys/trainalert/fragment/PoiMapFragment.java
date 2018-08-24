@@ -3,6 +3,7 @@ package cz.intesys.trainalert.fragment;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.IntDef;
@@ -149,9 +150,22 @@ public class PoiMapFragment extends Fragment {
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 mViewModel.getMode();
+//                mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.clearFocus();
                 onConfirmClicked();
             }
             return false;
+        });
+
+        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    setShowOverlay(true);
+                }
+                else {
+                    setShowOverlay(false);
+                }
+            }
         });
 
         return mBinding.getRoot();
@@ -237,6 +251,17 @@ public class PoiMapFragment extends Fragment {
     public void setCategory(int categoryId) {
         mViewModel.setPoiCategory(categoryId);
         onConfirmClicked();
+    }
+
+    private void setShowOverlay(boolean show) {
+        if (show) {
+            mBinding.fragmentPoiMapOverlay.setVisibility(View.VISIBLE);
+            mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setTextColor(Color.WHITE);
+        }
+        else {
+            mBinding.fragmentPoiMapOverlay.setVisibility(View.GONE);
+            mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setTextColor(Color.BLACK);
+        }
     }
 
     private void showNotification(@StringRes int text) {

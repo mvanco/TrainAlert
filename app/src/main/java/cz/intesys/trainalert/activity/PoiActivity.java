@@ -36,21 +36,6 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_poi);
-        mViewModel = ViewModelProviders.of(this).get(PoiActivityViewModel.class);
-
-        setupActionBar();
-
-        if (savedInstanceState == null) { // Not restoring from previous state, otherwise performance issue
-            setupLayout();
-        }
-
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -112,13 +97,16 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
         }
     }
 
-    @Override public void onPoiDeleted(Poi poi) {
+    @Override
+    public void onPoiDeleted(Poi poi) {
         mViewModel.deletePoi(poi.getId(), new TaCallback<Poi>() {
-            @Override public void onResponse(Poi response) {
+            @Override
+            public void onResponse(Poi response) {
                 // Nothing to show here is needed.
             }
 
-            @Override public void onFailure(Throwable t) {
+            @Override
+            public void onFailure(Throwable t) {
                 Toast.makeText(getApplicationContext(), R.string.error_cannot_delete_poi, Toast.LENGTH_LONG).show();
             }
         });
@@ -144,6 +132,21 @@ public class PoiActivity extends AppCompatActivity implements PoiListFragment.On
     @Override
     public void onCategorySelected(int categoryId) {
         getPoiMapFragment().setCategory(categoryId);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_poi);
+        mViewModel = ViewModelProviders.of(this).get(PoiActivityViewModel.class);
+
+        setupActionBar();
+
+        if (savedInstanceState == null) { // Not restoring from previous state, otherwise performance issue
+            setupLayout();
+        }
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     private PoiMapFragment getPoiMapFragment() {
