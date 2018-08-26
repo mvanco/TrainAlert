@@ -90,6 +90,9 @@
     <dimen name="compass_height">68dp</dimen>
     <dimen name="activityMain_sideContainer_width">400dp</dimen>
 
+    <dimen name="fragmentMain_handle_width">20dp</dimen>
+    <dimen name="fragmentMain_handle_height">120dp</dimen>
+
     <item name="activityMain_mainContentRatio" format="float" type="dimen">0.6</item>
     <item name="activityMain_sideContentRatio" format="float" type="dimen">0.4</item>
 

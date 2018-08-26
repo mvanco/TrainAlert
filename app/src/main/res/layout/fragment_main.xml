@@ -89,9 +89,10 @@
 
         <ImageView
             android:id="@+id/fragmentMain_handle"
-            android:layout_width="30dp"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/fragmentMain_handle_width"
+            android:layout_height="@dimen/fragmentMain_handle_height"
             android:visibility="gone"
+            android:scaleType="fitXY"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
