@@ -16,6 +16,7 @@ public class TaConfig {
     public static final int GET_POIS_INTERVAL = 300000; // GetPois service polling (5min.).
     public static final int AUTO_REGISTRATION_INTERVAL = 15000;
     public static final int MAP_MOVEMENT_INTERVAL = 10000;
+    public static final int SAVE_POI_TIMOUT = 1000;  //  The time after which the new location of poi is saved. Map must be untouched during this time.
 
     public static final int OSMDROID_ANIMATION_DURATION = 1000; // This is taken from osmdroid library, cannot change
 

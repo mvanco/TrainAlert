@@ -2,9 +2,14 @@ package cz.intesys.trainalert.viewmodel;
 
 import android.databinding.ObservableField;
 
+import java.util.concurrent.TimeUnit;
+
+import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.fragment.PoiMapFragment;
 import cz.intesys.trainalert.repository.DataHelper;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 
 /**
  * BaseViewModel is used only for floatbutton to obtain current location
@@ -15,9 +20,11 @@ public class PoiMapFragmentViewModel extends BaseViewModel {
     private boolean mInFreeMode = false;
     private @PoiMapFragment.PoiMapFragmentMode
     int mode;
+    BehaviorSubject<Boolean> mOnCoordinatesChangedObservable;
 
     public PoiMapFragmentViewModel() {
         poi.set(new Poi());
+        mOnCoordinatesChangedObservable = BehaviorSubject.create();
     }
 
     public void setPoiId(long poiId) {
@@ -30,6 +37,7 @@ public class PoiMapFragmentViewModel extends BaseViewModel {
 
     public void setPoiCoordinates(double latitude, double longitude) {
         poi.set(new Poi(poi.get().getId(), poi.get().getTitle(), latitude, longitude, poi.get().getCategory()));
+        mOnCoordinatesChangedObservable.onNext(true);
     }
 
     public void setPoiCategory(@DataHelper.CategoryId int category) {
@@ -60,4 +68,7 @@ public class PoiMapFragmentViewModel extends BaseViewModel {
         poi.set(workingPoi);
     }
 
+    public Observable<Boolean> getOnShouldSaveObservable() {
+        return mOnCoordinatesChangedObservable.debounce(TaConfig.SAVE_POI_TIMOUT, TimeUnit.MILLISECONDS);
+    }
 }

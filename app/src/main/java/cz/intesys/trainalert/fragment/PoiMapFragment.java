@@ -1,5 +1,6 @@
 package cz.intesys.trainalert.fragment;
 
+import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -12,10 +13,13 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import org.osmdroid.api.IGeoPoint;
@@ -38,6 +42,7 @@ import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.repository.DataHelper;
 import cz.intesys.trainalert.utility.Utility;
 import cz.intesys.trainalert.viewmodel.PoiMapFragmentViewModel;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 import static cz.intesys.trainalert.TaConfig.MAP_DEFAULT_ZOOM;
 
@@ -150,8 +155,9 @@ public class PoiMapFragment extends Fragment {
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 mViewModel.getMode();
-//                mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.clearFocus();
-                onConfirmClicked();
+                onSavePoi();
+                mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.clearFocus();
+                hideSoftKeyboard();
             }
             return false;
         });
@@ -164,8 +170,15 @@ public class PoiMapFragment extends Fragment {
                 }
                 else {
                     setShowOverlay(false);
+                    hideSoftKeyboard();
                 }
             }
+        });
+
+        mViewModel.getOnShouldSaveObservable().observeOn(AndroidSchedulers.mainThread()).subscribe((empty) -> {
+            Log.d("savePoi", "");
+            onSavePoi();
+            showNotification(R.string.message_new_poi_loaction_saved);
         });
 
         return mBinding.getRoot();
@@ -250,7 +263,7 @@ public class PoiMapFragment extends Fragment {
 
     public void setCategory(int categoryId) {
         mViewModel.setPoiCategory(categoryId);
-        onConfirmClicked();
+        onSavePoi();
     }
 
     private void setShowOverlay(boolean show) {
@@ -265,7 +278,10 @@ public class PoiMapFragment extends Fragment {
     }
 
     private void showNotification(@StringRes int text) {
-        Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT).show();
+        Toast toast = Toast.makeText(getActivity(), text, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 185, 125);
+
+        toast.show();
 //        mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoRoot.setVisibility(View.INVISIBLE);
 //        mBinding.fragmentPoiMapNewPoiAddedInclude.newPoiAddedRoot.setVisibility(View.VISIBLE);
 //        mBinding.fragmentPoiMapNewPoiAddedInclude.newPoiAddedTextView.setText(text);
@@ -356,11 +372,20 @@ public class PoiMapFragment extends Fragment {
         }
     }
 
-    private void onConfirmClicked() {
+    private void onSavePoi() {
         if (mViewModel.getMode() == MODE_ADD_POI) {
             mListener.onPoiAdded(mViewModel.getWorkingPoi());
         } else if (mViewModel.getMode() == MODE_EDIT_POI) {
             mListener.onPoiEdited(mViewModel.getWorkingPoi().getId(), mViewModel.getWorkingPoi());
         }
+    }
+
+    private void hideSoftKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View view = getActivity().getCurrentFocus();
+        if (view == null) {
+            view = new View(getActivity());
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }

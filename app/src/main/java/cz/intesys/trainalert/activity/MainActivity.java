@@ -110,17 +110,6 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         mViewModel.getLocationLiveData().observe(this, (location) -> onTimeChanged(location.getTime()));
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.ic_trip_selection_animator);
-
-        int delay = 0;
-        if (DataHelper.getInstance().isFirstRun()) {
-            delay = 5000;
-        }
-        new Handler().postDelayed(() ->  {
-            mViewModel.getAutoRegisterLiveData().observe(this, (empty) -> {
-                autoRegister();
-            });
-        }, delay);
-
     }
 
     @Override protected void onStart() {
@@ -150,6 +139,12 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
         if (tripIdManuallyDialogFragment != null && tripIdManuallyDialogFragment.getDialog() != null && tripIdManuallyDialogFragment.getDialog().isShowing()) {
             tripIdManuallyDialogFragment.dismiss();
+        }
+
+        if (!mViewModel.getAutoRegisterLiveData().hasActiveObservers()) {
+            mViewModel.getAutoRegisterLiveData().observe(this, (empty) -> {
+                autoRegister();
+            });
         }
     }
 

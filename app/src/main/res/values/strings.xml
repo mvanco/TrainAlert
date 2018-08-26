@@ -44,6 +44,7 @@
     <!-- Information Messages -->
     <string name="message_new_poi_added">Bod zájmu byl přidán</string>
     <string name="message_new_poi_edited">Bod zájmu byl editován</string>
+    <string name="message_new_poi_loaction_saved">Nová poloha bude uložena</string>
     <string name="message_destination_reached">Přijel jsi do cílové stanice\n%s</string>
     <string name="message_successful_logout">Byl jste úspěšně odhlášen</string>
     <string name="message_business_trip_set">Služební jízda byla započatá</string>
