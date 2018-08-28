@@ -73,6 +73,7 @@ import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_SPEED_LIMITAT
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_STOP;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_STOP_AZD;
 import static cz.intesys.trainalert.repository.DataHelper.POI_TYPE_TRAIN_STATION;
+import static cz.intesys.trainalert.repository.DataHelper.SPEED_LIMIT_NO_LIMIT;
 import static cz.intesys.trainalert.utility.Utility.convertToDegrees;
 import static cz.intesys.trainalert.utility.Utility.getMarkerRotation;
 
@@ -238,7 +239,8 @@ public class MainFragment extends Fragment {
         mBinding.fragmentMainMapView.getOverlayManager().add(mTrainMarker); // Add train marker.
         mViewModel.getLocationLiveData().observe(this, currentLocation -> {
             handleLocationChange(mTrainMarker, currentLocation);
-            mBinding.fragmentMainSpeedView.setSpeedAndLimit(currentLocation.getSpeed(), mViewModel.getSpeedLimit());
+            int speedLimit = (mViewModel.getSpeedLimit() == -1) ? SPEED_LIMIT_NO_LIMIT : mViewModel.getSpeedLimit();
+            mBinding.fragmentMainSpeedView.setSpeedAndLimit(currentLocation.getSpeed(), speedLimit);
         });
         mViewModel.getPoisLiveData().observe(this, pois -> {
             handlePOIsChange(pois);

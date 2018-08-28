@@ -55,15 +55,23 @@ public class Location implements IGeoPoint {
         Location location = (Location) o;
 
         if (metaIndex != location.metaIndex) return false;
-        if (!latitude.equals(location.latitude)) return false;
-        return longitude.equals(location.longitude);
+        if (interpolated != location.interpolated) return false;
+        if (speed != location.speed) return false;
+        if (latitude != null ? !latitude.equals(location.latitude) : location.latitude != null)
+            return false;
+        if (longitude != null ? !longitude.equals(location.longitude) : location.longitude != null)
+            return false;
+        return time != null ? time.equals(location.time) : location.time == null;
     }
 
     @Override
     public int hashCode() {
-        int result = latitude.hashCode();
-        result = 31 * result + longitude.hashCode();
+        int result = latitude != null ? latitude.hashCode() : 0;
+        result = 31 * result + (longitude != null ? longitude.hashCode() : 0);
+        result = 31 * result + (time != null ? time.hashCode() : 0);
         result = 31 * result + metaIndex;
+        result = 31 * result + (interpolated ? 1 : 0);
+        result = 31 * result + speed;
         return result;
     }
 

@@ -81,7 +81,7 @@ public class SpeedView extends FrameLayout {
             animType = AnimationType.HIDE;
         }
 
-        boolean exceededSpeed = speed > speedLimit;
+        boolean exceededSpeed = speedLimit > 0 && speed > speedLimit;
 
         if (animType == AnimationType.SHOW || animType == AnimationType.VISIBLE) {
             mBinding.speedText.setText(String.valueOf(speed));

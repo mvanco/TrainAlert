@@ -142,8 +142,8 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         }
 
         if (!mViewModel.getAutoRegisterLiveData().hasActiveObservers()) {
-            mViewModel.getAutoRegisterLiveData().observe(this, (empty) -> {
-                autoRegister();
+            mViewModel.getAutoRegisterLiveData().observe(this, (firstTime) -> {
+                autoRegister(firstTime);
             });
         }
     }
@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     }
 
     @Override public void onPasswordEntered(int password) {
-        DataHelper.getInstance().register(password, new TaCallback<Void>() {
+        DataHelper.getInstance().registerSideBar(password, new TaCallback<Void>() {
             @Override public void onResponse(Void response) {
                 mBinding.activityMainDrawerLayout.openDrawer(Gravity.LEFT);
             }
@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     public void onToggleSideBar() {
         Fragment tripFragment = getSupportFragmentManager().findFragmentByTag(TRIP_FRAGMENT_TAG);
         if (tripFragment == null) {  // Not shown side bar.
-            if (DataHelper.getInstance().getTrip() != TRIP_NO_TRIP) {
+            if (DataHelper.getInstance().getRegisteredTrip() != TRIP_NO_TRIP) {
                 showSideBar();
             }
         }
@@ -394,6 +394,9 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
      * Init trip id selection icon loader according to current trip id registration.
      */
     private void initTripIdSelectionIconLoader() {
+        if (mMenu == null) {
+            return;
+        }
         MenuItem item = mMenu.findItem(R.id.menu_trip_selection);
 
         // SET DEFAULT VALUES
@@ -401,7 +404,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         item.getActionView().setRotation(0f);
         item.getActionView().setAlpha(1f);
 
-        if (TRIP_NO_TRIP.equals(DataHelper.getInstance().getTrip())) {
+        if (TRIP_NO_TRIP.equals(DataHelper.getInstance().getRegisteredTrip())) {
             ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_trip_selection_red);
 
             //Toast.makeText(this, R.string.activity_main_unsuccessful_trip_selection, Toast.LENGTH_SHORT).show();
@@ -414,7 +417,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
     private void setSideBarHandleVisibility() {
         MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
-        if (TRIP_NO_TRIP.equals(DataHelper.getInstance().getTrip())) {
+        if (TRIP_NO_TRIP.equals(DataHelper.getInstance().getRegisteredTrip())) {
             fragment.showSideBarHandle(false);
         } else {
             fragment.showSideBarHandle(true);
@@ -431,7 +434,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         } else if (id == R.string.nav_logout) {
             mBinding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
             Toast.makeText(this, R.string.message_successful_logout, Toast.LENGTH_SHORT).show();
-            DataHelper.getInstance().unregister();
+            DataHelper.getInstance().unregisterSideBar();
         }
     }
 
@@ -447,7 +450,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         mBinding.activityMainDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
-                if (!DataHelper.getInstance().isRegistered()) {
+                if (!DataHelper.getInstance().isRegisteredSidebar()) {
                     mBinding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT);
                     if (mShouldShowPasswordDialog) {
                         PasswordDialogFragment.newInstance().show(getSupportFragmentManager(), PASSWORD_DIALOG_FRAGMENT_TAG);
@@ -541,28 +544,35 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     /**
      * Auto-register in case there is active trip. In other case do nothing.
      */
-    private void autoRegister() {
+    private void autoRegister(boolean firstTime) {
+        if (getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG) == null) {  // Fragment is not attached due to insufficient permissions.
+            return;
+        }
+
         DataHelper.getInstance().getActiveTrip(new TaCallback<String>() {
             @Override
             public void onResponse(String trip) {
-                if (trip != null && trip.equals(DataHelper.getInstance().getTrip())) {
-                    return;  // Do not show side bar again.
+                boolean tripChanged = trip != null && TRIP_NO_TRIP.equals(DataHelper.getInstance().getRegisteredTrip());
+                boolean tripChanged2 = trip == null && !TRIP_NO_TRIP.equals(DataHelper.getInstance().getRegisteredTrip());
+
+                // Register every time during first run in order to show sidebar when active trip, in other case only when registration is changed.
+                if (firstTime || tripChanged || tripChanged2 || (trip != null && !trip.equals(DataHelper.getInstance().getRegisteredTrip()))) {
+                    String previousTrip = DataHelper.getInstance().getRegisteredTrip();
+                    if (trip == null) {
+                        DataHelper.getInstance().unregisterTrip();
+                    }
+                    else {
+                        DataHelper.getInstance().registerTrip(trip);
+                        showSideBar();  // This is default state after application start.
+                    }
+                    initTripIdSelectionIconLoader();  // Set correct color of icon.
+                    setSideBarHandleVisibility();  // Set handle properly.
+                    mViewModel.reloadPois();
+                    if (trip != null && previousTrip != null && !trip.equals(previousTrip)) {
+                        Toast.makeText(MainActivity.this, "Jízda byla změnena kvůli synchronizaci s dalším zařízením", Toast.LENGTH_LONG).show();
+                    }
+                    Log.d("reloadingPois", ".");
                 }
-
-                showTripIdSelectionIconLoader();
-                DataHelper.getInstance().setTrip(trip, new TaCallback<Void>() {
-                    @Override public void onResponse(Void response) {
-                        showSideBar();
-                        hideTripIdSelectionIconLoader();
-                        setSideBarHandleVisibility();
-                        mViewModel.reloadPois();
-                        Log.d("reloadingPois", ".");
-                    }
-
-                    @Override public void onFailure(Throwable t) {
-                        hideTripIdSelectionIconLoader();
-                    }
-                });
             }
 
             @Override

@@ -4,7 +4,6 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.SharedPreferences;
 import android.support.annotation.IntDef;
-import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -305,25 +304,31 @@ public class DataHelper implements LifecycleObserver {
     public void setTrip(String id, TaCallback<Void> taCallback) {
         mRepository.setTrip(id, new TaCallback<Void>() {
             @Override public void onResponse(Void response) {
-                mSharedPrefs.edit().putString(TRIP_ID_KEY, id).commit();
+                registerTrip(id);
                 taCallback.onResponse(null);
             }
 
             @Override public void onFailure(Throwable t) {
-                mSharedPrefs.edit().remove(TRIP_ID_KEY).commit();
-//                mSharedPrefs.edit().putString(TRIP_ID_KEY, TRIP_NO_TRIP).commit();
+                unregisterTrip();
                 taCallback.onFailure(new Throwable());
             }
         });
 
     }
 
-    public void unregisterTrip() {
-        mSharedPrefs.edit().remove(TRIP_ID_KEY).commit();
-//        mSharedPrefs.edit().putString(TRIP_ID_KEY, TRIP_NO_TRIP).commit();
+    public void registerTrip(String id) {
+        mSharedPrefs.edit().putString(TRIP_ID_KEY, id).commit();
     }
 
-    public String getTrip() {
+    public void unregisterTrip() {
+        mSharedPrefs.edit().remove(TRIP_ID_KEY).commit();
+    }
+
+    /**
+     * If not TRIP_NO_TRIP - trip selection icon is black, side bar is shown (or handle at least) and trip services are called. Something like state of MainActivity.
+     * @return
+     */
+    public String getRegisteredTrip() {
         return mSharedPrefs.getString(TRIP_ID_KEY, TRIP_NO_TRIP);
     }
 
@@ -333,7 +338,7 @@ public class DataHelper implements LifecycleObserver {
      * @param password
      * @param taCallback
      */
-    public void register(int password, TaCallback<Void> taCallback) {
+    public void registerSideBar(int password, TaCallback<Void> taCallback) {
         if (password == TaConfig.ADMINISTRATOR_PASSWORD) {
             mSharedPrefs.edit().putBoolean(REGISTERED_KEY, true).commit();
             taCallback.onResponse(null);
@@ -346,11 +351,15 @@ public class DataHelper implements LifecycleObserver {
     /**
      * Unregister to prohibit access to side menu.
      */
-    public void unregister() {
+    public void unregisterSideBar() {
         mSharedPrefs.edit().putBoolean(REGISTERED_KEY, false).commit();
     }
 
-    public boolean isRegistered() {
+    /**
+     * Return true if side bar should be accessed.
+     * @return
+     */
+    public boolean isRegisteredSidebar() {
         return !BuildConfig.ACTION_BAR_BLOCKED || mSharedPrefs.getBoolean(REGISTERED_KEY, false);
     }
 
