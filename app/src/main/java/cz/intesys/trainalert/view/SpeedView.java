@@ -143,6 +143,10 @@ public class SpeedView extends FrameLayout {
         mExceededSpeed = exceededSpeed;
     }
 
+    public void onPause() {
+        mAnimSet.end();
+    }
+
     /**
      * @param attrs        mandatory
      * @param defStyleAttr optional, 0 if missing

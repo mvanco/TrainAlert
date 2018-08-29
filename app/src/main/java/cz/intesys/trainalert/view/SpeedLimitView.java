@@ -135,6 +135,10 @@ public class SpeedLimitView extends FrameLayout {
         }
     }
 
+    public void onPause() {
+        mAnimSet.end();
+    }
+
     public int getCategoryId() {
         return mCategoryId;
     }

@@ -146,6 +146,10 @@ public class MainFragment extends Fragment {
         if (mViewModel != null) {
             VoiceNavigation.getInstance(getActivity()).cancel();
         }
+
+        // Finish running animations
+        mBinding.fragmentMainSpeedLimitView.onPause();
+        mBinding.fragmentMainSpeedView.onPause();
     }
 
     public void restartAnimation(Context context) {
@@ -159,6 +163,7 @@ public class MainFragment extends Fragment {
     public void setAnimating(boolean shouldAnimating) {
         mViewModel.setAnimating(shouldAnimating);
         mBinding.fragmentMainSpeedLimitView.setAnimationEnabled(shouldAnimating);
+        mBinding.fragmentMainSpeedView.setAnimationEnabled(shouldAnimating);
     }
 
     private void showGpsUnavailableLoader() {
