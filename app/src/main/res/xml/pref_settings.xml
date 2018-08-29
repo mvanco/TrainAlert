@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="settings_sound"
+        android:title="@string/pref_title_sound" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="settings_speed_limit"
+        android:title="@string/pref_title_speed_limit" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="settings_speed"
+        android:title="@string/pref_title_speed" />
+
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="settings_compass"
+        android:title="@string/pref_title_compass" />
+
+</PreferenceScreen>

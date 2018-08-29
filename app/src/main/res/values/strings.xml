@@ -4,11 +4,13 @@
     <!-- Navigation item IDs/titles -->
     <string name="nav_pois">@string/title_activity_poi</string>
     <string name="nav_categories">@string/title_activity_category</string>
+    <string name="nav_settings">Nastavení</string>
     <string name="nav_logout">Odhlásit</string>
 
     <!-- ActionBar items -->
     <string name="menu_notification">Upozornění</string>
     <string name="menu_trip_selection">Vyběr jízdy</string>
+    <string name="menu_sound">Vypnout/zapnout zvuk</string>
     <string name="menu_clock">Hodiny</string>
 
     <!-- Dialog fragments -->
@@ -103,6 +105,10 @@
     <string name="pref_title_after_text">Text upozornění za vzdáleností</string>
     <string name="pref_title_graphics">Grafika</string>
     <string name="pref_title_distances">Vzdálenosti</string>
+    <string name="pref_title_sound">Zapnout zvuky</string>
+    <string name="pref_title_speed_limit">Zobrazit indikátor omezení rychlosti</string>
+    <string name="pref_title_speed">Zobrazit indikátor rychlosti</string>
+    <string name="pref_title_compass">Zobrazit kompas</string>
 
     <string name="pref_summary_distances">Nastav vzdálenosti, které vyvolávají upozornění</string>
     <string name="pref_summary_voice_navigation">Toto nastavení vypne hlasovou navigaci</string>
@@ -133,20 +139,25 @@
     </string-array>
 
     <string-array name="pref_distances_titles">
-        <item>50 m</item>
-        <item>70 m</item>
+        <item>75 m</item>
         <item>100 m</item>
-        <item>120 m</item>
         <item>150 m</item>
+        <item>200 m</item>
         <item>300 m</item>
+        <item>400 m</item>
+        <item>700 m</item>
     </string-array>
     <string-array name="pref_distances_values">
-        <item>50</item>
-        <item>70</item>
+        <item>75</item>
         <item>100</item>
-        <item>120</item>
         <item>150</item>
+        <item>200</item>
         <item>300</item>
+        <item>400</item>
+        <item>700</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

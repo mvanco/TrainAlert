@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -65,7 +66,7 @@ public class SpeedView extends FrameLayout {
     }
 
     public void setSpeedAndLimit(int speed, int speedLimit) {
-        if (TaConfig.SPEED_VIEW_DISABLED) {
+        if (!PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(TaConfig.SPEED_VIEW_ENABLED_KEY, TaConfig.SPEED_VIEW_ENABLED_DEFAULT)) {
             return;
         }
 

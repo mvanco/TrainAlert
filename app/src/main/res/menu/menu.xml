@@ -14,6 +14,12 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/menu_sound"
+        android:icon="@drawable/ic_volume_up"
+        android:title="@string/menu_sound"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/menu_clock"
         android:title="@string/menu_clock"
         app:actionViewClass="android.widget.TextView"

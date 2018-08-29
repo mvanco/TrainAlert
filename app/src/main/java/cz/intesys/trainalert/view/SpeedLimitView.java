@@ -5,6 +5,7 @@ import android.animation.AnimatorSet;
 import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.databinding.ViewSpeedLimitBinding;
 import cz.intesys.trainalert.repository.DataHelper;
 
@@ -72,6 +74,10 @@ public class SpeedLimitView extends FrameLayout {
     }
 
     public void setCategoryId(@DataHelper.CategoryId int categoryId) {
+        if (!PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(TaConfig.SPEED_LIMIT_VIEW_ENABLED_KEY, TaConfig.SPEED_LIMIT_VIEW_ENABLED_DEFAULT)) {
+            return;
+        }
+
         switch (categoryId) {
             case POI_TYPE_SPEED_LIMITATION_20:
                 mText = "20";

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -235,6 +236,11 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         iv.setOnClickListener(v -> MainActivity.this.onOptionsItemSelected(tripSelectionItem));
         tripSelectionItem.setActionView(iv);
 
+        MenuItem soundItem = menu.findItem(R.id.menu_sound);
+        ImageView iv2 = (ImageView) inflater.inflate(R.layout.custom_action_view, null);
+        iv2.setOnClickListener(v -> MainActivity.this.onOptionsItemSelected(soundItem));
+        soundItem.setActionView(iv2);
+
         MenuItem clockItem = menu.findItem(R.id.menu_clock);
         mClockTextView = (TextView) clockItem.getActionView();
         mClockTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimension(R.dimen.activityMain_clock_textSize));
@@ -245,9 +251,15 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
         mMenu = menu;
         hideTripIdSelectionIconLoader();
+        setupVolume();
         return true;
     }
 
+    /**
+     * Prerequisities: must be set field with type {@link Menu}
+     * @param item
+     * @return
+     */
     @Override public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_trip_selection:
@@ -255,8 +267,30 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                     showTripIdDialogFragment();
                 }
                 return true;
+            case R.id.menu_sound:
+                if (mViewModel.isVolumeUp(this)) {
+                    mViewModel.setVolumeUp(this, false);
+                }
+                else {
+                    mViewModel.setVolumeUp(this, true);
+                }
+                setupVolume();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void setupVolume() {
+        MenuItem item = mMenu.findItem(R.id.menu_sound);
+        AudioManager audioManager = (AudioManager)MainActivity.this.getSystemService(Context.AUDIO_SERVICE);
+        if (mViewModel.isVolumeUp(this)) {
+            ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_volume_up);
+            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
+        }
+        else {
+            ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_volume_off);
+            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
         }
     }
 
@@ -425,14 +459,14 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     }
 
     private void onNavigationItemSelected(@StringRes int id) {
+        mBinding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
         if (id == R.string.nav_pois) { // POIs
-            mBinding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
             startActivity(PoiActivity.newIntent(this));
         } else if (id == R.string.nav_categories) {
-            mBinding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
             startActivity(CategoryActivity.newIntent(this));
+        } else if (id == R.string.nav_settings) {
+            startActivity(SettingsActivity.newIntent(this));
         } else if (id == R.string.nav_logout) {
-            mBinding.activityMainDrawerLayout.closeDrawer(Gravity.LEFT, false);
             Toast.makeText(this, R.string.message_successful_logout, Toast.LENGTH_SHORT).show();
             DataHelper.getInstance().unregisterSideBar();
         }

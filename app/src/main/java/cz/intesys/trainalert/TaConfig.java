@@ -52,5 +52,16 @@ public class TaConfig {
     public static final TimeUnit UPDATE_INTERVAL_UNIT = TimeUnit.MINUTES;
     public static final int VOICE_NAVIGATION_TIME_PADDING = -100;  // in ms, can be negative
 
-    public static boolean SPEED_VIEW_DISABLED = false;
+    // Preference keys to obtain using PreferenceManager.getDefaultSharedPreferences(getContext()).get...
+    public static final String SPEED_LIMIT_VIEW_ENABLED_KEY = "settings_speed_limit";
+    public static boolean SPEED_LIMIT_VIEW_ENABLED_DEFAULT = true;
+
+    public static final String SPEED_VIEW_ENABLED_KEY = "settings_speed";
+    public static boolean SPEED_VIEW_ENABLED_DEFAULT = true;
+
+    public static final String COMPASS_ENABLED_KEY = "settings_compass";
+    public static boolean COMPASS_ENABLED_DEFAULT = true;
+
+    public static final String SOUND_ENABLED_KEY = "settings_sound";
+    public static boolean SOUND_ENABLED_DEFAULT = true;
 }
