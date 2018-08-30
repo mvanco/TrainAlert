@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import cz.intesys.trainalert.di.ApplicationComponent;
 import cz.intesys.trainalert.di.ApplicationModule;
 import cz.intesys.trainalert.di.DaggerApplicationComponent;
+import io.realm.Realm;
 
 public class TaApplication extends Application {
     private static TaApplication sInstance;
@@ -31,6 +32,7 @@ public class TaApplication extends Application {
                 .applicationModule(new ApplicationModule(this))
                 .build();
         mApplicationComponent.inject(this);
+        Realm.init(this);
     }
 
     /**
