@@ -19,7 +19,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.Toast;
 
 import org.osmdroid.api.IMapController;
@@ -146,10 +145,6 @@ public class MainFragment extends Fragment {
         if (mViewModel != null) {
             VoiceNavigation.getInstance(getActivity()).cancel();
         }
-
-        // Finish running animations
-        mBinding.fragmentMainSpeedLimitView.onPause();
-        mBinding.fragmentMainSpeedView.onPause();
     }
 
     public void restartAnimation(Context context) {
@@ -164,6 +159,7 @@ public class MainFragment extends Fragment {
         mViewModel.setAnimating(shouldAnimating);
         mBinding.fragmentMainSpeedLimitView.setAnimationEnabled(shouldAnimating);
         mBinding.fragmentMainSpeedView.setAnimationEnabled(shouldAnimating);
+        mBinding.fragmentMainSignView.setAnimationEnabled(shouldAnimating);
     }
 
     private void showGpsUnavailableLoader() {
@@ -407,20 +403,7 @@ public class MainFragment extends Fragment {
     }
 
     private void showTravelNotification(Alarm alarm) {
-        mBinding.fragmentMainSignView.setVisibility(View.VISIBLE);
-        mBinding.fragmentMainSignView.setAlpha(0f);
-        mBinding.fragmentMainSignView.setScaleX(0.5f);
-        mBinding.fragmentMainSignView.setScaleY(0.5f);
-        mBinding.fragmentMainSignView.setText(alarm.getMessage());
-        mBinding.fragmentMainSignView.setGraphics(alarm.getGraphics());
-
-        mBinding.fragmentMainSignView.animate()
-                .alpha(1f)
-                .scaleX(1f)
-                .scaleY(1f)
-                .setInterpolator(new DecelerateInterpolator())
-                .setDuration(getResources().getInteger(R.integer.show_animation_duration))
-                .setListener(null);
+        mBinding.fragmentMainSignView.showAlarm(alarm);
 
         if (alarm.useVoiceNavigation()) {
             playVoiceNavigation(alarm);
@@ -437,24 +420,6 @@ public class MainFragment extends Fragment {
                 vibrator.vibrate(effect);
             }
         }
-
-        Runnable hideNotificationAction = () -> {
-            if (!isAdded()) {
-                return;
-            }
-            mBinding.fragmentMainSignView.animate()
-                    .alpha(0f)
-                    .scaleX(0.5f)
-                    .scaleY(0.5f)
-                    .setInterpolator(new AccelerateInterpolator())
-                    .setDuration(getResources().getInteger(R.integer.hide_animation_duration))
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override public void onAnimationEnd(Animator animation) {
-                            mBinding.fragmentMainSignView.setVisibility(View.GONE);
-                        }
-                    });
-        };
-        new Handler().postDelayed(hideNotificationAction, 3000);
 
         if (mListener != null) {
             mListener.onActionBarNotificationShow(alarm.getMessage());

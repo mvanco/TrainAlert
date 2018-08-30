@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         if (BuildConfig.USE_OFFLINE_MAPS
                 || (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_GRANTED)) {
-            getSupportFragmentManager().beginTransaction().add(R.id.activityMain_fragmentContainer, MainFragment.newInstance(), MAIN_FRAGMENT_TAG).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.activityMain_fragmentContainer, MainFragment.newInstance(), MAIN_FRAGMENT_TAG).commitNow();
             getSupportFragmentManager().executePendingTransactions();
         }
 
@@ -286,11 +286,11 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         AudioManager audioManager = (AudioManager)MainActivity.this.getSystemService(Context.AUDIO_SERVICE);
         if (mViewModel.isVolumeUp(this)) {
             ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_volume_up);
-            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
         }
         else {
             ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_volume_off);
-            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
         }
     }
 
@@ -465,8 +465,11 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         } else if (id == R.string.nav_categories) {
             startActivity(CategoryActivity.newIntent(this));
         } else if (id == R.string.nav_settings) {
-            startActivity(SettingsActivity.newIntent(this));
-        } else if (id == R.string.nav_logout) {
+            startActivity(SettingActivity.newIntent(this));
+        } else if (id == R.string.nav_profiles) {
+            startActivity(ProfileActivity.newIntent(this));
+        }
+        if (id == R.string.nav_logout) {
             Toast.makeText(this, R.string.message_successful_logout, Toast.LENGTH_SHORT).show();
             DataHelper.getInstance().unregisterSideBar();
         }
@@ -567,7 +570,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
         new Handler().postDelayed(() -> {
             Fragment tripFragment = getSupportFragmentManager().findFragmentByTag(TRIP_FRAGMENT_TAG);
-            getSupportFragmentManager().beginTransaction().remove(tripFragment).commit();
+            getSupportFragmentManager().beginTransaction().remove(tripFragment).commitAllowingStateLoss();
             getSupportFragmentManager().executePendingTransactions();
             mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.GONE);
             mBinding.activityMainInclude.activityMainSideContainerSpace.setVisibility(View.GONE);

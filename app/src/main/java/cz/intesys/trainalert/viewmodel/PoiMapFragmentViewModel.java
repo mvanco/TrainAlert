@@ -3,6 +3,7 @@ package cz.intesys.trainalert.viewmodel;
 import android.databinding.ObservableField;
 
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Handler;
 
 import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.entity.Poi;
@@ -21,6 +22,7 @@ public class PoiMapFragmentViewModel extends BaseViewModel {
     private @PoiMapFragment.PoiMapFragmentMode
     int mode;
     BehaviorSubject<Boolean> mOnCoordinatesChangedObservable;
+    private boolean mActiveSavings = true;
 
     public PoiMapFragmentViewModel() {
         poi.set(new Poi());
@@ -37,7 +39,9 @@ public class PoiMapFragmentViewModel extends BaseViewModel {
 
     public void setPoiCoordinates(double latitude, double longitude) {
         poi.set(new Poi(poi.get().getId(), poi.get().getTitle(), latitude, longitude, poi.get().getCategory()));
-        mOnCoordinatesChangedObservable.onNext(true);
+        if (mActiveSavings) {
+            mOnCoordinatesChangedObservable.onNext(true);
+        }
     }
 
     public void setPoiCategory(@DataHelper.CategoryId int category) {
@@ -70,5 +74,15 @@ public class PoiMapFragmentViewModel extends BaseViewModel {
 
     public Observable<Boolean> getOnShouldSaveObservable() {
         return mOnCoordinatesChangedObservable.debounce(TaConfig.SAVE_POI_TIMOUT, TimeUnit.MILLISECONDS);
+    }
+
+    /**
+     * Inactivate savings for a while
+     */
+    public void inactivateSavings() {
+        mActiveSavings = false;
+        new android.os.Handler().postDelayed(() -> {
+            mActiveSavings = true;
+        }, 2000);
     }
 }

@@ -154,7 +154,6 @@ public class PoiMapFragment extends Fragment {
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.addTextChangedListener(tw);
         mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                mViewModel.getMode();
                 onSavePoi();
                 mBinding.fragmentPoiMapPoiMapInfoInclude.poiMapInfoTitle.clearFocus();
                 hideSoftKeyboard();
@@ -177,8 +176,10 @@ public class PoiMapFragment extends Fragment {
 
         mViewModel.getOnShouldSaveObservable().observeOn(AndroidSchedulers.mainThread()).subscribe((empty) -> {
             Log.d("savePoi", "");
-            onSavePoi();
-            showNotification(R.string.message_new_poi_loaction_saved);
+            if (mViewModel.getMode() != MODE_NONE) {
+                onSavePoi();
+                showNotification(R.string.message_new_poi_loaction_saved);
+            }
         });
 
         return mBinding.getRoot();
@@ -202,6 +203,7 @@ public class PoiMapFragment extends Fragment {
      * @param poi
      */
     public void editPoi(Poi poi) {
+        mViewModel.inactivateSavings();
         mBinding.fragmentPoiMapMapView.getController().setCenter(poi);
         mViewModel.setWorkingPoi(poi);
         mViewModel.setMode(MODE_EDIT_POI);
@@ -219,6 +221,7 @@ public class PoiMapFragment extends Fragment {
      * Swich fragment to addPoi mode and pripare UI
      */
     public void addPoi() {
+        mViewModel.inactivateSavings();
         mBinding.fragmentPoiMapMapView.getController().setCenter(mViewModel.getLocation());
         mViewModel.setWorkingPoi(new Poi(mViewModel.getLocation()));
         mViewModel.setMode(MODE_ADD_POI);

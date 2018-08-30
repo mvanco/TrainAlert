@@ -93,13 +93,13 @@ public class SimulatedRepository implements Repository {
                     location.setSpeed(40);
                     break;
                 case 2:
-                    location.setSpeed(50);
-                    break;
-                case 3:
                     location.setSpeed(0);
                     break;
-                case 4:
+                case 3:
                     location.setSpeed(50);
+                    break;
+                case 4:
+                    location.setSpeed(20);
                     break;
                 case 5:
                     location.setSpeed(50);
@@ -140,12 +140,12 @@ public class SimulatedRepository implements Repository {
     @Override
     public void getPois(TaCallback<List<Poi>> taCallback) {
         new Handler().postDelayed(() -> {
-            if (isEven) {
+//            if (isEven) {
                 taCallback.onResponse(mPois);
-            }
-            else {
-                taCallback.onResponse(new ArrayList<Poi>());
-            }
+//            }
+//            else {
+//                taCallback.onResponse(new ArrayList<Poi>());
+//            }
             Log.d(LOG_POSTGRE, "getPois response");
         }, getRandomServerDelay());
         Log.d(LOG_POSTGRE, "getPois enqueued");
@@ -276,13 +276,13 @@ public class SimulatedRepository implements Repository {
                     ts = new TripStatus(false, true, POI_TYPE_SPEED_LIMITATION_40, null);
                     break;
                 case 1:
-                    ts = new TripStatus(true, true, POI_TYPE_SPEED_LIMITATION_40, null);
+                    ts = new TripStatus(true, true, 0, null);
                     break;
                 case 2:
                     ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_40, null);
                     break;
                 case 3:
-                    ts = new TripStatus(true, false, POI_TYPE_SPEED_LIMITATION_40, "Lovosice");
+                    ts = new TripStatus(true, false, 0, "Lovosice");
                     break;
                 case 4:
                     ts = new TripStatus(false, false, POI_TYPE_SPEED_LIMITATION_50, "Lovosice");

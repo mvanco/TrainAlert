@@ -36,7 +36,10 @@
     <dimen name="navHeaderItem_cardView_height">65dp</dimen>
     <dimen name="navHeaderItem_cardView_cornerRadius">4dp</dimen>
     <dimen name="navHeaderItem_cardView_elevation">4dp</dimen>
-    <dimen name="navHeaderItem_cardView_margin">4dp</dimen>
+    <dimen name="navHeaderItem_cardView_margin_start">8dp</dimen>
+    <dimen name="navHeaderItem_cardView_margin_end">8dp</dimen>
+    <dimen name="navHeaderItem_cardView_margin_top">4dp</dimen>
+    <dimen name="navHeaderItem_cardView_margin_bottom">4dp</dimen>
     <dimen name="navHeaderItem_cardView_padding">4dp</dimen>
 
     <dimen name="poiListItem_height">56dp</dimen>
@@ -95,5 +98,6 @@
 
     <item name="activityMain_mainContentRatio" format="float" type="dimen">0.6</item>
     <item name="activityMain_sideContentRatio" format="float" type="dimen">0.4</item>
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>

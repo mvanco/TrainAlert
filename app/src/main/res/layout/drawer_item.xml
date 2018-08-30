@@ -13,11 +13,12 @@
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="@dimen/navHeaderItem_cardView_height"
-        android:layout_marginBottom="@dimen/navHeaderItem_cardView_margin"
-        android:layout_marginEnd="@dimen/navHeaderItem_cardView_margin"
-        android:layout_marginLeft="@dimen/navHeaderItem_cardView_margin"
-        android:layout_marginRight="@dimen/navHeaderItem_cardView_margin"
-        android:layout_marginStart="@dimen/navHeaderItem_cardView_margin"
+        android:layout_marginBottom="@dimen/navHeaderItem_cardView_margin_bottom"
+        android:layout_marginTop="@dimen/navHeaderItem_cardView_margin_top"
+        android:layout_marginEnd="@dimen/navHeaderItem_cardView_margin_end"
+        android:layout_marginLeft="@dimen/navHeaderItem_cardView_margin_start"
+        android:layout_marginRight="@dimen/navHeaderItem_cardView_margin_end"
+        android:layout_marginStart="@dimen/navHeaderItem_cardView_margin_start"
         android:elevation="@dimen/navHeaderItem_cardView_elevation"
         android:padding="@dimen/navHeaderItem_cardView_padding"
         app:cardCornerRadius="@dimen/navHeaderItem_cardView_cornerRadius">

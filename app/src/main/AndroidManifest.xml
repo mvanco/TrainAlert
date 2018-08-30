@@ -19,7 +19,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".activity.MainActivity"
             android:screenOrientation="landscape">
@@ -30,7 +29,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activity.PoiActivity"
             android:windowSoftInputMode="adjustNothing">
@@ -38,7 +36,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cz.intesys.trainalert.activity.MainActivity" />
         </activity>
-
         <activity
             android:name=".activity.CategoryActivity"
             android:excludeFromRecents="false"
@@ -50,9 +47,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cz.intesys.trainalert.activity.MainActivity" />
         </activity>
-
+        <activity android:name=".activity.SettingActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="cz.intesys.trainalert.activity.MainActivity" />
+        </activity>
         <activity
-            android:name=".activity.SettingsActivity">
+            android:name=".activity.ProfileActivity"
+            android:label="@string/title_activity_profile"
+            android:parentActivityName=".activity.MainActivity"
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cz.intesys.trainalert.activity.MainActivity" />

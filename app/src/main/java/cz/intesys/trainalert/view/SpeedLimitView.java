@@ -59,7 +59,7 @@ public class SpeedLimitView extends FrameLayout {
 
     public void setAnimationEnabled(boolean animationEnabled) {
         if (mAnimationEnabled == true && animationEnabled == false && mAnimSet != null) {
-            mAnimSet.cancel();
+            mAnimSet.end();
             Log.d("cancelinganim", "true");
         }
         mAnimationEnabled = animationEnabled;
@@ -133,10 +133,6 @@ public class SpeedLimitView extends FrameLayout {
             mAnimSet.setTarget(this);
             mAnimSet.start();
         }
-    }
-
-    public void onPause() {
-        mAnimSet.end();
     }
 
     public int getCategoryId() {

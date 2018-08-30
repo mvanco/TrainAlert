@@ -1,8 +1,11 @@
 package cz.intesys.trainalert.view;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
@@ -10,11 +13,18 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewPropertyAnimator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 
 import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.databinding.ViewSignBinding;
+import cz.intesys.trainalert.entity.Alarm;
 import cz.intesys.trainalert.repository.DataHelper;
 
 import static cz.intesys.trainalert.repository.DataHelper.GRAPHICS_BLACK_SQUARE;
@@ -30,6 +40,9 @@ import static cz.intesys.trainalert.repository.DataHelper.GRAPHICS_YELLOW_GREY_S
 public class SignView extends FrameLayout {
     private int mGraphics;
     private String mText;
+    private boolean mAnimationEnabled = true;
+    private boolean mAnimating = false;
+    private ViewPropertyAnimator mAnimator;
 
     private ViewSignBinding mBinding;
 
@@ -68,6 +81,68 @@ public class SignView extends FrameLayout {
         mBinding.fragmentMainNotificationText.setTextColor(getTextColor()); // Changed graphics, possibly text color must be changed as well.
         invalidate();
         requestLayout();
+    }
+
+    public void showAlarm(Alarm alarm) {
+        setVisibility(View.VISIBLE);
+        setText(alarm.getMessage());
+        setGraphics(alarm.getGraphics());
+        if (mAnimationEnabled) {
+            mAnimating = true;
+            setAlpha(0f);
+            setScaleX(0.5f);
+            setScaleY(0.5f);
+            mAnimator = animate()
+                    .alpha(1f)
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setInterpolator(new DecelerateInterpolator())
+                    .setDuration(getResources().getInteger(R.integer.show_animation_duration))
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            mAnimating = false;
+                        }
+                    });
+
+            new Handler().postDelayed(() -> {
+                mAnimating = true;
+                mAnimator = animate()
+                        .alpha(0f)
+                        .scaleX(0.5f)
+                        .scaleY(0.5f)
+                        .setInterpolator(new AccelerateInterpolator())
+                        .setDuration(getResources().getInteger(R.integer.hide_animation_duration))
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                setVisibility(View.GONE);
+                                mAnimating = false;
+                            }
+                        });
+            }, TaConfig.SIGN_VIEW_SHOW_DURATION);
+        }
+        else {
+            setAlpha(1f);
+            setScaleX(1f);
+            setScaleY(1);
+
+            new Handler().postDelayed(() -> {
+                setVisibility(View.GONE);
+            }, TaConfig.SIGN_VIEW_SHOW_DURATION);
+        }
+    }
+
+    public void setAnimationEnabled(boolean animationEnabled) {
+        if (mAnimationEnabled == true && animationEnabled == false && mAnimating) {
+            if (mAnimator != null) {
+                mAnimator.cancel();
+            }
+            setVisibility(View.GONE);
+            invalidate();
+            requestLayout();
+        }
+        mAnimationEnabled = animationEnabled;
     }
 
     /**

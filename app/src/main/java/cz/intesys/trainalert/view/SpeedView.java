@@ -55,7 +55,7 @@ public class SpeedView extends FrameLayout {
 
     public void setAnimationEnabled(boolean animationEnabled) {
         if (mAnimationEnabled == true && animationEnabled == false && mAnimSet != null) {
-            mAnimSet.cancel();
+            mAnimSet.end();
             Log.d("cancelinganim", "true");
         }
         mAnimationEnabled = animationEnabled;
@@ -141,10 +141,6 @@ public class SpeedView extends FrameLayout {
         requestLayout();
         mSpeed = speed;
         mExceededSpeed = exceededSpeed;
-    }
-
-    public void onPause() {
-        mAnimSet.end();
     }
 
     /**
