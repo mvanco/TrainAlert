@@ -56,16 +56,18 @@ public class PoiListAdapter extends RecyclerView.Adapter<PoiListAdapter.ViewHold
         notifyDataSetChanged();
     }
 
-    public void selectPoi(Poi poi) {
+    public int selectPoi(Poi poi) {
         int i = mPois.indexOf(poi);
         if (i != -1) {
             selectItem(i);
         }
+        return i;
     }
 
     private void selectItem(int position) {
         selectedItems.clear();
         selectedItems.put(position, true);
+        this.
 
         notifyItemChanged(position);
         notifyItemChanged(latestSelectedPosition);

@@ -39,9 +39,9 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-//        holder.mBinding.setData(mItems.get(position));
+        holder.mBinding.setData(mItems.get(position));
         holder.mBinding.getRoot().setOnClickListener((view) -> {
-            mListener.onCheckedItem(1);
+            mListener.onCheckedItem(position);
         });
     }
 

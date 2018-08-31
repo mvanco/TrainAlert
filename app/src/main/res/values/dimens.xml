@@ -59,7 +59,7 @@
     <dimen name="dialog_train_id_left_margin">20dp</dimen>
 
     <dimen name="stopView_stop_textSize">18sp</dimen>
-    <dimen name="stopView_other_textSize">20sp</dimen>
+    <dimen name="stopView_other_textSize">24sp</dimen>
     <dimen name="stopView_height">85dp</dimen>
     <dimen name="stopView_height_train">60dp</dimen>
     <dimen name="stopView_lineHeight">2dp</dimen>
@@ -99,5 +99,7 @@
     <item name="activityMain_mainContentRatio" format="float" type="dimen">0.6</item>
     <item name="activityMain_sideContentRatio" format="float" type="dimen">0.4</item>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fragmentTrip_header_textSize">18dp</dimen>
+    <dimen name="fragmentTrip_header_smallerTextSize">14dp</dimen>
 
 </resources>

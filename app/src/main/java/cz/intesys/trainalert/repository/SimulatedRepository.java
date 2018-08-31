@@ -194,7 +194,7 @@ public class SimulatedRepository implements Repository {
 
     @Override public void getTrips(String id, TaCallback<List<String>> taCallback) {
         new Handler().postDelayed(() -> {
-            List<String> trips = Arrays.asList("21", "25", "34", "1", "2", "3", "4", "5", "9");
+            List<String> trips = Arrays.asList("21", "25", "34", "a18355", "2", "3", "4", "5", "9");
             taCallback.onResponse(trips);
             Log.d(LOG_POSTGRE, "getTrips response");
         }, getCustomRandomServerDelay(SIMULATED_REPOSITORY_GET_TRIPS_RESPONSE_DELAY_RANGE));

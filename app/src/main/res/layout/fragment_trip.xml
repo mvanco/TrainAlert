@@ -71,7 +71,7 @@
 
                     <TableRow
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:divider="@drawable/time_point_now">
 
                         <TextView
@@ -81,36 +81,42 @@
                             android:inputType="textPersonName"
                             android:paddingBottom="@dimen/fragmentTrip_cellPaddingBottom"
                             android:paddingRight="@dimen/fragmentTrip_cellPaddingRight"
-                            android:text="@string/fragment_trip_train_id_label" />
+                            android:textSize="@dimen/fragmentTrip_header_textSize"
+                            android:text="@string/fragment_trip_train_id_label"
+                            android:paddingEnd="12dp" />
 
                         <TextView
                             android:id="@+id/train_id"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:inputType="textPersonName"
+                            android:textSize="@dimen/fragmentTrip_header_textSize"
                             tools:text="AZD003" />
+
 
                     </TableRow>
 
                     <TableRow
                         android:layout_width="wrap_content"
-                        android:layout_height="match_parent">
-
+                        android:layout_height="wrap_content">
                         <TextView
                             android:id="@+id/trip_id_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:inputType="textPersonName"
                             android:paddingBottom="@dimen/fragmentTrip_cellPaddingBottom"
-                            android:text="@string/fragment_trip_trip_id_label" />
+                            android:paddingRight="@dimen/fragmentTrip_cellPaddingRight"
+                            android:textSize="@dimen/fragmentTrip_header_textSize"
+                            android:text="@string/fragment_trip_trip_id_label"
+                            android:paddingEnd="12dp"/>
 
                         <TextView
                             android:id="@+id/trip_id"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:inputType="textPersonName"
+                            android:textSize="@dimen/fragmentTrip_header_textSize"
                             tools:text="24" />
-
                     </TableRow>
 
                 </TableLayout>

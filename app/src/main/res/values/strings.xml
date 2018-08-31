@@ -20,8 +20,8 @@
     <string name="fragment_trip_id_manual_selection">Ruční zadání</string>
 
     <!-- TripFragment -->
-    <string name="fragment_trip_train_id_label">Číslo vlaku:</string>
-    <string name="fragment_trip_trip_id_label">Číslo jízdy:</string>
+    <string name="fragment_trip_train_id_label">Vlak:</string>
+    <string name="fragment_trip_trip_id_label">Jízda:</string>
     <string name="fragment_trip_name_label">Zastávka</string>
     <string name="fragment_trip_delay_label">Zpoždění\n(min.)</string>
     <string name="fragment_trip_arrival_label">Příjezd</string>

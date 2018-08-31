@@ -125,6 +125,7 @@ public class PoiListFragment extends Fragment {
     }
 
     public void select(Poi poi) {
-        mAdapter.selectPoi(poi);
+        int position = mAdapter.selectPoi(poi);
+        mBinding.fragmentPoiListRecyclerView.scrollToPosition(position);
     }
 }

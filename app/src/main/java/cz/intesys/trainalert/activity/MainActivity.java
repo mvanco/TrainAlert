@@ -390,7 +390,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                     return;
                 }
 
-                mTripDialogFragment = TripIdDialogFragment.newInstance(response);
+                mTripDialogFragment = TripIdDialogFragment.newInstance(response, DataHelper.getInstance().getRegisteredTrip());
                 if (getSupportFragmentManager().isStateSaved() == false) {
                     mTripDialogFragment.show(getSupportFragmentManager(), TRIP_ID_DIALOG_FRAGMENT_TAG);
                 }
