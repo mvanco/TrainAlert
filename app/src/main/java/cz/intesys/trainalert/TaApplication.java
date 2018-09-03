@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import cz.intesys.trainalert.di.ApplicationComponent;
 import cz.intesys.trainalert.di.ApplicationModule;
 import cz.intesys.trainalert.di.DaggerApplicationComponent;
+import cz.intesys.trainalert.entity.realm.Database;
 import io.realm.Realm;
 
 public class TaApplication extends Application {
@@ -33,6 +34,10 @@ public class TaApplication extends Application {
                 .build();
         mApplicationComponent.inject(this);
         Realm.init(this);
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        realm.createObject(Database.class);
+        realm.commitTransaction();
     }
 
     /**

@@ -4,28 +4,23 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import cz.intesys.trainalert.databinding.SettingItemBinding;
-import cz.intesys.trainalert.entity.Settings;
+import cz.intesys.trainalert.entity.realm.Profile;
+import io.realm.Realm;
+import io.realm.RealmList;
 
-public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHolder> {
-    private List<Settings> mItems;
+public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
+    private List<Profile> mItems;
     private OnItemClickListener mListener;
 
     public interface OnItemClickListener {
-        /**
-         * @param itemId string resource id of item title, which works like id of navigation item
-         */
-        void onCheckedItem(int itemId);
+        void onCheckedItem(String profileName);
     }
 
-    public SettingAdapter(OnItemClickListener listener) {
-        mItems = new ArrayList<Settings>();
-        mItems.add(new Settings());
-        mItems.add(new Settings());
-        mItems.add(new Settings());
+    public ProfileAdapter(OnItemClickListener listener) {
+        mItems = new RealmList<>();
 
         mListener = listener;
     }
@@ -39,9 +34,10 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mBinding.setData(mItems.get(position));
+        Profile item = mItems.get(position);
+        holder.mBinding.setData(item);
         holder.mBinding.getRoot().setOnClickListener((view) -> {
-            mListener.onCheckedItem(position);
+            mListener.onCheckedItem(item.getName());
         });
     }
 
@@ -50,12 +46,22 @@ public class SettingAdapter extends RecyclerView.Adapter<SettingAdapter.ViewHold
         return mItems.size();
     }
 
+    public void setData(List<Profile> profiles) {
+        mItems.clear();
+        mItems.addAll(profiles);
+        notifyDataSetChanged();
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private SettingItemBinding mBinding;
 
         public ViewHolder(SettingItemBinding binding) {
             super(binding.getRoot());
             mBinding = binding;
+        }
+
+        public SettingItemBinding getBinding() {
+            return mBinding;
         }
     }
 }

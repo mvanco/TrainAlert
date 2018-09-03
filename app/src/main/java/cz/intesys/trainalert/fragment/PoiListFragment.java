@@ -17,8 +17,6 @@ import cz.intesys.trainalert.databinding.FragmentPoiListBinding;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.viewmodel.PoiListFragmentViewModel;
 
-import static android.support.v7.widget.helper.ItemTouchHelper.RIGHT;
-
 public class PoiListFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
@@ -89,7 +87,7 @@ public class PoiListFragment extends Fragment {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                if (swipeDir == RIGHT) {
+                if (swipeDir == ItemTouchHelper.RIGHT) {
                     if (viewHolder instanceof PoiListAdapter.ViewHolder) {
                         Poi poi = ((PoiListAdapter.ViewHolder) viewHolder).getBinding().getData();
                         mListener.onPoiDeleted(poi);
