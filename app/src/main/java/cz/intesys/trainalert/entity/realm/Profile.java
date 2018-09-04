@@ -17,6 +17,11 @@ import io.realm.RealmObject;
  */
 public class Profile extends RealmObject {
     private String name;
+    private boolean sounds;
+    private boolean speedLimit;
+    private boolean speed;
+    private boolean compass;
+
     private RealmList<CategorySetting> data = new RealmList<>();
 
     public Profile() {
@@ -40,6 +45,38 @@ public class Profile extends RealmObject {
         this.name = name;
     }
 
+    public boolean isSounds() {
+        return sounds;
+    }
+
+    public void setSounds(boolean sounds) {
+        this.sounds = sounds;
+    }
+
+    public boolean isSpeedLimit() {
+        return speedLimit;
+    }
+
+    public void setSpeedLimit(boolean speedLimit) {
+        this.speedLimit = speedLimit;
+    }
+
+    public boolean isSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(boolean speed) {
+        this.speed = speed;
+    }
+
+    public boolean isCompass() {
+        return compass;
+    }
+
+    public void setCompass(boolean compass) {
+        this.compass = compass;
+    }
+
     public RealmList<CategorySetting> getData() {
         return data;
     }
@@ -60,6 +97,11 @@ public class Profile extends RealmObject {
             editor.putBoolean(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.INCLUDE_DISTANCE_PREF_KEY, categoryId), data.get(categoryId).isIncludeDistance());
             editor.putString(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.TEXT_AFTER_PREF_KEY, categoryId), data.get(categoryId).getTextAfter());
         }
+
+        editor.putBoolean("settings_sound", isSounds());
+        editor.putBoolean("settings_speed_limit", isSpeedLimit());
+        editor.putBoolean("settings_speed", isSpeed());
+        editor.putBoolean("settings_compass", isCompass());
 
         editor.commit();
     }
@@ -82,5 +124,10 @@ public class Profile extends RealmObject {
             cSett.setTextAfter(pref.getString(CategorySharedPrefs.TEXT_AFTER_PREF_KEY, CategorySharedPrefs.TEXT_AFTER_DEFAULT_VALUE));
             data.add(cSett);
         }
+
+        setSounds(sharedPref.getBoolean("settings_sound", true));
+        setSpeedLimit(sharedPref.getBoolean("settings_speed_limit", true));
+        setSpeed(sharedPref.getBoolean("settings_speed", true));
+        setCompass(sharedPref.getBoolean("settings_compass", true));
     }
 }

@@ -19,6 +19,9 @@ import cz.intesys.trainalert.entity.realm.Profile;
 import cz.intesys.trainalert.fragment.ProfileFragment;
 import cz.intesys.trainalert.viewmodel.ProfileActivityViewModel;
 
+/**
+ * Not used.
+ */
 public class ProfileActivity extends AppCompatActivity implements ProfileFragment.OnFragmentInteractionListener {
 
     private ActivityProfileBinding mBinding;

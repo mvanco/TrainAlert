@@ -1,5 +1,7 @@
 package cz.intesys.trainalert.viewmodel;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.databinding.ObservableField;
 
 import java.util.concurrent.TimeUnit;
@@ -10,6 +12,7 @@ import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.fragment.PoiMapFragment;
 import cz.intesys.trainalert.repository.DataHelper;
 import io.reactivex.Observable;
+import io.reactivex.functions.Predicate;
 import io.reactivex.subjects.BehaviorSubject;
 
 /**
@@ -48,6 +51,16 @@ public class PoiMapFragmentViewModel extends BaseViewModel {
         poi.set(new Poi(poi.get().getId(), poi.get().getTitle(), poi.get().getLatitude(), poi.get().getLongitude(), category));
     }
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    public void onResumePoiMapFragment() {
+        mActiveSavings = true;
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    public void onPausePoiMapFragment() {
+        mActiveSavings = false;
+    }
+
     public int getMode() {
         return mode;
     }
@@ -84,5 +97,9 @@ public class PoiMapFragmentViewModel extends BaseViewModel {
         new android.os.Handler().postDelayed(() -> {
             mActiveSavings = true;
         }, 2000);
+    }
+
+    public boolean isActiveSavings() {
+        return mActiveSavings;
     }
 }

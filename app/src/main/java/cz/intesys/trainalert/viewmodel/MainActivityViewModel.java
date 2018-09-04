@@ -8,13 +8,17 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 
 import cz.intesys.trainalert.TaConfig;
+import cz.intesys.trainalert.entity.realm.Database;
+import cz.intesys.trainalert.entity.realm.Profile;
 import cz.intesys.trainalert.utility.Utility;
+import io.realm.Realm;
 
 public class MainActivityViewModel extends BaseViewModel {
 
     // Stream of time events when autoregistration should be performed. True if it is first autoregistration, otherwise false.
     MutableLiveData<Boolean> mAutoRegisterLiveData = new MutableLiveData<>();
     private Utility.IntervalPoller mAutoRegistrationPoller;
+    Realm realm = Realm.getDefaultInstance();
 
     public MainActivityViewModel() {
         mAutoRegistrationPoller = new Utility.IntervalPoller(TaConfig.AUTO_REGISTRATION_INTERVAL, () -> {
@@ -49,5 +53,27 @@ public class MainActivityViewModel extends BaseViewModel {
 
     public void setVolumeUp(Context context, boolean volumeUp) {
         PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(TaConfig.SOUND_ENABLED_KEY, volumeUp).commit();
+    }
+
+    public void addProfile(Context context, String title) {
+        realm.beginTransaction();
+        Profile unmanagedProfile = Profile.createFromPrefences(context);
+        unmanagedProfile.setName(title);
+//        Profile managedProfile = realm.copyToRealm(unmanagedProfile);
+        Database database = realm.where(Database.class).findFirst();  // Should be only one instance here.
+        database.getProfiles().add(unmanagedProfile);
+        realm.commitTransaction();
+    }
+
+    public void deleteProfile(Profile profile) {
+        realm.beginTransaction();
+        Database database = realm.where(Database.class).findFirst();
+        database.getProfiles().remove(profile);
+        realm.commitTransaction();
+    }
+
+    public void loadProfile(Context context, String profileName) {
+        Profile profile = realm.where(Profile.class).contains("name", profileName).findFirst();
+        profile.saveToPreferences(context);
     }
 }

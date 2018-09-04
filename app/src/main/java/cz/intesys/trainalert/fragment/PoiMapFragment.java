@@ -175,6 +175,10 @@ public class PoiMapFragment extends Fragment {
         });
 
         mViewModel.getOnShouldSaveObservable().observeOn(AndroidSchedulers.mainThread()).subscribe((empty) -> {
+            if (!mViewModel.isActiveSavings()) {
+                return;
+            }
+
             Log.d("savePoi", "");
             if (mViewModel.getMode() != MODE_NONE) {
                 onSavePoi();

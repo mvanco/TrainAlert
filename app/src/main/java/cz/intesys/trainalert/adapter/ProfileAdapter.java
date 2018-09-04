@@ -21,7 +21,6 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
 
     public ProfileAdapter(OnItemClickListener listener) {
         mItems = new RealmList<>();
-
         mListener = listener;
     }
 

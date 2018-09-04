@@ -11,6 +11,7 @@
     <!-- ActionBar items -->
     <string name="menu_notification">Upozornění</string>
     <string name="menu_trip_selection">Vyběr jízdy</string>
+    <string name="menu_profile_selection">Vyběr profilu</string>
     <string name="menu_sound">Vypnout/zapnout zvuk</string>
     <string name="menu_clock">Hodiny</string>
 
@@ -53,6 +54,7 @@
     <string name="message_destination_reached">Přijel jsi do cílové stanice\n%s</string>
     <string name="message_successful_logout">Byl jste úspěšně odhlášen</string>
     <string name="message_business_trip_set">Služební jízda byla započatá</string>
+    <string name="message_profil_loaded">Profil byl načten</string>
 
     <!-- Error Messages -->
     <string name="error_wrong_password">Bylo zadáno špatné heslo</string>
@@ -163,5 +165,6 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="action_settings">Settings</string>
+    <string name="fragmentProfile_emptyText">Není uložen žádný profil</string>
 
 </resources>

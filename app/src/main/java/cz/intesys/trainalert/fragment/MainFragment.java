@@ -137,6 +137,7 @@ public class MainFragment extends Fragment {
         super.onResume();
         mTrainMarker.setPosition(mViewModel.getLocation().toGeoPoint());
         setAnimating(true);
+        initIcons();
     }
 
     @Override public void onPause() {
@@ -237,9 +238,7 @@ public class MainFragment extends Fragment {
     private void initAnimation() {
         initMap(getActivity()); // Initialize map using osmdroid library and set current position on the map.
         initTrainMarker(mBinding.fragmentMainMapView);
-        mBinding.fragmentMainCompass.setVisibility((PreferenceManager.getDefaultSharedPreferences(
-                getContext()).getBoolean(TaConfig.COMPASS_ENABLED_KEY, TaConfig.COMPASS_ENABLED_DEFAULT)) ?
-                View.VISIBLE : View.GONE);
+
         mBinding.fragmentMainMapView.getOverlayManager().add(mTrainMarker); // Add train marker.
         mViewModel.getLocationLiveData().observe(this, currentLocation -> {
             handleLocationChange(mTrainMarker, currentLocation);
@@ -281,6 +280,12 @@ public class MainFragment extends Fragment {
                 setMapPosition(mViewModel.getCurrentLocation().toGeoPoint());
             }
         });
+    }
+
+    public void initIcons() {
+        mBinding.fragmentMainCompass.setVisibility((PreferenceManager.getDefaultSharedPreferences(
+                getContext()).getBoolean(TaConfig.COMPASS_ENABLED_KEY, TaConfig.COMPASS_ENABLED_DEFAULT)) ?
+                View.VISIBLE : View.GONE);
     }
 
     private boolean onMapScroll(ScrollEvent event) {

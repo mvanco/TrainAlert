@@ -10,24 +10,62 @@
             type="cz.intesys.trainalert.viewmodel.ProfileFragmentViewModel"/>
     </data>
 
-    <android.support.design.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/fragmentProfile_recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+        <TextView
+            android:id="@+id/fragmentProfile_title"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:text="Profily"
+            android:textSize="28sp"
+            android:padding="8dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fragmentProfile_fab"
+        <android.support.design.widget.CoordinatorLayout
+            android:layout_width="@dimen/fragmentProfile_root_width"
+            android:layout_height="@dimen/fragmentProfile_root_height"
+            app:layout_constraintTop_toBottomOf="@id/fragmentProfile_title">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/fragmentProfile_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fragmentProfile_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="@dimen/fab_margin"
+                app:backgroundTint="@android:color/white"
+                app:srcCompat="@android:drawable/ic_input_add" />
+
+        </android.support.design.widget.CoordinatorLayout>
+
+        <TextView
+            android:id="@+id/fragmentProfile_emptyView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/fab_margin"
-            app:backgroundTint="@android:color/white"
-            app:srcCompat="@android:drawable/ic_input_add" />
+            android:gravity="center_horizontal"
+            android:text="@string/fragmentProfile_emptyText"
+            android:textColor="@color/red"
+            android:textSize="32sp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fragmentProfile_title"
+            app:layout_constraintVertical_bias="0.45" />
 
-    </android.support.design.widget.CoordinatorLayout>
+    </android.support.constraint.ConstraintLayout>
+
 </layout>

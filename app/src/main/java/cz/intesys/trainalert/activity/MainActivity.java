@@ -5,6 +5,7 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -35,7 +36,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,8 +52,10 @@ import cz.intesys.trainalert.adapter.NavAdapter;
 import cz.intesys.trainalert.databinding.ActivityMainBinding;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.TaCallback;
+import cz.intesys.trainalert.entity.realm.Profile;
 import cz.intesys.trainalert.fragment.MainFragment;
 import cz.intesys.trainalert.fragment.PasswordDialogFragment;
+import cz.intesys.trainalert.fragment.ProfileFragment;
 import cz.intesys.trainalert.fragment.TripFragment;
 import cz.intesys.trainalert.fragment.TripIdDialogFragment;
 import cz.intesys.trainalert.fragment.TripIdManuallyDialogFragment;
@@ -64,7 +69,11 @@ import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_NEXT_STOP_COUNT;
 import static cz.intesys.trainalert.TaConfig.TRIP_FRAGMENT_PREVIOUS_STOP_COUNT;
 import static cz.intesys.trainalert.repository.DataHelper.TRIP_NO_TRIP;
 
-public class MainActivity extends AppCompatActivity implements TripIdDialogFragment.OnFragmentInteractionListener, TripFragment.OnFragmentInteractionListener, PasswordDialogFragment.OnFragmentInteractionListener, MainFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements TripIdDialogFragment.OnFragmentInteractionListener,
+        TripFragment.OnFragmentInteractionListener,
+        PasswordDialogFragment.OnFragmentInteractionListener,
+        MainFragment.OnFragmentInteractionListener,
+        ProfileFragment.OnFragmentInteractionListener {
 
     public static final int MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
     private static final String MAIN_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.mainFragmentTag";
@@ -72,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     private static final String TRIP_ID_MANUALLY_DIALOG_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.tripIdManuallyTag";
     private static final String PASSWORD_DIALOG_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.passwordTag";
     private static final String TRIP_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.sideFragmentTag";
+    private static final String PROFILE_DIALOG_FRAGMENT_TAG = "cz.intesys.trainAlert.mainActivity.ProfileDialogFragmentTag";
 
     private ActivityMainBinding mBinding;
     private ActionBarDrawerToggle mToggle;
@@ -83,6 +93,50 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     private AnimatorSet mAnimSet;
     private boolean mTripSelectionIconEnabled = true;
 
+    @Override
+    public void onFabClick() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("Název");
+
+        final EditText input = new EditText(this);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        alertDialog.setView(input);
+
+        alertDialog.setPositiveButton(getResources().getString(R.string.button_save),
+                (dialog, which) -> {
+                    String title = input.getText().toString();
+                    mViewModel.addProfile(MainActivity.this, title);
+                    ProfileFragment fragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(PROFILE_DIALOG_FRAGMENT_TAG);
+                    fragment.reload();
+                });
+
+        alertDialog.setNegativeButton(getResources().getString(R.string.button_cancel),
+                (dialog, which) -> dialog.cancel());
+
+        alertDialog.show();
+    }
+
+    @Override
+    public void onProfileDeleted(Profile profile) {
+        mViewModel.deleteProfile(profile);
+        ProfileFragment fragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(PROFILE_DIALOG_FRAGMENT_TAG);
+        if (fragment != null) {
+            fragment.reload();
+        }
+    }
+
+    @Override
+    public void onProfileClick(String profileName) {
+        mViewModel.loadProfile(this, profileName);
+        Toast.makeText(this, R.string.message_profil_loaded, Toast.LENGTH_SHORT).show();
+        MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
+        if (fragment != null) {
+            fragment.initIcons();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,6 +201,12 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                 autoRegister(firstTime);
             });
         }
+        setIconsVisibility();
+        setupVolume();
+    }
+
+    private void setIconsVisibility() {
+
     }
 
     @Override
@@ -267,6 +327,9 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                     showTripIdDialogFragment();
                 }
                 return true;
+            case R.id.menu_profile_selection:
+                ProfileFragment.newInstance().show(getSupportFragmentManager(), PROFILE_DIALOG_FRAGMENT_TAG);
+                return true;
             case R.id.menu_sound:
                 if (mViewModel.isVolumeUp(this)) {
                     mViewModel.setVolumeUp(this, false);
@@ -282,6 +345,9 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     }
 
     public void setupVolume() {
+        if (mMenu == null) {
+            return;
+        }
         MenuItem item = mMenu.findItem(R.id.menu_sound);
         AudioManager audioManager = (AudioManager)MainActivity.this.getSystemService(Context.AUDIO_SERVICE);
         if (mViewModel.isVolumeUp(this)) {
@@ -467,7 +533,8 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         } else if (id == R.string.nav_settings) {
             startActivity(SettingActivity.newIntent(this));
         } else if (id == R.string.nav_profiles) {
-            startActivity(ProfileActivity.newIntent(this));
+//            startActivity(ProfileActivity.newIntent(this));
+            ProfileFragment.newInstance().show(getSupportFragmentManager(), PROFILE_DIALOG_FRAGMENT_TAG);
         }
         if (id == R.string.nav_logout) {
             Toast.makeText(this, R.string.message_successful_logout, Toast.LENGTH_SHORT).show();
