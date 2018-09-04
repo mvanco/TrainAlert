@@ -1,5 +1,6 @@
 package cz.intesys.trainalert.viewmodel;
 
+import android.app.AlertDialog;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.OnLifecycleEvent;
@@ -57,11 +58,9 @@ public class MainActivityViewModel extends BaseViewModel {
 
     public void addProfile(Context context, String title) {
         realm.beginTransaction();
-        Profile unmanagedProfile = Profile.createFromPrefences(context);
-        unmanagedProfile.setName(title);
-//        Profile managedProfile = realm.copyToRealm(unmanagedProfile);
+        Profile profile = Profile.createFromPrefences(context, title);
         Database database = realm.where(Database.class).findFirst();  // Should be only one instance here.
-        database.getProfiles().add(unmanagedProfile);
+        database.getProfiles().add(profile);
         realm.commitTransaction();
     }
 

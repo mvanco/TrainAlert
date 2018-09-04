@@ -121,11 +121,48 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
     @Override
     public void onProfileDeleted(Profile profile) {
-        mViewModel.deleteProfile(profile);
-        ProfileFragment fragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(PROFILE_DIALOG_FRAGMENT_TAG);
-        if (fragment != null) {
-            fragment.reload();
+        if (profile.getName().equals("Výchozí profil")) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Vymazat výchozí profil");
+            builder.setMessage("Tento profil obsahuje výchozí konfiguraci, naozaj vymazat?");
+            builder.setPositiveButton(getResources().getString(R.string.button_confirm), (dialog, which) -> {
+                dialog.dismiss();
+                mViewModel.deleteProfile(profile);
+                ProfileFragment fragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(PROFILE_DIALOG_FRAGMENT_TAG);
+                if (fragment != null) {
+                    fragment.reload();
+                }
+            });
+            builder.setNegativeButton(getResources().getString(R.string.button_cancel), (dialog, which) -> {
+                dialog.dismiss();
+                ProfileFragment fragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(PROFILE_DIALOG_FRAGMENT_TAG);
+                if (fragment != null) {
+                    fragment.reload();
+                }
+            });
+            builder.show();
+            return;
         }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Vymazat profil");
+        builder.setMessage("Naozaj vymazat?");
+        builder.setPositiveButton(getResources().getString(R.string.button_confirm), (dialog, which) -> {
+            dialog.dismiss();
+            mViewModel.deleteProfile(profile);
+            ProfileFragment fragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(PROFILE_DIALOG_FRAGMENT_TAG);
+            if (fragment != null) {
+                fragment.reload();
+            }
+        });
+        builder.setNegativeButton(getResources().getString(R.string.button_cancel), (dialog, which) -> {
+            dialog.dismiss();
+            ProfileFragment fragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(PROFILE_DIALOG_FRAGMENT_TAG);
+            if (fragment != null) {
+                fragment.reload();
+            }
+        });
+        builder.show();
     }
 
     @Override
@@ -353,10 +390,12 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         if (mViewModel.isVolumeUp(this)) {
             ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_volume_up);
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
+            audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, AudioManager.ADJUST_UNMUTE, 0);
         }
         else {
             ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_volume_off);
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
+            audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, AudioManager.ADJUST_MUTE, 0);
         }
     }
 
@@ -533,7 +572,6 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         } else if (id == R.string.nav_settings) {
             startActivity(SettingActivity.newIntent(this));
         } else if (id == R.string.nav_profiles) {
-//            startActivity(ProfileActivity.newIntent(this));
             ProfileFragment.newInstance().show(getSupportFragmentManager(), PROFILE_DIALOG_FRAGMENT_TAG);
         }
         if (id == R.string.nav_logout) {

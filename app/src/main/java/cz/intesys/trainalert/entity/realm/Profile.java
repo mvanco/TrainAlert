@@ -5,6 +5,10 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import cz.intesys.trainalert.entity.CategorySharedPrefs;
 import cz.intesys.trainalert.repository.DataHelper;
@@ -31,9 +35,10 @@ public class Profile extends RealmObject {
         this.name = name;
     }
 
-    public static Profile createFromPrefences(Context context) {
+    public static Profile createFromPrefences(Context context, String profileName) {
         Profile profile = new Profile();
         profile.fill(context);
+        profile.setName(profileName);
         return profile;
     }
 
@@ -93,6 +98,15 @@ public class Profile extends RealmObject {
             editor.putString(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.GRAPHICS_PREF_KEY, categoryId), String.valueOf(data.get(categoryId).getGraphics()));
             editor.putBoolean(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.VOICE_NAVIGATION_PREF_KEY, categoryId), data.get(categoryId).isSoundNotification());
             editor.putString(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.RINGTONE_PREF_KEY, categoryId), data.get(categoryId).getRingtone());
+
+            List<String> distances = data.get(categoryId).getDistances();
+            Set<String> stringSet = new HashSet<>();
+            for (int i = 0; i < distances.size(); i++) {
+                stringSet.add(data.get(categoryId).getDistances().get(i));
+            }
+
+            editor.putStringSet(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.DISTANCES_PREF_KEY, categoryId), stringSet);
+
             editor.putString(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.TEXT_BEFORE_PREF_KEY, categoryId), data.get(categoryId).getTextBefore());
             editor.putBoolean(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.INCLUDE_DISTANCE_PREF_KEY, categoryId), data.get(categoryId).isIncludeDistance());
             editor.putString(CategorySharedPrefs.getPrefKey(CategorySharedPrefs.TEXT_AFTER_PREF_KEY, categoryId), data.get(categoryId).getTextAfter());
@@ -117,8 +131,14 @@ public class Profile extends RealmObject {
             cSett.setGraphics(Integer.valueOf(pref.getString(CategorySharedPrefs.GRAPHICS_PREF_KEY, String.valueOf(pref.getGraphicsDefaultValue()))));
             cSett.setSoundNotification(pref.getBoolean(CategorySharedPrefs.VOICE_NAVIGATION_PREF_KEY, CategorySharedPrefs.VOICE_NAVIGATION_DEFAULT_VALUE));
             cSett.setRingtone(pref.getString(CategorySharedPrefs.RINGTONE_PREF_KEY, CategorySharedPrefs.RINGTONE_DEFAULT_VALUE.toString()));
-//            cSett.setDistances(new ArrayList<String>());
-//            pref.getStringSet(CategorySharedPrefs.DISTANCES_PREF_KEY, CategorySharedPrefs.DISTANCE_DEFAULT_VALUE);
+
+            List<String> stringList = new ArrayList<>(pref.getStringSet(CategorySharedPrefs.DISTANCES_PREF_KEY, CategorySharedPrefs.DISTANCE_DEFAULT_VALUE));
+            RealmList<String> distances = new RealmList<>();
+            for (int i = 0; i < stringList.size(); i++) {
+                distances.add(stringList.get(i));
+            }
+            cSett.setDistances(distances);
+
             cSett.setTextBefore(pref.getString(CategorySharedPrefs.TEXT_BEFORE_PREF_KEY, context.getString(pref.getTextBeforeDefaultValue()) + " "));
             cSett.setIncludeDistance(pref.getBoolean(CategorySharedPrefs.INCLUDE_DISTANCE_PREF_KEY, CategorySharedPrefs.INCLUDE_DISTANCE_DEFAULT_VALUE));
             cSett.setTextAfter(pref.getString(CategorySharedPrefs.TEXT_AFTER_PREF_KEY, CategorySharedPrefs.TEXT_AFTER_DEFAULT_VALUE));

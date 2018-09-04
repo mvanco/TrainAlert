@@ -52,15 +52,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="cz.intesys.trainalert.activity.MainActivity" />
         </activity>
-        <activity
-            android:name=".activity.ProfileActivity"
-            android:label="@string/title_activity_profile"
-            android:parentActivityName=".activity.MainActivity"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="cz.intesys.trainalert.activity.MainActivity" />
-        </activity>
     </application>
 
 </manifest>
