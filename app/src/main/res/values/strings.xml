@@ -56,6 +56,13 @@
     <string name="message_business_trip_set">Služební jízda byla započatá</string>
     <string name="message_profil_loaded">Profil byl načten</string>
 
+    <!-- Dialog Messages -->
+    <string name="dialog_message_def_profile_deletion_title">Smazat výchozí profil?</string>
+    <string name="dialog_message_def_profile_deletion">Tento profil obsahuje výchozí konfiguraci. V případě smazání ho již nebude možné obnovit!</string>
+
+    <string name="dialog_message_profile_deletion_title">Smazat profil?</string>
+    <string name="dialog_message_profile_deletion">V případě smazání ho již nebude možné obnovit!</string>
+
     <!-- Error Messages -->
     <string name="error_wrong_password">Bylo zadáno špatné heslo</string>
     <string name="error_location_unavailable">GPS data\nnejsou dostupná</string>
@@ -65,6 +72,7 @@
     <string name="button_save">Ulož</string>
     <string name="button_cancel">Zruš</string>
     <string name="button_confirm">Potvrď</string>
+    <string name="button_delete">Smazat</string>
 
     <!-- Categories -->
     <string name="category_crossing">Přejezd</string>

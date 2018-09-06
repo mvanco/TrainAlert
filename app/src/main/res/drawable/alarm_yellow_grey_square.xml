@@ -30,7 +30,7 @@
             <stroke
                 android:width="@dimen/alarm_stroke_width"
                 android:color="#a6a6a6" />
-            <solid android:color="@color/grey" />
+            <solid android:color="#ffffff" />
         </shape>
     </item>
 </layer-list>

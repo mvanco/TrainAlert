@@ -101,7 +101,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="fragmentTrip_header_textSize">18dp</dimen>
     <dimen name="fragmentTrip_header_smallerTextSize">14dp</dimen>
-    <dimen name="fragmentProfile_root_width">500dp</dimen>
-    <dimen name="fragmentProfile_root_height">500dp</dimen>
+    <dimen name="fragmentProfile_root_width">400dp</dimen>
+    <dimen name="fragmentProfile_root_height">400dp</dimen>
 
 </resources>

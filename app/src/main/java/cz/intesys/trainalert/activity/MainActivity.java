@@ -5,7 +5,6 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -123,9 +122,9 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     public void onProfileDeleted(Profile profile) {
         if (profile.getName().equals("Výchozí profil")) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Vymazat výchozí profil");
-            builder.setMessage("Tento profil obsahuje výchozí konfiguraci, naozaj vymazat?");
-            builder.setPositiveButton(getResources().getString(R.string.button_confirm), (dialog, which) -> {
+            builder.setTitle(R.string.dialog_message_def_profile_deletion_title);
+            builder.setMessage(R.string.dialog_message_def_profile_deletion);
+            builder.setPositiveButton(getResources().getString(R.string.button_delete), (dialog, which) -> {
                 dialog.dismiss();
                 mViewModel.deleteProfile(profile);
                 ProfileFragment fragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(PROFILE_DIALOG_FRAGMENT_TAG);
@@ -145,8 +144,8 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Vymazat profil");
-        builder.setMessage("Naozaj vymazat?");
+        builder.setTitle(R.string.dialog_message_profile_deletion_title);
+        builder.setMessage(R.string.dialog_message_profile_deletion);
         builder.setPositiveButton(getResources().getString(R.string.button_confirm), (dialog, which) -> {
             dialog.dismiss();
             mViewModel.deleteProfile(profile);
@@ -173,77 +172,6 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         if (fragment != null) {
             fragment.initIcons();
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (!BuildConfig.USE_OFFLINE_MAPS
-                && (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_DENIED)) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
-        }
-
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        mViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
-        getLifecycle().addObserver(mViewModel);
-
-        if (BuildConfig.USE_OFFLINE_MAPS
-                || (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED)) {
-            getSupportFragmentManager().beginTransaction().add(R.id.activityMain_fragmentContainer, MainFragment.newInstance(), MAIN_FRAGMENT_TAG).commitNow();
-            getSupportFragmentManager().executePendingTransactions();
-        }
-
-        setupActionBar();
-        setupNavigationBar();
-        mViewModel.getLocationLiveData().observe(this, (location) -> onTimeChanged(location.getTime()));
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.ic_trip_selection_animator);
-    }
-
-    @Override protected void onStart() {
-        super.onStart();
-        if (DataHelper.getInstance().isFirstRun()) {
-            DataHelper.getInstance().getTrainId(new TaCallback<String>() { // Load train id to SharedPreferences.
-                @Override public void onResponse(String response) {
-                }
-
-                @Override public void onFailure(Throwable t) {
-                }
-            });
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        DialogFragment tripIdDialogFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(TRIP_ID_DIALOG_FRAGMENT_TAG);
-
-        if (tripIdDialogFragment != null && tripIdDialogFragment.getDialog() != null && tripIdDialogFragment.getDialog().isShowing()) {
-            tripIdDialogFragment.dismiss();
-        }
-
-        DialogFragment tripIdManuallyDialogFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(TRIP_ID_MANUALLY_DIALOG_FRAGMENT_TAG);
-
-        if (tripIdManuallyDialogFragment != null && tripIdManuallyDialogFragment.getDialog() != null && tripIdManuallyDialogFragment.getDialog().isShowing()) {
-            tripIdManuallyDialogFragment.dismiss();
-        }
-
-        if (!mViewModel.getAutoRegisterLiveData().hasActiveObservers()) {
-            mViewModel.getAutoRegisterLiveData().observe(this, (firstTime) -> {
-                autoRegister(firstTime);
-            });
-        }
-        setIconsVisibility();
-        setupVolume();
-    }
-
-    private void setIconsVisibility() {
-
     }
 
     @Override
@@ -277,7 +205,8 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     public void onTripSelected(String tripId) { // Returned from TripIdDialogFragment or TripIdManuallyDialogFragment
         showTripIdSelectionIconLoader();
         DataHelper.getInstance().setTrip(tripId, new TaCallback<Void>() {
-            @Override public void onResponse(Void response) {
+            @Override
+            public void onResponse(Void response) {
                 showSideBar();
                 hideTripIdSelectionIconLoader();
                 setSideBarHandleVisibility();  // Make handle visible.
@@ -285,28 +214,33 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                 Log.d("reloadingPois", ".");
             }
 
-            @Override public void onFailure(Throwable t) {
+            @Override
+            public void onFailure(Throwable t) {
                 hideTripIdSelectionIconLoader();
             }
         });
     }
 
-    @Override public void onTripFinished() {
+    @Override
+    public void onTripFinished() {
         DataHelper.getInstance().unregisterTrip();
         initTripIdSelectionIconLoader();  // Disable animation.
         setSideBarHandleVisibility();  // Sets to invisible
         hideSideBar();
     }
 
-    @Override public void onBusinessTripSelected(String tripId) {
+    @Override
+    public void onBusinessTripSelected(String tripId) {
         showTripIdSelectionIconLoader();
         DataHelper.getInstance().setTrip(tripId, new TaCallback<Void>() {
-            @Override public void onResponse(Void response) {
+            @Override
+            public void onResponse(Void response) {
                 Toast.makeText(MainActivity.this, R.string.message_business_trip_set, Toast.LENGTH_SHORT).show();
                 hideTripIdSelectionIconLoader();
             }
 
-            @Override public void onFailure(Throwable t) {
+            @Override
+            public void onFailure(Throwable t) {
                 hideTripIdSelectionIconLoader();
             }
         });
@@ -315,7 +249,8 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         mBinding.activityMainInclude.activityMainSideContainer.setVisibility(View.GONE);
     }
 
-    @Override public void onTripManuallySelected() {
+    @Override
+    public void onTripManuallySelected() {
         DialogFragment tripIdDialogFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(TRIP_ID_DIALOG_FRAGMENT_TAG);
 
         if (tripIdDialogFragment != null && tripIdDialogFragment.getDialog() != null && tripIdDialogFragment.getDialog().isShowing()) {
@@ -324,7 +259,8 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         TripIdManuallyDialogFragment.newInstance().show(getSupportFragmentManager(), TRIP_ID_MANUALLY_DIALOG_FRAGMENT_TAG);
     }
 
-    @Override public boolean onCreateOptionsMenu(Menu menu) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -354,10 +290,12 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
 
     /**
      * Prerequisities: must be set field with type {@link Menu}
+     *
      * @param item
      * @return
      */
-    @Override public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_trip_selection:
                 if (mTripSelectionIconEnabled) {
@@ -370,8 +308,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             case R.id.menu_sound:
                 if (mViewModel.isVolumeUp(this)) {
                     mViewModel.setVolumeUp(this, false);
-                }
-                else {
+                } else {
                     mViewModel.setVolumeUp(this, true);
                 }
                 setupVolume();
@@ -386,48 +323,54 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             return;
         }
         MenuItem item = mMenu.findItem(R.id.menu_sound);
-        AudioManager audioManager = (AudioManager)MainActivity.this.getSystemService(Context.AUDIO_SERVICE);
+        AudioManager audioManager = (AudioManager) MainActivity.this.getSystemService(Context.AUDIO_SERVICE);
         if (mViewModel.isVolumeUp(this)) {
             ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_volume_up);
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
             audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, AudioManager.ADJUST_UNMUTE, 0);
-        }
-        else {
+        } else {
             ((ImageView) item.getActionView()).setImageResource(R.drawable.ic_volume_off);
             audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_MUTE, 0);
             audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, AudioManager.ADJUST_MUTE, 0);
         }
     }
 
-    @Override public void onPasswordEntered(int password) {
+    @Override
+    public void onPasswordEntered(int password) {
         DataHelper.getInstance().registerSideBar(password, new TaCallback<Void>() {
-            @Override public void onResponse(Void response) {
+            @Override
+            public void onResponse(Void response) {
                 mBinding.activityMainDrawerLayout.openDrawer(Gravity.LEFT);
             }
 
-            @Override public void onFailure(Throwable t) {
+            @Override
+            public void onFailure(Throwable t) {
                 Toast.makeText(MainActivity.this, R.string.error_wrong_password, Toast.LENGTH_SHORT).show();
             }
         });
         mShouldShowPasswordDialog = true;
     }
 
-    @Override public void onDialogCanceled() {
+    @Override
+    public void onDialogCanceled() {
         mShouldShowPasswordDialog = true;
     }
 
-    @Override public void onFinishAnimationStarted() {
+    @Override
+    public void onFinishAnimationStarted() {
         MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
         if (fragment != null) {
             fragment.setAnimating(false);
         }
     }
 
-    @Override public void onBackPressed() {
+    @Override
+    public void onBackPressed() {
         // Suppress shutting the application down using back button.
     }
 
-    @Override public void onActionBarNotificationShow(String alarmMessage) {
+    @Override
+    public void onActionBarNotificationShow(String alarmMessage) {
         if (mMenu == null) {
             return;
         }
@@ -436,7 +379,8 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         tv.setText(alarmMessage);
     }
 
-    @Override public void onPassedPoi(Poi poi) {
+    @Override
+    public void onPassedPoi(Poi poi) {
         if (mMenu == null) {
             return;
         }
@@ -452,8 +396,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             if (DataHelper.getInstance().getRegisteredTrip() != TRIP_NO_TRIP) {
                 showSideBar();
             }
-        }
-        else {
+        } else {
             hideSideBar();
         }
     }
@@ -466,6 +409,81 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             int minutes = cal.get(Calendar.MINUTE);
             mClockTextView.setText(Utility.getTwoDigitString(hours) + ":" + Utility.getTwoDigitString(minutes));
         }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (!BuildConfig.USE_OFFLINE_MAPS
+                && (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_DENIED)) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+        }
+
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        mViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+        getLifecycle().addObserver(mViewModel);
+
+        if (BuildConfig.USE_OFFLINE_MAPS
+                || (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED)) {
+            getSupportFragmentManager().beginTransaction().add(R.id.activityMain_fragmentContainer, MainFragment.newInstance(), MAIN_FRAGMENT_TAG).commitNow();
+            getSupportFragmentManager().executePendingTransactions();
+        }
+
+        setupActionBar();
+        setupNavigationBar();
+        mViewModel.getLocationLiveData().observe(this, (location) -> onTimeChanged(location.getTime()));
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        mAnimSet = (AnimatorSet) AnimatorInflater.loadAnimator(this, R.animator.ic_trip_selection_animator);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (DataHelper.getInstance().isFirstRun()) {
+            DataHelper.getInstance().getTrainId(new TaCallback<String>() { // Load train id to SharedPreferences.
+                @Override
+                public void onResponse(String response) {
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                }
+            });
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        DialogFragment tripIdDialogFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(TRIP_ID_DIALOG_FRAGMENT_TAG);
+
+        if (tripIdDialogFragment != null && tripIdDialogFragment.getDialog() != null && tripIdDialogFragment.getDialog().isShowing()) {
+            tripIdDialogFragment.dismiss();
+        }
+
+        DialogFragment tripIdManuallyDialogFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(TRIP_ID_MANUALLY_DIALOG_FRAGMENT_TAG);
+
+        if (tripIdManuallyDialogFragment != null && tripIdManuallyDialogFragment.getDialog() != null && tripIdManuallyDialogFragment.getDialog().isShowing()) {
+            tripIdManuallyDialogFragment.dismiss();
+        }
+
+        if (!mViewModel.getAutoRegisterLiveData().hasActiveObservers()) {
+            mViewModel.getAutoRegisterLiveData().observe(this, (firstTime) -> {
+                autoRegister(firstTime);
+            });
+        }
+        setIconsVisibility();
+        setupVolume();
+
+    }
+
+    private void setIconsVisibility() {
+
     }
 
     private void setupNavigationBar() {
@@ -481,7 +499,8 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     synchronized private void showTripIdDialogFragment() {
         showTripIdSelectionIconLoader();
         DataHelper.getInstance().getTrips(new TaCallback<List<String>>() {
-            @Override public void onResponse(List<String> response) {
+            @Override
+            public void onResponse(List<String> response) {
 
                 DialogFragment tripIdDialogFragment = (DialogFragment) getSupportFragmentManager().findFragmentByTag(TRIP_ID_DIALOG_FRAGMENT_TAG);
 
@@ -502,7 +521,8 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                 hideTripIdSelectionIconLoader();
             }
 
-            @Override public void onFailure(Throwable t) {
+            @Override
+            public void onFailure(Throwable t) {
                 hideTripIdSelectionIconLoader();
             }
         });
@@ -702,8 +722,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
                     String previousTrip = DataHelper.getInstance().getRegisteredTrip();
                     if (trip == null) {
                         DataHelper.getInstance().unregisterTrip();
-                    }
-                    else {
+                    } else {
                         DataHelper.getInstance().registerTrip(trip);
                         showSideBar();  // This is default state after application start.
                     }
