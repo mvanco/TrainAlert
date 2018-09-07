@@ -16,7 +16,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-
         <cz.intesys.trainalert.view.SignView
             android:id="@+id/fragmentMain_signView"
             android:layout_width="wrap_content"

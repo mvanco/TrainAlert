@@ -5,10 +5,12 @@ import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -41,18 +43,22 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import cz.intesys.trainalert.BuildConfig;
 import cz.intesys.trainalert.R;
+import cz.intesys.trainalert.TaConfig;
 import cz.intesys.trainalert.adapter.NavAdapter;
 import cz.intesys.trainalert.databinding.ActivityMainBinding;
 import cz.intesys.trainalert.entity.Poi;
 import cz.intesys.trainalert.entity.TaCallback;
 import cz.intesys.trainalert.entity.realm.Profile;
 import cz.intesys.trainalert.fragment.MainFragment;
+import cz.intesys.trainalert.fragment.ManualFragment;
 import cz.intesys.trainalert.fragment.PasswordDialogFragment;
 import cz.intesys.trainalert.fragment.ProfileFragment;
 import cz.intesys.trainalert.fragment.TripFragment;
@@ -146,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.dialog_message_profile_deletion_title);
         builder.setMessage(R.string.dialog_message_profile_deletion);
-        builder.setPositiveButton(getResources().getString(R.string.button_confirm), (dialog, which) -> {
+        builder.setPositiveButton(getResources().getString(R.string.button_delete), (dialog, which) -> {
             dialog.dismiss();
             mViewModel.deleteProfile(profile);
             ProfileFragment fragment = (ProfileFragment) getSupportFragmentManager().findFragmentByTag(PROFILE_DIALOG_FRAGMENT_TAG);
@@ -165,13 +171,20 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
     }
 
     @Override
-    public void onProfileClick(String profileName) {
+    public void onProfileClicked(String profileName) {
         mViewModel.loadProfile(this, profileName);
         Toast.makeText(this, R.string.message_profil_loaded, Toast.LENGTH_SHORT).show();
         MainFragment fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(MAIN_FRAGMENT_TAG);
         if (fragment != null) {
             fragment.initIcons();
         }
+    }
+
+    @Override
+    public void onProfileUpdated(String profileName) {
+        mViewModel.deleteProfile(profileName);
+        mViewModel.addProfile(this, profileName);
+        Toast.makeText(this, R.string.message_profil_updated, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -593,11 +606,26 @@ public class MainActivity extends AppCompatActivity implements TripIdDialogFragm
             startActivity(SettingActivity.newIntent(this));
         } else if (id == R.string.nav_profiles) {
             ProfileFragment.newInstance().show(getSupportFragmentManager(), PROFILE_DIALOG_FRAGMENT_TAG);
+        } else if (id == R.string.nav_manual) {
+//            startActivity(ManualActivity.newIntent(this));
+            try {
+                openPdf(TaConfig.MANUAL_PAGE);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         if (id == R.string.nav_logout) {
             Toast.makeText(this, R.string.message_successful_logout, Toast.LENGTH_SHORT).show();
             DataHelper.getInstance().unregisterSideBar();
         }
+    }
+
+    public void openPdf(String url) throws IOException {
+        Uri uri = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(uri, "application/pdf");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     private void setupActionBar() {

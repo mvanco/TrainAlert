@@ -35,7 +35,9 @@ public class ProfileFragment extends DialogFragment implements ProfileAdapter.On
 
         void onProfileDeleted(Profile profile);
 
-        void onProfileClick(String profileName);
+        void onProfileClicked(String profileName);
+
+        void onProfileUpdated(String profileName);
     }
 
     public ProfileFragment() {
@@ -131,8 +133,13 @@ public class ProfileFragment extends DialogFragment implements ProfileAdapter.On
     }
 
     @Override
-    public void onCheckedItem(String profileName) {
-        mListener.onProfileClick(profileName);
+    public void onClickedItem(String profileName) {
+        mListener.onProfileClicked(profileName);
         dismiss();
+    }
+
+    @Override
+    public void onLongClickedItem(String profileName) {
+        mListener.onProfileUpdated(profileName);
     }
 }

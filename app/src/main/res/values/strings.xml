@@ -6,6 +6,7 @@
     <string name="nav_categories">@string/title_activity_category</string>
     <string name="nav_settings">@string/title_activity_setting</string>
     <string name="nav_profiles">@string/title_activity_profile</string>
+    <string name="nav_manual">@string/title_activity_manual</string>
     <string name="nav_logout">Odhlásit</string>
 
     <!-- ActionBar items -->
@@ -43,6 +44,7 @@
     <string name="title_activity_category">Kategorie</string>
     <string name="title_activity_setting">Nastavení</string>
     <string name="title_activity_profile">Profily</string>
+    <string name="title_activity_manual">Manuál</string>
     <string name="title_fragment_category_picker">Kategorie</string>
     <string name="title_fragment_trip_id">Číslo jízdy</string>
     <string name="title_fragment_password">Heslo</string>
@@ -55,6 +57,7 @@
     <string name="message_successful_logout">Byl jste úspěšně odhlášen</string>
     <string name="message_business_trip_set">Služební jízda byla započatá</string>
     <string name="message_profil_loaded">Profil byl načten</string>
+    <string name="message_profil_updated">Profil byl aktualizován</string>
 
     <!-- Dialog Messages -->
     <string name="dialog_message_def_profile_deletion_title">Smazat výchozí profil?</string>

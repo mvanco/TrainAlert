@@ -55,6 +55,7 @@ public class TaConfig {
 
     // Preference keys to obtain using PreferenceManager.getDefaultSharedPreferences(getContext()).get...
     public static final String SPEED_LIMIT_VIEW_ENABLED_KEY = "settings_speed_limit";
+    public static final String MANUAL_PAGE = BuildConfig.REST_BASE_URL + "/manual.pdf";
     public static boolean SPEED_LIMIT_VIEW_ENABLED_DEFAULT = true;
 
     public static final String SPEED_VIEW_ENABLED_KEY = "settings_speed";

@@ -71,8 +71,16 @@ public class MainActivityViewModel extends BaseViewModel {
         realm.commitTransaction();
     }
 
+    public void deleteProfile(String profileName) {
+        deleteProfile(getProfile(profileName));
+    }
+
     public void loadProfile(Context context, String profileName) {
         Profile profile = realm.where(Profile.class).contains("name", profileName).findFirst();
         profile.saveToPreferences(context);
+    }
+
+    public Profile getProfile(String profileName) {
+        return realm.where(Profile.class).contains("name", profileName).findFirst();
     }
 }

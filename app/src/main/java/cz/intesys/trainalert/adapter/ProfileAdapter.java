@@ -8,7 +8,6 @@ import java.util.List;
 
 import cz.intesys.trainalert.databinding.SettingItemBinding;
 import cz.intesys.trainalert.entity.realm.Profile;
-import io.realm.Realm;
 import io.realm.RealmList;
 
 public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
@@ -16,7 +15,8 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
     private OnItemClickListener mListener;
 
     public interface OnItemClickListener {
-        void onCheckedItem(String profileName);
+        void onClickedItem(String profileName);
+        void onLongClickedItem(String name);
     }
 
     public ProfileAdapter(OnItemClickListener listener) {
@@ -36,7 +36,11 @@ public class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHold
         Profile item = mItems.get(position);
         holder.mBinding.setData(item);
         holder.mBinding.getRoot().setOnClickListener((view) -> {
-            mListener.onCheckedItem(item.getName());
+            mListener.onClickedItem(item.getName());
+        });
+        holder.mBinding.getRoot().setOnLongClickListener((view) -> {
+            mListener.onLongClickedItem(item.getName());
+            return true;
         });
     }
 
